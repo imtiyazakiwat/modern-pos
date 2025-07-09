@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+refer [shreshta_collections.sql](mdc:shreshta_collections.sql) for database schema ,  that is the actual , real schema used in backend , if you want to update the scheme for any requirement update , give alter querry to update the schema and match the requireemnts, for that create a new file as alter{no}.sql to alter the tables , do not update the shreshta_collections.sql 

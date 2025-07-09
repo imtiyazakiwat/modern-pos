@@ -350,3 +350,68 @@ if($request->server['REQUEST_METHOD'] == 'GET' AND $request->get['type'] == 'STO
 		exit();
 	}
 }
+
+// Generate UPI QR Code
+if($request->server['REQUEST_METHOD'] == 'POST' AND $request->post['action_type'] == 'GENERATE_UPI_QR') 
+{
+    try {
+        // Validate inputs
+        $amount = isset($request->post['amount']) ? $request->post['amount'] : 0;
+        $store_name = isset($request->post['store_name']) ? $request->post['store_name'] : store('name');
+        $ctn = isset($request->post['ctn']) ? $request->post['ctn'] : 'INV'.time();
+        
+        if (!is_numeric($amount) || $amount <= 0) {
+            throw new Exception("Invalid amount");
+        }
+        
+        // Format amount to 2 decimal places
+        $amount = number_format((float)$amount, 2, '.', '');
+        
+        // Create UPI payment URL (using standard UPI URL format)
+        $upi_id = "8217291743@ybl"; // Change this to your actual UPI ID
+        
+        // Create UPI URL with fixed amount
+        $upi_url = "upi://pay?pa=" . urlencode($upi_id) . 
+                  "&pn=" . urlencode($store_name) . 
+                  "&am=" . $amount . 
+                  "&cu=INR" . 
+                  "&tn=" . urlencode("Order Payment - " . $ctn);
+        
+        // Generate QR code using phpqrcode library
+        require_once(ROOT . '/_inc/src/phpqrcode/phpqrcode.php');
+        
+        // Create directory if not exists
+        $qr_dir = DIR_STORAGE . 'temp/qrcodes/';
+        if (!file_exists($qr_dir)) {
+            if (!is_dir(DIR_STORAGE . 'temp')) {
+                mkdir(DIR_STORAGE . 'temp', 0755, true);
+            }
+            mkdir($qr_dir, 0755, true);
+        }
+        
+        // Generate unique filename
+        $qr_file = $qr_dir . 'upi_' . $ctn . '.png';
+        $qr_web_path = root_url() . '/storage/temp/qrcodes/upi_' . $ctn . '.png';
+        
+        // Generate QR code
+        QRcode::png($upi_url, $qr_file, 'M', 6, 2);
+        
+        if (!file_exists($qr_file)) {
+            throw new Exception("Failed to generate QR code");
+        }
+        
+        header('Content-Type: application/json');
+        echo json_encode(array(
+            'error' => false,
+            'qr_url' => $qr_web_path,
+            'upi_url' => $upi_url
+        ));
+        exit();
+        
+    } catch (Exception $e) {
+        header('HTTP/1.1 422 Unprocessable Entity');
+        header('Content-Type: application/json; charset=UTF-8');
+        echo json_encode(array('errorMsg' => $e->getMessage()));
+        exit();
+    }
+}

@@ -175,9 +175,16 @@ if ($request->server['REQUEST_METHOD'] == 'POST')
 
     $Hooks->do_action('After_Place_POS_Order', $invoice_info);
 
-  	header('Content-Type: application/json');
-  	echo json_encode(array('msg' => trans('text_invoice_create_success'), 'invoice_id' => $invoice_id, 'invoice_info' => $invoice_info, 'invoice_items' => $invoice_items));
-	  exit();
+    header('Content-Type: application/json');
+    echo json_encode(array(
+        'invoice_id' => $invoice_id, 
+        'invoice_info' => $invoice_info, 
+        'invoice_items' => $invoice_items,
+        'msg' => '',  // Empty message to prevent default success message
+        'status' => 'success',
+        'hide_success' => true  // Flag to prevent default success message
+    ));
+    exit();
 
   } catch (Exception $e) { 
 

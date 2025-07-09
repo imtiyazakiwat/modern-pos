@@ -96,42 +96,55 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                         $scope.invoiceInfo = response.data.invoice_info;
                         $scope.invoiceItems = response.data.invoice_items;
                         $scope.done = true;
+                        
+                        // Close payment modal first
+                        $scope.resetPos();
+                        $scope.closePaymentFormModal();
+                        
                         if (window.store.sound_effect == 1) {
                             window.storeApp.playSound("modify.mp3");
                         }
-                        if (window.store.auto_print == 1 && window.store.remote_printing == 1) {
+                        
+                        // Print automatically if auto_print is enabled
+                        if (window.store.auto_print == 1) {
                             PrintReceiptModal($scope);
                         }
-                        
-                        if (window.getParameterByName("holding_id") || window.getParameterByName("qref")) {
-                            localStorage.setItem("swal",
-                                window.swal({
-                                  title: "Success!",
-                                  text:  "Invoice ID: "+$scope.invoiceId,
-                                  type: "success",
-                                  timer: 3000,
-                                  showConfirmButton: false
-                                })
-                                .then(function (willDelete) {
-                                    if (willDelete) {
-                                        window.location = "pos.php";
-                                    }
-                                })
-                            );
-                        } else {
-                            if (window.settings.after_sell_page == 'receipt_in_new_window') {
-                                window.open(window.baseUrl+"admin/view_invoice.php?invoice_id=" + $scope.invoiceId);
-                            } else if (window.settings.after_sell_page == 'receipt_in_popup') {
-                                InvoiceViewModal({'invoice_id':$scope.invoiceId});
-                            } else if (window.settings.after_sell_page == 'toastr_msg') {
-                                window.toastr.success("ID: "+$scope.invoiceId, "Success!");
-                            } else if (window.settings.after_sell_page == 'sweet_alert_msg') {
-                                window.swal("Success.", "ID: "+$scope.invoiceId, "success");
-                            } else {
-                                window.swal("Success.", "ID: "+$scope.invoiceId, "success");
-                            }
-                        }
 
+                        // Show success message with print button
+                        setTimeout(function() {
+                            // Hide any existing success messages
+                            $(".alert-success").hide();
+                            
+                            window.swal({
+                                title: "Success!",
+                                text: "Invoice ID: " + $scope.invoiceId,
+                                type: "success",
+                                buttons: {
+                                    print: {
+                                        text: "Print Receipt",
+                                        value: "print",
+                                        visible: true,
+                                        className: "btn-success",
+                                        closeModal: false
+                                    },
+                                    ok: {
+                                        text: "OK",
+                                        value: "ok",
+                                        visible: true,
+                                        className: "btn-default",
+                                        closeModal: true
+                                    }
+                                }
+                            }).then(function(value) {
+                                if (value === "print") {
+                                    PrintReceiptModal($scope);
+                                }
+                                if (window.getParameterByName("holding_id") || window.getParameterByName("qref")) {
+                                    window.location = "pos.php";
+                                }
+                            });
+                        }, 100);
+                        
                         if ($scope.customerMobileNumber && window.settings.invoice_auto_sms == '1') {
                             $http({
                                 url: window.baseUrl+"_inc/sms/index.php",
@@ -148,9 +161,6 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                                 window.swal("Oops!", response.data.errorMsg, "error");
                             });
                         }
-
-                        $scope.resetPos();
-                        $scope.closePaymentFormModal();
                     }, function(response) {
                         if (window.store.sound_effect == 1) {
                             window.storeApp.playSound("error.mp3");

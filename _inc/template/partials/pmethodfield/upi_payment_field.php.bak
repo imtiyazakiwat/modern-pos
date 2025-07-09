@@ -1,0 +1,86 @@
+<?php
+require_once(ROOT.'/_inc/src/phpqrcode/qrlib.php');
+
+$store_name = get_store_name(store_id());
+$store_name_encoded = urlencode($store_name);
+
+// Create temp directory if it doesn't exist
+$qr_temp_dir = ROOT.'/storage/qr-codes/';
+if (!file_exists($qr_temp_dir)) {
+    mkdir($qr_temp_dir, 0777, true);
+}
+
+// Generate QR code
+$amount = isset($payment_amount) ? $payment_amount : 0;
+$qr_filename = 'upi_qr_'.time().'.png';
+$qr_file_path = $qr_temp_dir . $qr_filename;
+$upi_url = "upi://pay?pa=8217291743@ybl&pn={$store_name_encoded}&am={$amount}&cu=INR";
+QRcode::png($upi_url, $qr_file_path, 'L', 10, 2);
+?>
+
+<div class="panel panel-default mt-5">
+    <div class="panel-body">
+        <div class="text-center">
+            <div id="upi-qr-code">
+                <img src="<?php echo root_url().'/storage/qr-codes/'.$qr_filename; ?>" alt="UPI QR Code" style="max-width: 200px;">
+            </div>
+            <p class="mt-2">Amount to pay: ₹<span id="upi-amount-display"><?php echo number_format($amount, 2); ?></span></p>
+            
+            <div class="form-group mt-3">
+                <label for="upi_transaction_id" class="control-label">
+                    <?php echo trans('text_transaction_id'); ?> <span class="text-danger">*</span>
+                </label>
+                <div class="col-sm-12">
+                    <input type="text" id="upi_transaction_id" name="payment_details" class="form-control" placeholder="Enter UPI Transaction ID" required>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+window.addEventListener('DOMContentLoaded', function() {
+    // Function to update QR code
+    function updateQRCode(amount) {
+        // Make an AJAX call to generate new QR code
+        $.ajax({
+            url: '_inc/ajax.php',
+            type: 'POST',
+            data: {
+                action_type: 'GENERATE_UPI_QR',
+                amount: amount,
+                store_name: '<?php echo $store_name_encoded; ?>'
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.error) {
+                    console.error('Error generating QR code:', response.error);
+                    return;
+                }
+                // Update QR code image
+                document.querySelector('#upi-qr-code img').src = response.qr_url;
+                document.getElementById('upi-amount-display').textContent = amount.toFixed(2);
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', error);
+            }
+        });
+    }
+
+    // Watch for changes in the paid amount
+    var amountInput = document.querySelector('[ng-model="paidAmount"]');
+    if (amountInput) {
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === "attributes" && mutation.attributeName === "value") {
+                    var newAmount = parseFloat(amountInput.value) || 0;
+                    updateQRCode(newAmount);
+                }
+            });
+        });
+
+        observer.observe(amountInput, {
+            attributes: true
+        });
+    }
+});</script> 
