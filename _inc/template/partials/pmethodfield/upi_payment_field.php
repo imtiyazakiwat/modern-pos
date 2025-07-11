@@ -37,8 +37,8 @@ $store_name = store('name');
     </div>
 </div>
 
-<!-- Include QRCode.js library -->
-<script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs@master/qrcode.min.js"></script>
+<!-- Include local QRCode.js library -->
+<script src="/modernpos/assets/js/qrcode.min.js"></script>
 
 <script type="text/javascript">
 // Function to get amount from various sources
@@ -102,7 +102,7 @@ function generateUpiQrCode() {
         console.log("Generating QR code with amount:", formattedAmount, "CTN:", ctn, "Source:", scopeAccess);
         
         // Create UPI URL with fixed amount
-        var upiId = "8217291743@ybl"; // Change this to your actual UPI ID
+        var upiId = "hanamantmokashi@ybl"; // Change this to your actual UPI ID
         var storeName = "<?php echo addslashes($store_name); ?>";
         
         var upiUrl = "upi://pay?pa=" + encodeURIComponent(upiId) + 
