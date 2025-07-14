@@ -38,7 +38,39 @@ $store_name = store('name');
 </div>
 
 <!-- Include local QRCode.js library -->
-<script src="/modernpos/assets/js/qrcode.min.js"></script>
+<script>
+// Dynamically load QRCode library with fallbacks
+(function loadQRCodeLibrary() {
+    // Try different paths to find the library
+    var paths = [
+        '/assets/itsolution24/js/qrcode/qrcode.min.js',
+        'assets/itsolution24/js/qrcode/qrcode.min.js',
+        '../assets/itsolution24/js/qrcode/qrcode.min.js'
+    ];
+    
+    function tryLoadScript(index) {
+        if (index >= paths.length) {
+            console.error("Failed to load QRCode library from all paths");
+            $('#upi-qr-code').html('<p class="text-danger">Error: QR Code library could not be loaded</p>');
+            return;
+        }
+        
+        var script = document.createElement('script');
+        script.src = paths[index];
+        script.onload = function() {
+            console.log("QRCode library loaded successfully from: " + paths[index]);
+            setTimeout(generateUpiQrCode, 500);
+        };
+        script.onerror = function() {
+            console.warn("Failed to load QRCode from: " + paths[index]);
+            tryLoadScript(index + 1);
+        };
+        document.head.appendChild(script);
+    }
+    
+    tryLoadScript(0);
+})();
+</script>
 
 <script type="text/javascript">
 // Function to get amount from various sources

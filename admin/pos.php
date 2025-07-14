@@ -47,6 +47,46 @@ if ($order_printer_ids) {
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <meta name="google" content="notranslate">
     
+    <!-- Accessibility Fix for aria-hidden issues -->
+    <script type="text/javascript">
+        // Polyfill for inert attribute if needed
+        if (!('inert' in document.createElement('div'))) {
+            var script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/wicg-inert@3.1.2/dist/inert.min.js';
+            document.head.appendChild(script);
+        }
+        
+        // Replace all aria-hidden with inert attribute
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create a MutationObserver to catch any newly added aria-hidden attributes
+            var observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'aria-hidden') {
+                        var target = mutation.target;
+                        if (target.getAttribute('aria-hidden') === 'true') {
+                            target.removeAttribute('aria-hidden');
+                            target.setAttribute('inert', '');
+                        }
+                    }
+                });
+            });
+            
+            // Observe the entire document for aria-hidden attribute changes
+            observer.observe(document.body, {
+                attributes: true,
+                attributeFilter: ['aria-hidden'],
+                subtree: true
+            });
+            
+            // Fix any existing aria-hidden attributes
+            var elements = document.querySelectorAll('[aria-hidden="true"]');
+            for (var i = 0; i < elements.length; i++) {
+                elements[i].removeAttribute('aria-hidden');
+                elements[i].setAttribute('inert', '');
+            }
+        });
+    </script>
+    
 	<!-- Favicon -->
     <?php if (store('favicon')): ?>
 		<link rel="shortcut icon" href="../assets/itsolution24/img/logo-favicons/<?php echo store('favicon'); ?>">
@@ -137,6 +177,33 @@ if ($order_printer_ids) {
 		.modal-lg .modal-content {
 			border-color: #ffffff;
 		}
+		/* Custom success message style */
+		.pos-success-modal {
+			background-color: #fff;
+			border-radius: 8px;
+			box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+			padding: 20px;
+			text-align: center;
+		}
+		.pos-success-modal .swal-title {
+			color: #28a745;
+			font-size: 24px;
+			margin-bottom: 10px;
+		}
+		.pos-success-modal .swal-text {
+			color: #333;
+			font-size: 18px;
+		}
+		.pos-success-modal .swal-button {
+			background-color: #28a745;
+			color: #fff;
+			border-radius: 4px;
+			padding: 8px 24px;
+			font-size: 16px;
+		}
+		.pos-success-modal .swal-button:hover {
+			background-color: #218838;
+		}
 	</style>
 
 	<!-- JS -->
@@ -156,6 +223,11 @@ if ($order_printer_ids) {
 	    var printer = <?php echo json_encode($printer); ?>;
 	    var slideDirection = '<?php echo $user->getPreference('pos_side_panel') == 'left' ? 'right' : 'left'; ?>';
 	    var sendReportEmail = '<?php echo user_group_id() == 1 || has_permission('access', 'send_report_via_email');?>';
+        
+        // Polyfill for inert attribute
+        if (!HTMLElement.prototype.hasOwnProperty('inert')) {
+            document.write('<script src="https://cdn.jsdelivr.net/npm/wicg-inert@3.1.2/dist/inert.min.js"><\/script>');
+        }
 	</script>
 
 </head>
@@ -515,14 +587,17 @@ if ($order_printer_ids) {
 		<script src="../assets/itsolution24/jsmin/pos.js" type="text/javascript"></script>
 	<?php else : ?>
 
-		<!-- jQuery JS  -->
-	    <script src="../assets/jquery/jquery.min.js" type="text/javascript"></script> 
-
-	    <!-- jQuery Ui JS -->
-        <script src="../assets/jquery-ui/jquery-ui.min.js" type="text/javascript"></script>
+		<!-- jQuery -->
+	    <script type="text/javascript" src="../assets/jquery/jquery.min.js"></script>
 
 	    <!-- Bootstrap JS -->
-	    <script src="../assets/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+	    <script type="text/javascript" src="../assets/bootstrap/js/bootstrap.min.js"></script>
+
+	    <!-- Perfect Scroll -->
+	    <script type="text/javascript" src="../assets/perfectScroll/js/perfect-scrollbar.jquery.min.js"></script>
+
+	    <!-- Sweet Alert -->
+	    <script src="../assets/sweetalert/sweetalert.min.js"></script>
 
 		<!-- Angular JS -->
 	    <script src="../assets/itsolution24/angularmin/angular.js" type="text/javascript"></script> 
@@ -582,6 +657,19 @@ if ($order_printer_ids) {
 <script src="../assets/itsolution24/angular/modals/HoldingOrderModal.js" type="text/javascript"></script>
 <script src="../assets/itsolution24/angular/modals/HoldingOrderDetailsModal.js" type="text/javascript"></script>
 <script src="../assets/itsolution24/angular/controllers/PosController.js" type="text/javascript"></script>
+
+<!-- Custom Success Message Handler -->
+<script src="../assets/itsolution24/js/pos/success-modal.js" type="text/javascript"></script>
+
+<!-- Accessibility Fixes -->
+<script src="../assets/itsolution24/js/pos/accessibility-fix.js" type="text/javascript"></script>
+
+<!-- Customer Mobile Field Fix -->
+<script src="../assets/itsolution24/js/pos/customer-mobile-fix.js" type="text/javascript"></script>
+
+<!-- Invoice Printing Fix -->
+<script src="../assets/itsolution24/js/pos/invoice-patch.js" type="text/javascript"></script>
+
 <noscript>
     <div class="global-site-notice noscript">
         <div class="notice-inner">

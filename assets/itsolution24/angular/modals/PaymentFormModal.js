@@ -1,5 +1,8 @@
 window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$http", "$uibModal", "$sce", "InvoiceViewModal", "PrintReceiptModal", "$rootScope", function (API_URL, window, $, $http, $uibModal, $sce, InvoiceViewModal, PrintReceiptModal, $scope) {
     return function($scope) {
+        // Store focused element before opening modal
+        var previouslyFocused = document.activeElement;
+        
         var uibModalInstance = $uibModal.open({
             animation: true,
             ariaLabelledBy: "modal-title",
@@ -14,11 +17,16 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                             "<div bind-html-compile=\"rawHtml\">Loading...</div>" +
                         "</div>" +
                         "<div class=\"modal-footer\">" +
-                            "<button ng-click=\"closePaymentFormModal();\" type=\"button\" class=\"btn btn-danger radius-50\"><i class=\"fa fa-fw fa-close\"></i> Close</button>" +
-                            "<button  ng-click=\"checkout();\" type=\"button\" class=\"btn btn-success radius-50\"><i class=\"fa fa-fw fa-money\"></i> Checkout &rarr;</button>" +
+                            "<button ng-click=\"closePaymentFormModal();\" type=\"button\" class=\"btn btn-danger radius-50\" tabindex=\"1\"><i class=\"fa fa-fw fa-close\"></i> Close</button>" +
+                            "<button ng-click=\"checkout();\" type=\"button\" class=\"btn btn-success radius-50\" tabindex=\"2\"><i class=\"fa fa-fw fa-money\"></i> Checkout &rarr;</button>" +
                         "</div>",
             controller: function ($scope, $uibModalInstance) {
                 $(document).find("body").addClass("overlay-loader");
+                
+                // Use inert attribute instead of aria-hidden
+                $('.pos-content-wrapper').attr('inert', '');
+                $('.pos-content-wrapper').removeAttr('aria-hidden');
+                
                 $http({
                   url: window.baseUrl+"_inc/template/payment_form.php?customer_id="+$scope.customerId,
                   method: "GET"
@@ -29,6 +37,12 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                     setTimeout(function() {
                         storeApp.bootBooxHeightAdjustment();
                         $(document).find("body").removeClass("overlay-loader");
+                        
+                        // Focus management
+                        var firstInput = document.querySelector('.modal-body input:not([type="hidden"]), .modal-body button:not(.close)');
+                        if (firstInput) {
+                            firstInput.focus();
+                        }
                     }, 500);                 
                 }, function(response) {
                    window.swal("Oops!", response.data.errorMsg, "error");
@@ -76,6 +90,10 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                 };
 
                 $scope.checkout = function() {
+                    // Ensure inert attribute is used properly
+                    $('.pos-content-wrapper').attr('inert', '');
+                    $('.pos-content-wrapper').removeAttr('aria-hidden');
+                    
                     $(document).find(".modal").addClass("overlay-loader");
                     var form = $("#checkout-form");
                     var actionUrl = form.attr("action");
@@ -115,34 +133,8 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                             // Hide any existing success messages
                             $(".alert-success").hide();
                             
-                            window.swal({
-                                title: "Success!",
-                                text: "Invoice ID: " + $scope.invoiceId,
-                                type: "success",
-                                buttons: {
-                                    print: {
-                                        text: "Print Receipt",
-                                        value: "print",
-                                        visible: true,
-                                        className: "btn-success",
-                                        closeModal: false
-                                    },
-                                    ok: {
-                                        text: "OK",
-                                        value: "ok",
-                                        visible: true,
-                                        className: "btn-default",
-                                        closeModal: true
-                                    }
-                                }
-                            }).then(function(value) {
-                                if (value === "print") {
-                                    PrintReceiptModal($scope);
-                                }
-                                if (window.getParameterByName("holding_id") || window.getParameterByName("qref")) {
-                                    window.location = "pos.php";
-                                }
-                            });
+                            // Show success message with invoice ID
+                            window.swal("Success", "ID: " + $scope.invoiceId, "success");
                         }, 100);
                         
                         if ($scope.customerMobileNumber && window.settings.invoice_auto_sms == '1') {
@@ -202,8 +194,33 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                 };
 
                 $scope.closePaymentFormModal = function () {
+                    // Remove inert attribute when closing modal
+                    $('.pos-content-wrapper').removeAttr('inert');
+                    $('.pos-content-wrapper').removeAttr('aria-hidden');
+                    
+                    // Restore focus to previously focused element
+                    if (previouslyFocused && previouslyFocused.focus) {
+                        setTimeout(function() {
+                            previouslyFocused.focus();
+                        }, 0);
+                    }
+                    
                     $uibModalInstance.dismiss("cancel");
                 };
+
+                // Handle modal open
+                $scope.$on('modal.opened', function() {
+                    // Use inert attribute instead of aria-hidden
+                    $('.pos-content-wrapper').attr('inert', '');
+                    $('.pos-content-wrapper').removeAttr('aria-hidden');
+                });
+
+                // Handle modal closing
+                $scope.$on('modal.closing', function() {
+                    // Remove inert attribute when closing modal
+                    $('.pos-content-wrapper').removeAttr('inert');
+                    $('.pos-content-wrapper').removeAttr('aria-hidden');
+                });
 
                 $scope.$watch('installmentInterestPercentage', function() {
                     $scope.installmentInterestAmount = ($scope.installmentInterestPercentage/100)*$scope.payable;
@@ -212,11 +229,19 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
             },
             scope: $scope,
             size: "lg",
-            backdrop  : "static",
+            backdrop: "static",
             keyboard: true,
         });
 
         uibModalInstance.result.catch(function () { 
+            // Remove inert attribute and restore focus
+            $('.pos-content-wrapper').removeAttr('inert');
+            $('.pos-content-wrapper').removeAttr('aria-hidden');
+            if (previouslyFocused && previouslyFocused.focus) {
+                setTimeout(function() {
+                    previouslyFocused.focus();
+                }, 0);
+            }
             uibModalInstance.close(); 
         });
     };

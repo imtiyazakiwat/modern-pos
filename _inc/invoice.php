@@ -350,6 +350,52 @@ if ($request->server['REQUEST_METHOD'] == 'GET' && isset($request->get['invoice_
 
         $invoice['items'] = $selling_items;
 
+        // Handle INVOICE_DETAILS action type specifically
+        if (isset($request->get['action_type']) && $request->get['action_type'] == 'INVOICE_DETAILS') {
+            // Format response specifically for PrintReceiptModal
+            $response = array(
+                'invoice_info' => array(
+                    'invoice_id' => $invoice['invoice_id'],
+                    'created_at' => $invoice['created_at'],
+                    'by' => $invoice['created_by'],
+                    'customer_name' => $invoice['customer_name'] ? $invoice['customer_name'] : 'Walk-in Customer',
+                    'customer_mobile' => $invoice['customer_mobile'] ? $invoice['customer_mobile'] : '',
+                    'customer_email' => '',
+                    'customer_id' => $invoice['customer_id'],
+                    'subtotal' => $invoice['subtotal'],
+                    'payable_amount' => $invoice['payable_amount'],
+                    'paid_amount' => $invoice['paid_amount'],
+                    'due' => $invoice['due'],
+                    'balance' => $invoice['balance'],
+                    'discount_amount' => $invoice['discount_amount'],
+                    'order_tax' => $invoice['order_tax'],
+                    'shipping_amount' => $invoice['shipping_amount'],
+                    'others_charge' => $invoice['others_charge'],
+                    'previous_due' => $invoice['previous_due'],
+                    'prev_due_paid' => $invoice['prev_due_paid'] ? $invoice['prev_due_paid'] : 0,
+                    'return_amount' => $invoice['return_amount'] ? $invoice['return_amount'] : 0,
+                    'invoice_note' => $invoice['invoice_note'] ? $invoice['invoice_note'] : '',
+                    'payment_method' => $invoice['payment_method'] ? $invoice['payment_method'] : '',
+                    'tax_reg_no' => $invoice['tax_reg_no'] ? $invoice['tax_reg_no'] : '',
+                    'status' => $invoice['status'],
+                    'payment_status' => $invoice['payment_status']
+                ),
+                'invoice_items' => array_map(function($item) {
+                    return array(
+                        'item_id' => $item['item_id'],
+                        'item_name' => $item['item_name'],
+                        'item_price' => $item['item_price'],
+                        'item_quantity' => $item['item_quantity'],
+                        'item_total' => $item['item_total']
+                    );
+                }, $selling_items)
+            );
+            
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit();
+        }
+
         header('Content-Type: application/json');
         echo json_encode(array('msg' => trans('text_success'), 'invoice' => $invoice));
         exit();

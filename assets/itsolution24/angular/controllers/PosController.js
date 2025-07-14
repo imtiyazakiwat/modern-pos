@@ -1033,146 +1033,15 @@ function (
         }, 300);
     }
 
-    // =============================================
-    // End Popup Invoice Payment Form
-    // =============================================
-
-
-    // =============================================
-    // Start Input Item Quantity Manually
-    // =============================================
-
-    $scope.triggerKeyup = false;
-    $(document).delegate(".item_quantity", "keyup", function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        var  itemid = $(this).data("itemid");
-        var  itemquantity = $(this).val();
-        var totalAmount = 0;
-        window._.map($scope.itemArray, function (item) {
-            if (item.id == itemid) {
-                item.quantity = itemquantity;
-                item.subTotal = item.price * itemquantity;
-                $scope.$applyAsync(function() {
-                    $scope.itemArray = $scope.itemArray;
-                });
-            }
-            totalAmount += item.subTotal;
-            $scope.$applyAsync(function() {
-                $scope.totalAmount = totalAmount;
-                $scope._calcTotalPayable();
-            });
+    // Custom success message handler
+    $scope.showSuccessMessage = function(invoiceId) {
+        window.swal({
+            title: "Success.",
+            text: "ID: " + invoiceId,
+            icon: "success",
+            buttons: "OK",
+            className: "pos-success-modal"
         });
-        if ($scope.triggerKeyup == false) {
-            $scope.error = false;
-        } else {
-            $scope.triggerKeyup = false;
-        }
-    });
-    $(document).on('click', function(e) {
-        if ($scope.error == false) {
-            window._.map($scope.itemArray, function (item) {
-                var itemquantity = parseFloat($("#item_quantity_"+item.id).val());
-                var $queryString = "p_id=" + item.id + "&action_type=PRODUCTITEM";
-                $http({
-                    url: API_URL + "_inc/pos.php?" + $queryString,
-                    method: "GET",
-                    cache: false,
-                    processData: false,
-                    contentType: false,
-                    dataType: "json"
-                }).
-                then(function(response) {
-                    if (response.data.p_id) {
-                        if ((itemquantity > response.data.quantity_in_stock || $scope.itemQuantity >= response.data.quantity_in_stock) &&  response.data.p_type != 'service') {
-                            if ($scope.error == false) {
-                                $scope.error = true;
-                                $scope.triggerKeyup = true;
-                                $("#item_quantity_"+item.id).val(response.data.quantity_in_stock).trigger("keyup");
-                                $(document).trigger("click");
-                                if (window.store.sound_effect == 1) {
-                                    window.storeApp.playSound("error.mp3");
-                                }
-                                window.toastr.error("This product is out of stock!", "Warning!");
-                            }
-                        } else {
-                            $scope.error = true;
-                            $scope.triggerKeyup = true;
-                        }
-                    }
-                }, function(response) {
-                    if (window.store.sound_effect == 1) {
-                        window.storeApp.playSound("error.mp3");
-                    }
-                    window.toastr.error(response.data.errorMsg, "Warning!");
-                });
-            });
-        }
-    });
-
-    // =============================================
-    // End Input Item Quantity Manually
-    // =============================================    
-
-
-    // =============================================
-    // Start Input Item Price Manually
-    // =============================================    
-
-    if (window.settings.change_item_price_while_billing == 1) {
-        $(document).delegate(".item_price", "keyup", function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            var  itemid = $(this).data("itemid");
-            var  itemprice = $(this).val();
-            var totalAmount = 0;
-            window._.map($scope.itemArray, function (item) {
-                if (item.id == itemid) {
-                    item.price = itemprice;
-                    item.subTotal = item.quantity * itemprice;
-                    $scope.$apply(function() {
-                        $scope.itemArray = $scope.itemArray;
-                    });
-                }
-                totalAmount += item.subTotal;
-                $scope.$apply(function() {
-                    $scope.totalAmount = totalAmount;
-                    $scope._calcTotalPayable();
-                });
-            });
-        });
-    }
-
-    // =============================================
-    // End Input Item Price Manually
-    // =============================================    
-
-
-    // =============================================
-    // Start Popup Customer Mobile Number Edit Modal
-    // =============================================
-
-    $(document).delegate("#add-customer-mobile-number-handler", "click", function(e) {
-        e.stopPropagation();
-        e.preventDefault();
-        $scope.customerMobileNumber = $("#customer-mobile-number").val();
-        AddCustomerMobileNumberModal($scope);
-    })
-
-    // =============================================
-    // End Popup Customer Mobile Number Edit Modal
-    // =============================================
-
-
-    // =============================================
-    // Start Popup Invoice Note Modal
-    // =============================================
-
-    $scope.addInvoiceNote = function() {
-        $scope.invoiceNote = $("#invoice-note").data("note");
-        AddInvoiceNoteModal($scope);
     };
 
     // =============================================

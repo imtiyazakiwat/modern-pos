@@ -243,17 +243,19 @@ if (! Array.prototype.find) {
 // start Modal window drugable
 // =================================
 
-angularApp.directive('uibModalWindow', function(){
-  return {
-    restrict: 'EA',
-    link: function(scope, element) {
-        var draggableDiv = $('.modal-dialog');
-        draggableDiv.draggable({
-          handle: $('.modal-header', draggableDiv)
-        });
-    }
-  }  
-});
+// Remove the draggable directive
+/*angularApp.directive('draggable', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            if (element.draggable && typeof element.draggable === 'function') {
+                element.draggable({
+                    handle: '.modal-header'
+                });
+            }
+        }
+    };
+})*/
 
 // =================================
 // end Modal window drugable
