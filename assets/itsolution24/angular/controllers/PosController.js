@@ -119,7 +119,9 @@ function (
             if (window.store.sound_effect == 1) {
                 window.storeApp.playSound("error.mp3");
             }
-            window.toastr.error(response.data.errorMsg, "Warning!");
+            // Fix: Prevent error if response.data or errorMsg is null
+            var errorMsg = (response && response.data && response.data.errorMsg) ? response.data.errorMsg : "Unknown error occurred.";
+            window.toastr.error(errorMsg, "Warning!");
         });
     };
     $("#customer-name").on("click", function() {
@@ -143,7 +145,9 @@ function (
                 if (window.store.sound_effect == 1) {
                     window.storeApp.playSound("error.mp3");
                 }
-                window.toastr.error(response.data.errorMsg, "Warning!");
+                // Fix: Prevent error if response.data or errorMsg is null
+                var errorMsg = (response && response.data && response.data.errorMsg) ? response.data.errorMsg : "Unknown error occurred.";
+                window.toastr.error(errorMsg, "Warning!");
             });
         } else if (customer.customer_id) {
             var contact = customer.customer_mobile || customer.customer_email;
@@ -232,7 +236,9 @@ function (
             if (window.store.sound_effect == 1) {
                 window.storeApp.playSound("error.mp3");
             }
-            window.toastr.error(response.data.errorMsg, "Warning!");
+            // Fix: Prevent error if response.data or errorMsg is null
+            var errorMsg = (response && response.data && response.data.errorMsg) ? response.data.errorMsg : "Unknown error occurred.";
+            window.toastr.error(errorMsg, "Warning!");
         });
     };
     $scope.showProductList();
@@ -545,7 +551,9 @@ function (
             if (window.store.sound_effect == 1) {
                 window.storeApp.playSound("error.mp3");
             }
-            window.toastr.error(response.data.errorMsg, "Warning!");
+            // Fix: Prevent error if response.data or errorMsg is null
+            var errorMsg = (response && response.data && response.data.errorMsg) ? response.data.errorMsg : "Unknown error occurred.";
+            window.toastr.error(errorMsg, "Warning!");
             $scope.showLoader = !1;
         });
     };
@@ -708,7 +716,9 @@ function (
                 if (window.store.sound_effect == 1) {
                     window.storeApp.playSound("error.mp3");
                 }
-                window.toastr.warning(response.data.errorMsg, "Warning!");
+                // Fix: Prevent error if response.data or errorMsg is null
+                var errorMsg = (response && response.data && response.data.errorMsg) ? response.data.errorMsg : "Unknown error occurred.";
+                window.toastr.warning(errorMsg, "Warning!");
                 window.location = window.baseUrl+'admin/pos.php';
             });
         }
@@ -799,7 +809,9 @@ function (
                 if (window.store.sound_effect == 1) {
                     window.storeApp.playSound("error.mp3");
                 }
-                window.toastr.warning(response.data.errorMsg, "Warning!");
+                // Fix: Prevent error if response.data or errorMsg is null
+                var errorMsg = (response && response.data && response.data.errorMsg) ? response.data.errorMsg : "Unknown error occurred.";
+                window.toastr.warning(errorMsg, "Warning!");
                 window.location = window.baseUrl+'admin/pos.php';
             });
         }

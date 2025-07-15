@@ -544,7 +544,7 @@ function get_postemplate_data($invoice_id)
       'qrcode' => '<img src="../storage/qrcode.png" alt="" class="img-responsive" style="display:inline-block" width="50" height="50">',
       'qrcode_url' => '../storage/qrcode.png',
       'barcode' => '<img class="bcimg" src="data:image/png;base64,'.encode_data($generator->getBarcode($invoice_id, $symbology, 1)).'" height="20">',
-      'barcode_url' => 'data:image/png;base64,'.encode_data($generator->getBarcode($invoice_id, $symbology, 1)),
+      'barcode_url' => 'data:image/png;base64.'.encode_data($generator->getBarcode($invoice_id, $symbology, 1)),
 
       'cashier_name' => '',
       'printed_on' => format_date(date_time()),
@@ -632,17 +632,52 @@ function get_postemplate_data($invoice_id)
     $tax_array = array();
     $inc = 0;
     foreach ($taxes as $tax) {
-      $tax['sl'] = $inc+1;
-      $new_tax = array(); 
-      foreach ($tax as $key => $val) {
-        if (in_array($key, array('sl'))) {
-          $new_tax[$key] = $val;
-        } else {
-          $new_tax[$key] = currency_format($val);
+      // Check if code_name has '_', e.g., cgst14_sgst14
+      if (isset($tax['code_name']) && strpos($tax['code_name'], '_') !== false) {
+        $code_names = explode('_', $tax['code_name']);
+        $taxrate_names = isset($tax['taxrate_name']) ? explode('_', $tax['taxrate_name']) : $code_names;
+        $qty = isset($tax['qty']) ? $tax['qty'] : 1;
+        // Use the invoice's payable amount as the base for tax calculation
+        $base_amount = isset($invoice_info['payable_amount']) ? $invoice_info['payable_amount'] : 0;
+        $percent = 14; // default, can be improved if dynamic
+        if (preg_match('/(\d+)/', $code_names[0], $m)) {
+          $percent = (int)$m[1];
         }
+        foreach ($code_names as $i => $code) {
+          $name = isset($taxrate_names[$i]) ? $taxrate_names[$i] : $code;
+          $tax_amt = 0;
+          // Try to get percent from code, fallback to 14
+          if (preg_match('/(\d+)/', $code, $m)) {
+            $percent = (int)$m[1];
+          }
+          $tax_amt = $base_amount * ($percent/100) * $qty;
+          $new_tax = array(
+            'sl' => ++$inc,
+            'qty' => $qty,
+            'tax' => $percent,
+            'item_tax' => $tax_amt,
+            'taxrate_name' => $name,
+            'code_name' => $code
+          );
+          foreach ($new_tax as $k => $v) {
+            if ($k !== 'sl' && $k !== 'taxrate_name' && $k !== 'code_name') {
+              $new_tax[$k] = currency_format($v);
+            }
+          }
+          $tax_array[] = $new_tax;
+        }
+      } else {
+        $tax['sl'] = ++$inc;
+        $new_tax = array();
+        foreach ($tax as $key => $val) {
+          if (in_array($key, array('sl'))) {
+            $new_tax[$key] = $val;
+          } else {
+            $new_tax[$key] = currency_format($val);
+          }
+        }
+        $tax_array[] = $new_tax;
       }
-      $tax_array[] = $new_tax;
-      $inc++;
     }
     $data['taxes'] = $tax_array;
     return $data;
