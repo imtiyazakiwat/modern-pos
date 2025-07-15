@@ -637,26 +637,22 @@ function get_postemplate_data($invoice_id)
         $code_names = explode('_', $tax['code_name']);
         $taxrate_names = isset($tax['taxrate_name']) ? explode('_', $tax['taxrate_name']) : $code_names;
         $qty = isset($tax['qty']) ? $tax['qty'] : 1;
-        // Use the invoice's payable amount as the base for tax calculation
         $base_amount = isset($invoice_info['payable_amount']) ? $invoice_info['payable_amount'] : 0;
-        $percent = 14; // default, can be improved if dynamic
-        if (preg_match('/(\d+)/', $code_names[0], $m)) {
-          $percent = (int)$m[1];
-        }
         foreach ($code_names as $i => $code) {
-          $name = isset($taxrate_names[$i]) ? $taxrate_names[$i] : $code;
-          $tax_amt = 0;
-          // Try to get percent from code, fallback to 14
+          $percent = 14; // default
           if (preg_match('/(\d+)/', $code, $m)) {
             $percent = (int)$m[1];
           }
+          // Extract tax type (e.g., cgst, sgst)
+          $tax_type = preg_replace('/\d+.*/', '', $code);
+          $tax_name = $tax_type . ' @' . $percent . '%';
           $tax_amt = $base_amount * ($percent/100) * $qty;
           $new_tax = array(
             'sl' => ++$inc,
             'qty' => $qty,
             'tax' => $percent,
             'item_tax' => $tax_amt,
-            'taxrate_name' => $name,
+            'taxrate_name' => $tax_name,
             'code_name' => $code
           );
           foreach ($new_tax as $k => $v) {
@@ -669,9 +665,18 @@ function get_postemplate_data($invoice_id)
       } else {
         $tax['sl'] = ++$inc;
         $new_tax = array();
+        // Format single tax name as "type @percent%"
+        $percent = 14;
+        if (isset($tax['code_name']) && preg_match('/(\d+)/', $tax['code_name'], $m)) {
+          $percent = (int)$m[1];
+        }
+        $tax_type = isset($tax['code_name']) ? preg_replace('/\d+.*/', '', $tax['code_name']) : '';
+        $tax_name = $tax_type ? $tax_type . ' @' . $percent . '%' : (isset($tax['taxrate_name']) ? $tax['taxrate_name'] : '');
         foreach ($tax as $key => $val) {
-          if (in_array($key, array('sl'))) {
+          if ($key == 'sl') {
             $new_tax[$key] = $val;
+          } else if ($key == 'taxrate_name') {
+            $new_tax[$key] = $tax_name;
           } else {
             $new_tax[$key] = currency_format($val);
           }
