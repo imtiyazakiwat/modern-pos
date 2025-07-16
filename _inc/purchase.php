@@ -180,6 +180,28 @@ if ($request->server['REQUEST_METHOD'] == 'POST' && isset($request->post['action
     $purchase_date = date('Y-m-d H:i:s', strtotime($request->post['date']));
     $created_at = date_time();
     $purchase_note = $request->post['purchase-note'];
+    
+    // Get GST and tax information from the form
+    $supplier_gst = isset($request->post['supplier_gst']) ? trim($request->post['supplier_gst']) : '';
+    $tax_info_input = isset($request->post['tax_information']) ? trim($request->post['tax_information']) : '';
+    
+    // Append GST and tax information to the purchase note
+    $note_append = '';
+    if (!empty($supplier_gst)) {
+        $note_append .= "Supplier GST: " . $supplier_gst . "\n";
+    }
+    if (!empty($tax_info_input)) {
+        $note_append .= "Tax Info: " . $tax_info_input . "\n";
+    }
+    
+    // Only append if we have new information
+    if (!empty($note_append)) {
+        if (!empty($purchase_note)) {
+            $purchase_note = $purchase_note . "\n\n" . trim($note_append);
+        } else {
+            $purchase_note = trim($note_append);
+        }
+    }
     $attachment = $request->post['image'];
     $subtotal = $request->post['total-amount'];
     $item_tax = $request->post['total-tax'];

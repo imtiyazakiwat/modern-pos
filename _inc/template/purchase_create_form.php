@@ -18,6 +18,18 @@
       </div>
     </div>
     <div class="form-group">
+      <label for="supplier-gst" class="col-sm-3 control-label">Supplier GST</label>
+      <div class="col-sm-6">
+        <input type="text" class="form-control" id="supplier-gst" name="supplier_gst" autocomplete="off">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="tax-info" class="col-sm-3 control-label">Tax Information</label>
+      <div class="col-sm-6">
+        <textarea id="tax-info" class="form-control" name="tax_information"></textarea>
+      </div>
+    </div>
+    <div class="form-group">
       <label for="purchase-note" class="col-sm-3 control-label">
         <?php echo trans('label_note'); ?>
       </label>
@@ -262,5 +274,43 @@ if (isset($request->get['sup_id']) && file_exists($path)):?>
         autoclose:true,
         todayHighlight: true
     }).datepicker("setDate",'now');
+    
+    // Use a simple polling approach that won't conflict with Angular
+    var gstMonitor = setInterval(function() {
+        var gstField = document.getElementById('supplier-gst');
+        var taxInfoField = document.getElementById('tax-info');
+        var orderTaxField = document.getElementById('order-tax');
+        
+        if (gstField && taxInfoField && orderTaxField) {
+            // Fields exist, set up monitoring
+            clearInterval(gstMonitor);
+            
+            // Store initial values
+            var lastGstValue = gstField.value;
+            var lastTaxInfoValue = taxInfoField.value;
+            var lastOrderTaxValue = orderTaxField.value;
+            
+            // Set up polling to check for changes
+            setInterval(function() {
+                // Check GST field
+                if (gstField.value !== lastGstValue) {
+                    console.log("Supplier GST updated:", gstField.value);
+                    lastGstValue = gstField.value;
+                }
+                
+                // Check Tax Info field
+                if (taxInfoField.value !== lastTaxInfoValue) {
+                    console.log("Tax Information updated:", taxInfoField.value);
+                    lastTaxInfoValue = taxInfoField.value;
+                }
+                
+                // Check Order Tax field
+                if (orderTaxField.value !== lastOrderTaxValue) {
+                    console.log("Order Tax updated:", orderTaxField.value + "%");
+                    lastOrderTaxValue = orderTaxField.value;
+                }
+            }, 300); // Check every 300ms
+        }
+    }, 500); // Check for fields every 500ms
 })(jQuery);
 </script>

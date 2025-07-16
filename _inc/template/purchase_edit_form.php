@@ -47,6 +47,19 @@
     </div>
 
     <div class="form-group">
+      <label for="supplier-gst" class="col-sm-3 control-label">Supplier GST</label>
+      <div class="col-sm-6">
+        <input type="text" class="form-control" id="supplier-gst" name="supplier-gst" value="<?php echo isset($quotation['supplier_gst']) ? $quotation['supplier_gst'] : '';?>" autocomplete="off">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="tax-info" class="col-sm-3 control-label">Tax Information</label>
+      <div class="col-sm-6">
+        <textarea id="tax-info" class="form-control" name="tax-info"><?php echo isset($quotation['tax_info']) ? $quotation['tax_info'] : '';?></textarea>
+      </div>
+    </div>
+
+    <div class="form-group">
       <label for="quotation-note" class="col-sm-3 control-label">
         <?php echo trans('label_note'); ?>
       </label>

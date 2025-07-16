@@ -48,7 +48,7 @@
 							<?php echo trans('label_note'); ?>
 						</td>
 						<td class="w-70">
-							<?php echo $invoice['purchase_note']; ?>
+							<?php echo nl2br(htmlspecialchars($invoice['purchase_note'])); ?>
 						</td>
 					</tr>
 					<tr>
