@@ -6186,6 +6186,8 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                         "</div>" +
                         "<div class=\"modal-footer\">" +
                             "<button ng-click=\"closePaymentFormModal();\" type=\"button\" class=\"btn btn-danger radius-50\"><i class=\"fa fa-fw fa-close\"></i> Close</button>" +
+                            "<button ng-click=\"goToInvoice();\" type=\"button\" class=\"btn btn-info radius-50\"><i class=\"fa fa-fw fa-file-text\"></i> Go to Invoice</button>" +
+                            "<button ng-click=\"checkoutWithFullPaidAndPrint();\" type=\"button\" class=\"btn btn-primary radius-50\"><i class=\"fa fa-fw fa-money\"></i> <i class=\"fa fa-fw fa-print\"></i> Full Payment & View</button>" +
                             "<button  ng-click=\"checkout();\" type=\"button\" class=\"btn btn-success radius-50\"><i class=\"fa fa-fw fa-money\"></i> Checkout &rarr;</button>" +
                         "</div>",
             controller: function ($scope, $uibModalInstance) {
@@ -6274,7 +6276,17 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                             PrintReceiptModal($scope);
                         }
                         
-                        if (window.getParameterByName("holding_id") || window.getParameterByName("qref")) {
+                        // Check if we should redirect to invoice page
+                        if ($scope.shouldRedirectAfterCheckout === true) {
+                            // Reset the flag
+                            $scope.shouldRedirectAfterCheckout = false;
+                            
+                            // Add a small delay to ensure everything is processed
+                            setTimeout(function() {
+                                // Redirect to invoice view page
+                                window.location.href = window.baseUrl + "admin/view_invoice.php?invoice_id=" + $scope.invoiceId;
+                            }, 300);
+                        } else if (window.getParameterByName("holding_id") || window.getParameterByName("qref")) {
                             localStorage.setItem("swal",
                                 window.swal({
                                   title: "Success!",
@@ -6354,7 +6366,83 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
 		                    }, 100);
 					    }
 					});
+				};
+                
+                // New function for full payment and print payment with redirect
+                $scope.checkoutWithFullPaidAndPrint = function() {
+					$scope.paidAmount = $scope.totalPayable;
+	                window.swal({
+					  title: "Full Payment!",
+					  text: "Are  sure that u want to make full payment and print?",
+					  icon: "warning",
+					  buttons: true,
+					  dangerMode: false,
+					})
+					.then(function(willDelete) {
+					    if (willDelete) {
+		                    setTimeout(function() {
+                                // Set flag to redirect after checkout
+                                $scope.shouldRedirectAfterCheckout = true;
+                                
+                                // Force print receipt even if auto_print is disabled
+                                var originalAutoPrint = window.store.auto_print;
+                                window.store.auto_print = 1;
+                                
+                                // Process checkout
+                                $scope.checkout();
+                                
+                                // Restore original auto_print setting
+                                setTimeout(function() {
+                                    window.store.auto_print = originalAutoPrint;
+                                }, 100);
+		                    }, 200);
+					    }
+					});
 				}; 
+
+                $scope.goToInvoice = function() {
+                    // Process payment first
+                    $scope.paidAmount = $scope.totalPayable;
+                    
+                    window.swal({
+                      title: "Go to Invoice",
+                      text: "Process payment and go to invoice?",
+                      icon: "info",
+                      buttons: true,
+                    })
+                    .then(function(willProceed) {
+                        if (willProceed) {
+                            $(document).find(".modal").addClass("overlay-loader");
+                            var form = $("#checkout-form");
+                            var actionUrl = form.attr("action");
+                            var data = form.serialize();
+                            
+                            $http({
+                                url: window.baseUrl+"_inc/" + actionUrl,
+                                method: "POST",
+                                data: data,
+                                cache: false,
+                                processData: false,
+                                contentType: false,
+                                dataType: "json"
+                            }).
+                            then(function(response) {
+                                $(document).find(".modal").removeClass("overlay-loader");
+                                var invoiceId = response.data.invoice_id;
+                                
+                                // Close modal
+                                $scope.resetPos();
+                                $scope.closePaymentFormModal();
+                                
+                                // Redirect to invoice view page
+                                window.location.href = window.baseUrl + "admin/view_invoice.php?invoice_id=" + invoiceId;
+                            }, function(response) {
+                                $(document).find(".modal").removeClass("overlay-loader");
+                                window.swal("Error", response.data.errorMsg, "error");
+                            });
+                        }
+                    });
+                };
 
                 $scope.checkoutWithFullDue = function() {
                     $scope.paidAmount = 0;

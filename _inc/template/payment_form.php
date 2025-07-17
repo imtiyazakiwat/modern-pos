@@ -68,6 +68,12 @@ $customer_id = isset($request->get['customer_id']) ? $request->get['customer_id'
 						<input type="text" name="invoice-note" class="form-control invoice-note" value="{{ invoiceNote }}" placeholder="<?php echo trans('placeholder_note_here');?>">
 					</div>
 				</div>
+				<div class="mt-5">
+					<div class="input-group input-group-xs pmethod-field-wrapper">
+						<span class="input-group-addon hidden-sm"><span class="fa fa-id-card"></span></span>
+						<input type="text" name="customer-gst-number" class="form-control" placeholder="Customer GST Number">
+					</div>
+				</div>
 				<div bind-html-compile="rawPaymentMethodHtml"></div>
 				<?php if(INSTALLMENT && (user_group_id() == 1 || has_permission('access', 'create_installment'))):?>
 					<h4 ng-show="isInstallmentOrder" class="text-center"><?php echo trans('title_installment_details'); ?></h4>

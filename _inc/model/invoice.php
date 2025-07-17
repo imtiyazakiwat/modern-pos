@@ -98,6 +98,17 @@ class ModelInvoice extends Model
         $product_items = $request->post['product-item'];
         $total_items = count($request->post['product-item']);
         $invoice_note = $request->post['invoice-note'];
+        
+        // Add GST number to invoice note if provided
+        if (isset($request->post['customer-gst-number']) && !empty($request->post['customer-gst-number'])) {
+            $gst_number = $request->post['customer-gst-number'];
+            if (!empty($invoice_note)) {
+                $invoice_note .= "\nCustomer GST Number: " . $gst_number;
+            } else {
+                $invoice_note = "Customer GST Number: " . $gst_number;
+            }
+        }
+        
         $customer_id = $request->post['customer-id'];
         $customer_mobile = $request->post['customer-mobile-number'];
         $pmethod_id = $request->post['pmethod-id'];

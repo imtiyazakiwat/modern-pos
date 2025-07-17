@@ -11372,6 +11372,8 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                         "</div>" +
                         "<div class=\"modal-footer\">" +
                             "<button ng-click=\"closePaymentFormModal();\" type=\"button\" class=\"btn btn-danger radius-50\"><i class=\"fa fa-fw fa-close\"></i> Close</button>" +
+                            "<button ng-click=\"goToInvoice();\" type=\"button\" class=\"btn btn-info radius-50\"><i class=\"fa fa-fw fa-file-text\"></i> Go to Invoice</button>" +
+                            "<button ng-click=\"checkoutWithFullPaidAndPrint();\" type=\"button\" class=\"btn btn-primary radius-50\"><i class=\"fa fa-fw fa-money\"></i> <i class=\"fa fa-fw fa-print\"></i> Full Payment & View</button>" +
                             "<button  ng-click=\"checkout();\" type=\"button\" class=\"btn btn-success radius-50\"><i class=\"fa fa-fw fa-money\"></i> Checkout &rarr;</button>" +
                         "</div>",
             controller: function ($scope, $uibModalInstance) {

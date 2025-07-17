@@ -13,7 +13,7 @@ window.angularApp.factory("PurchaseInvoiceViewModal", ["API_URL", "window", "jQu
 								"<div bind-html-compile=\"rawHtml\">Loading...</div>" +
 							"</div>" +
                             "<div class=\"modal-footer\" style=\"text-align:center;\">" +
-                                "<button onClick=\"window.printContent('data-modal', {headline:'<small>Printed on: "+window.formatDate(new Date())+"</small>',screenSize:'fullScreen'})\" class=\"btn btn-primary\"><span class=\"fa fa-fw fa-print\"></span> Print</button>" +
+                                "<button onClick=\"window.open(window.baseUrl+'admin/view_invoice.php?invoice_id='+invoice.invoice_id)\" class=\"btn btn-primary\"><span class=\"fa fa-fw fa-print\"></span> Print</button>" +
                             "</div>" +
                         "</div>",
             controller: function ($scope, $uibModalInstance) {

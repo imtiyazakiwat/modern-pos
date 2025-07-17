@@ -17,6 +17,12 @@
                 text: text,
                 icon: "success",
                 buttons: {
+                    view: {
+                        text: "View Invoice",
+                        value: "view",
+                        visible: !!invoiceNumber,
+                        className: "btn-info"
+                    },
                     print: {
                         text: "Print Invoice",
                         value: "print",
@@ -31,7 +37,10 @@
                     }
                 }
             }).then((value) => {
-                if (value === "print" && invoiceNumber) {
+                if (value === "view" && invoiceNumber) {
+                    // Redirect to invoice view page
+                    window.location.href = window.baseUrl + "admin/view_invoice.php?invoice_id=" + invoiceNumber;
+                } else if (value === "print" && invoiceNumber) {
                     // Get invoice data first
                     $.get(window.baseUrl + "_inc/invoice.php", {
                         invoice_id: invoiceNumber,
