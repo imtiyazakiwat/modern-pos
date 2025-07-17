@@ -99,14 +99,10 @@ class ModelInvoice extends Model
         $total_items = count($request->post['product-item']);
         $invoice_note = $request->post['invoice-note'];
         
-        // Add GST number to invoice note if provided
+        // Store GST number separately instead of adding to invoice note
+        $gst_number = '';
         if (isset($request->post['customer-gst-number']) && !empty($request->post['customer-gst-number'])) {
             $gst_number = $request->post['customer-gst-number'];
-            if (!empty($invoice_note)) {
-                $invoice_note .= "\nCustomer GST Number: " . $gst_number;
-            } else {
-                $invoice_note = "Customer GST Number: " . $gst_number;
-            }
         }
         
         $customer_id = $request->post['customer-id'];
@@ -338,8 +334,8 @@ class ModelInvoice extends Model
         $capital = ($total_purchase_price / ($subtotal -$discount_amount)) * ($paid_amount - $shipping_amount - $others_charge);
         $profit = ($subtotal -$discount_amount) - $total_purchase_price;
         
-        $statement = $this->db->prepare("INSERT INTO `selling_info` (invoice_id, store_id, customer_id, customer_mobile, invoice_note, total_items, payment_status, is_installment, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $statement->execute(array($invoice_id, $store_id, $customer_id, $customer_mobile, $invoice_note, $total_items, $payment_status, (int)$is_installment_order, $user_id, $created_at));
+        $statement = $this->db->prepare("INSERT INTO `selling_info` (invoice_id, store_id, customer_id, customer_mobile, gst_number, invoice_note, total_items, payment_status, is_installment, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $statement->execute(array($invoice_id, $store_id, $customer_id, $customer_mobile, $gst_number, $invoice_note, $total_items, $payment_status, (int)$is_installment_order, $user_id, $created_at));
         
         $statement = $this->db->prepare("INSERT INTO `selling_price` (invoice_id, store_id, subtotal, discount_type, discount_amount, interest_amount, interest_percentage, item_tax, order_tax, cgst, sgst, igst, total_purchase_price, shipping_type, shipping_amount, others_charge, previous_due, payable_amount, paid_amount, due, prev_due_paid, profit, balance) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $statement->execute(array($invoice_id, $store_id, $subtotal, $discount_type, $discount_amount, $installment_interest_amount, $installment_interest_percentage, $item_tax, $order_tax, $tcgst, $tsgst, $tigst, $total_purchase_price, $shipping_type, $shipping_amount, $others_charge, $previous_due, $payable_amount, $paid_amount, $due, $prev_due_paid, $profit, $balance));
@@ -607,7 +603,7 @@ class ModelInvoice extends Model
     public function getInvoiceInfo($invoice_id, $store_id = null)
     {
         $store_id = $store_id ? $store_id : store_id();
-        $statement = $this->db->prepare("SELECT`selling_info`.*, `selling_price`.*, `customers`.`customer_id`, `customers`.`customer_name`, `customers`.`customer_mobile` AS `mobile_number`, `customers`.`customer_email` FROM `selling_info` LEFT JOIN `selling_price` ON `selling_info`.`invoice_id` = `selling_price`.`invoice_id` LEFT JOIN `customers` ON `selling_info`.`customer_id` = `customers`.`customer_id` WHERE `selling_info`.`store_id` = ? AND (`selling_info`.`invoice_id` = ? OR (`selling_info`.`customer_id` = ?) AND `selling_info`.`inv_type` = 'sell') ORDER BY `selling_info`.`invoice_id` DESC");
+        $statement = $this->db->prepare("SELECT`selling_info`.*, `selling_price`.*, `customers`.`customer_id`, `customers`.`customer_name`, `customers`.`customer_mobile` AS `mobile_number`, `customers`.`customer_email`, `selling_info`.`gst_number` FROM `selling_info` LEFT JOIN `selling_price` ON `selling_info`.`invoice_id` = `selling_price`.`invoice_id` LEFT JOIN `customers` ON `selling_info`.`customer_id` = `customers`.`customer_id` WHERE `selling_info`.`store_id` = ? AND (`selling_info`.`invoice_id` = ? OR (`selling_info`.`customer_id` = ?) AND `selling_info`.`inv_type` = 'sell') ORDER BY `selling_info`.`invoice_id` DESC");
         $statement->execute(array($store_id, $invoice_id, $invoice_id));
         $invoice = $statement->fetch(PDO::FETCH_ASSOC);
         if ($invoice) {

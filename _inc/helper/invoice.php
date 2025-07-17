@@ -506,6 +506,7 @@ function get_postemplate_data($invoice_id)
       'customer_phone' => $invoice_info['customer_mobile'] ? $invoice_info['customer_mobile'] : $invoice_info['mobile_number'],
       'customer_email' => $invoice_info['customer_email'],
       'customer_contact' => $customer_contact,
+      'customer_gst_number' => isset($invoice_info['gst_number']) ? $invoice_info['gst_number'] : '',
       'gtin' => get_the_customer($invoice_info['customer_id'],'gtin'),
       'total_items' => $invoice_info['total_items'],
       'is_installment' => $invoice_info['is_installment'] ? 'Yes' : 'No',
