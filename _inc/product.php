@@ -151,6 +151,11 @@ if ($request->server['REQUEST_METHOD'] == 'POST' && isset($request->post['action
       throw new Exception(trans('error_create_permission'));
     }
 
+    // Append MRP to product name if provided
+    if (isset($request->post['p_mrp']) && !empty($request->post['p_mrp'])) {
+      $request->post['p_name'] = $request->post['p_name'] . "_" . $request->post['p_mrp'];
+    }
+
     // Validate post data
     validate_request_data($request);
 
@@ -204,6 +209,11 @@ if ($request->server['REQUEST_METHOD'] == 'POST' && isset($request->post['action
     }
 
     $p_id = $request->post['p_id'];
+
+    // Append MRP to product name if provided
+    if (isset($request->post['p_mrp']) && !empty($request->post['p_mrp'])) {
+      $request->post['p_name'] = $request->post['p_name'] . "_" . $request->post['p_mrp'];
+    }
 
     // Validate post data
     validate_request_data($request);

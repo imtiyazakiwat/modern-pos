@@ -411,7 +411,10 @@
                         
                         // On document load
                         window.onload = function() {
-                            tryLoadQRLibrary();
+                            // Only try to load QR library if UPI QR is enabled
+                            if (window.store && window.store.show_upi_qr == 1) {
+                                tryLoadQRLibrary();
+                            }
                             generateBarcode();
                         };
                     </script>
@@ -616,10 +619,11 @@
                             <svg id="barcode"></svg>
                         </div>
                         
+                        ${window.store && window.store.show_upi_qr == 1 ? `
                         <div class="qr-section">
                             <p>Scan to pay via UPI (${upiId})</p>
                             <div id="qrcode"></div>
-                        </div>
+                        </div>` : ''}
                         
                         <div class="warranty-text">
                             Sold product No Claim. No Change. New product One Month Warranty.<br>

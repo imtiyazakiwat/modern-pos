@@ -331,6 +331,19 @@ include ("left_sidebar.php");
 											</div>
 										</div>
 									</div>
+									<div class="row">
+										<div class="col-sm-6">
+											<label for="show_upi_qr" class="control-label">
+												Show UPI QR on Invoice
+											</label>
+											<div>
+												<select class="form-control" name="show_upi_qr" id="show_upi_qr">
+													<option value="1">Yes</option>
+													<option value="0" selected>No</option>
+												</select>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>

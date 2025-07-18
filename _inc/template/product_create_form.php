@@ -118,6 +118,15 @@ $tab_active = isset($request->get['tab']) ? $request->get['tab'] : 'general';
             </div>
           </div>
 
+          <div class="form-group">
+            <label for="p_mrp" class="col-sm-3 control-label">
+              <?php echo "MRP"; ?><i class="required">*</i>
+            </label>
+            <div class="col-sm-7">
+              <input type="text" class="form-control" id="p_mrp" value="<?php echo isset($request->post['p_mrp']) ? $request->post['p_mrp'] : null; ?>" name="p_mrp" required>
+            </div>
+          </div>
+
           <div class="form-group all">
             <label for="p_code" class="col-sm-3 control-label">
               <?php echo trans('label_pcode'); ?> <i class="required">*</i>

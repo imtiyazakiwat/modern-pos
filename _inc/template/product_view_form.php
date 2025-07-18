@@ -23,7 +23,25 @@
         <?php echo sprintf(trans('label_name'),null); ?>
       </label>
       <div class="col-sm-7">
-        <input type="text" class="form-control" id="p_name" value="<?php echo $product['p_name']; ?>" name="p_name" readonly>
+        <?php 
+          $mrp = '';
+          $name = $product['p_name'];
+          // Extract MRP from product name if it has the format: product-name_mrp
+          if (preg_match('/(.*?)_(\d+)$/', $product['p_name'], $matches)) {
+            $name = $matches[1];
+            $mrp = $matches[2];
+          }
+        ?>
+        <input type="text" class="form-control" id="p_name" value="<?php echo $name; ?>" name="p_name" readonly>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="p_mrp" class="col-sm-3 control-label">
+        <?php echo "MRP"; ?>
+      </label>
+      <div class="col-sm-7">
+        <input type="text" class="form-control" id="p_mrp" value="<?php echo $mrp; ?>" name="p_mrp" readonly>
       </div>
     </div>
 

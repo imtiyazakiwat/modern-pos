@@ -114,7 +114,24 @@
               <?php echo sprintf(trans('label_name'),null); ?><i class="required">*</i>
             </label>
             <div class="col-sm-8">
-              <input type="text" class="form-control" id="p_name" name="p_name" value="<?php echo $product['p_name']; ?>" required>
+              <input type="text" class="form-control" id="p_name" name="p_name" value="<?php
+                $mrp = '';
+                $name = $product['p_name'];
+                // Extract MRP from product name if it has the format: product-name_mrp
+                if (preg_match('/(.*?)_(\d+)$/', $product['p_name'], $matches)) {
+                  $name = $matches[1];
+                  $mrp = $matches[2];
+                }
+                echo $name;
+              ?>" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="p_mrp" class="col-sm-3 control-label">
+              <?php echo "MRP"; ?><i class="required">*</i>
+            </label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="p_mrp" name="p_mrp" value="<?php echo $mrp; ?>" required>
             </div>
           </div>
           <div class="form-group all">

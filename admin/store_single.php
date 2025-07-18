@@ -510,6 +510,19 @@ $tab_active = isset($request->get['tab']) ? $request->get['tab'] : 'general';
 											</div>
 										</div>
 									</div>
+									<div class="row">
+										<div class="col-sm-6">
+											<label for="show_upi_qr" class="control-label">
+												Show UPI QR on Invoice
+											</label>
+											<div>
+												<select class="form-control" name="show_upi_qr" id="show_upi_qr">
+													<option value="1" <?php echo store('show_upi_qr') == 1 ? 'selected' : null; ?>>Yes</option>
+													<option value="0" <?php echo store('show_upi_qr') == 0 ? 'selected' : null; ?>>No</option>
+												</select>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>

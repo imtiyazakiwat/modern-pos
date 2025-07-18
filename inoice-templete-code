@@ -1,0 +1,259 @@
+<section class="receipt-template">
+
+    <header class="receipt-header">
+        <div class="logo-area">
+            <img class="logo" src="{{ logo_url }}">
+        </div>
+        <h2 class="store-name">{{ store_name }}</h2>
+        <div class="address-area">
+            <span class="info address">{{ store_address }}</span>
+            <div class="block">
+                <span class="info phone">Mobile: {{ store_phone }}</span>, <span class="info email">Email: {{ store_email }}</span>
+            </div>
+        </div>
+    </header>
+    
+    <section class="info-area">
+        <table>
+            <tr>
+                <td class="w-30"><span>Invoice ID:</td>
+                <td>{{ invoice_id }}</td>
+            </tr>
+            <tr>
+                <td class="w-30">VAT-Reg:</td>
+                <td>{{ vat_reg }}</td>
+            </tr>
+            <tr>
+                <td class="w-30"><span>Date:</td>
+                <td>{{ date_time }}</td>
+            </tr>
+            <tr>
+                <td class="w-30"><span>GST Reg:</td>
+                <td>{{ gst_reg }}</td>
+            </tr>
+            <tr>
+                <td class="w-30">Customer Name:</td>
+                <td>{{ customer_name }}</td>
+            </tr>
+            {{ if customer_gst_number }}
+            <tr>
+                <td class="w-30">Customer GST:</td>
+                <td>{{ customer_gst_number }}</td>
+            </tr>
+            {{ endif }}
+            <tr>
+                <td class="w-30">Phone:</td>
+                <td>{{ customer_phone }}</td>
+            </tr>
+            <tr>
+                <td class="w-30">Address:</td>
+                <td>{{ customer_address }}</td>
+            </tr>
+            <tr>
+                <td class="w-30">GTIN:</td>
+                <td>{{ gtin }}</td>
+            </tr>
+        </table>
+    </section>
+    
+    <h4 class="main-title">INVOICE</h4>
+    
+    {{ if items }}
+    <section class="listing-area item-list">
+        <table>
+            <thead>
+                <tr>
+                    <td class="w-10 text-center">Sl.</td>
+                    <td class="w-40 text-center">Name</td>
+                    <td class="w-15 text-center">Qty</td>
+                    <td class="w-15 text-right">Price</td>
+                    <td class="w-20 text-right">Amount</td>
+                </tr>
+            </thead>
+            <tbody>
+                {{ items }}
+                    <tr>
+                        <td class="text-center">{{ sl }}</td>
+                        <td>{{ item_name }} 
+                            {{ if invoice_view == indian_gst }} 
+                                <small>[HSN-{{ hsn_code }}]</small>
+                            {{ endif }}
+                        </td>
+                        <td class="text-center">{{ item_quantity }} {{ unitName }}</td>
+                        <td class="text-right">{{ item_price }}</td>
+                        <td class="text-right">{{ item_total }}</td>   
+                    </tr>
+                {{ /items }}
+            </tbody>
+        </table>
+    </section>
+    {{ endif }}
+    
+    <section class="info-area calculation-area">
+        <table>
+            <tr>
+                <td class="w-70">Total Amt:</td>
+                <td>{{ subtotal }}</td>
+            </tr>
+            {{ if invoice_view == 'indian_gst' }}
+            <tr>
+                <td class="w-70">CGST:</td>
+                <td>{{ cgst }}</td>
+            </tr>
+            <tr>
+                <td class="w-70">SGST:</td>
+                <td>{{ sgst }}</td>
+            </tr>
+            <tr>
+                <td class="w-70">IGST:</td>
+                <td>{{ igst }}</td>
+            </tr>
+            {{ endif }}
+            <tr>
+                <td class="w-70">Discount:</td>
+                <td>{{ discount_amount }}</td>
+            </tr>
+            <tr>
+                <td class="w-70">Shipping Chrg:</td>
+                <td>{{ shipping_amount }}</td>
+            </tr>
+            <tr>
+                <td class="w-70">Others Chrg:</td>
+                <td>{{ others_charge }}</td>
+            </tr>
+            <tr>
+                <td class="w-70">Previous Due:</td>
+                <td>{{ previous_due }}</td>
+            </tr>
+            <tr>
+                <td class="w-70">Total Due:</td>
+                <td>{{ payable_amount }}</td>
+            </tr>
+            <tr>
+                <td class="w-70">Amount Paid:</td>
+                <td>{{ paid_amount }}</td>
+            </tr>
+            <tr>
+                <td class="w-70">Prev. Due Paid:</td>
+                <td>{{ prev_due_paid }}</td>
+            </tr>
+            <tr>
+                <td class="w-70">Change:</td>
+                <td>{{ change }}</td>
+            </tr>
+            <tr>
+                <td class="w-70">Due:</td>
+                <td>{{ due }}</td>
+            </tr>
+        </table>
+    </section>
+    
+    <section class="info-area italic">
+        <span class="text-small"><b>In Text:</b> {{ amount_in_text }}</span><br>
+        {{ if invoice_note }}
+            <span class="text-small"><b>Note:</b> {{ invoice_note }}</span>
+        {{ endif }}
+    </section>
+
+    {{ if return_items }}
+    <section class="listing-area payment-list">
+        <div class="heading">
+            <h2 class="sub-title">Returns</h2>
+        </div>
+        <table>
+            <thead>
+                <td class="w-5 text-center">Sl.</td>
+                <td class="w-25 text-center">Returned at</td>
+                <td class="w-30 text-center">Item Name</td>
+                <td class="w-20 text-right">Qty</td>
+                <td class="w-20 text-right">Amt</td>
+            </thead>
+            <tbody>
+                {{return_items}}
+                    <tr>
+                        <td class="text-center">{{ sl }}</td>
+                        <td class="text-center">{{ created_at }}</td>
+                        <td class="text-center">{{ item_name }}</td>
+                        <td class="text-right">{{ item_quantity }}</td>
+                        <td class="text-right">{{ item_total }}</td> 
+                    </tr>
+                {{/return_items}}
+            </tbody>
+        </table>
+    </section>
+    {{ endif }}
+    
+    {{ if payments }}
+    <section class="listing-area payment-list">
+        <div class="heading">
+            <h2 class="sub-title">Payments</h2>
+        </div>
+        <table>
+            <thead>
+                <td class="w-10 text-center">Sl.</td>
+                <td class="w-50 text-center">Payment Method</td>
+                <td class="w-20 text-right">Amount</td>
+                <td class="w-20 text-right">Balance</td>
+            </thead>
+            <tbody>
+                {{ payments }}
+                    <tr>
+                        <td class="text-center">{{ sl }}</td>
+                        <td>{{ name }} by {{ by }} on {{ created_at }}</td>
+                        <td class="text-right">{{ amount }}</td>
+                        <td class="text-right">{{ pos_balance }}</td> 
+                    </tr>
+                {{ /payments }}
+            </tbody>
+        </table>
+    </section>
+    {{ endif }}
+       
+    {{ if invoice_view != 'standard' }}
+    {{ if taxes }}
+    <section class="listing-area payment-list">
+        <div class="heading">
+            <h2 class="sub-title">Tax Information</h2>
+        </div>
+        <table>
+            <thead>
+                <td class="w-25">Name</td>
+                <td class="w-25 text-center">Code</td>
+                <td class="w-25 text-right">Qty</td>
+                <td class="w-25 text-right">Tax Amt.</td>
+            </thead>
+            <tbody>
+                {{ taxes }}
+                    <tr>
+                        <td>{{ taxrate_name }}</td>
+                        <td class="text-center">{{ code_name }}</td>
+                        <td class="text-right">{{ qty }}</td> 
+                        <td class="text-right">{{ item_tax }}</td> 
+                    </tr>
+                {{ /taxes }}
+                {{ if invoice_view == 'indian_gst' }}
+                    <tr class="bg-gray">
+                        <td></td>
+                        <td class="text-right">CGST: {{ cgst }}</td>
+                        <td class="text-right">SGST: {{ sgst }}</td>
+                        <td class="text-right">IGST: {{ igst }}</td>
+                    </tr>
+                {{ endif }}
+            </tbody>
+        </table>
+    </section>
+    {{ endif }}
+    {{ endif }}
+    
+    {{ if barcode }}
+    <section class="info-area barcode-area">
+        {{ barcode }}
+    </section>
+    {{ endif }}
+    
+    <section class="info-area align-center footer-area">
+        <span class="block">Sold product No Claim. No Change, New product One Month Warranty.</span>
+        <span class="block bold">{{ footer_text }}</span>
+    </section>
+    
+</section>
