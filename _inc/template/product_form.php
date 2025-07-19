@@ -118,7 +118,7 @@
                 $mrp = '';
                 $name = $product['p_name'];
                 // Extract MRP from product name if it has the format: product-name_mrp
-                if (preg_match('/(.*?)_(\d+)$/', $product['p_name'], $matches)) {
+                if (preg_match('/(.*?)-(\d+)$/', $product['p_name'], $matches)) {
                   $name = $matches[1];
                   $mrp = $matches[2];
                 }

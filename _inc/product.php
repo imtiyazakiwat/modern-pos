@@ -153,7 +153,7 @@ if ($request->server['REQUEST_METHOD'] == 'POST' && isset($request->post['action
 
     // Append MRP to product name if provided
     if (isset($request->post['p_mrp']) && !empty($request->post['p_mrp'])) {
-      $request->post['p_name'] = $request->post['p_name'] . "_" . $request->post['p_mrp'];
+      $request->post['p_name'] = $request->post['p_name'] . "-" . $request->post['p_mrp'];
     }
 
     // Validate post data
