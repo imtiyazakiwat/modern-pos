@@ -410,6 +410,39 @@
     margin: 0;
 }
 
+/* TSC printer specific styles */
+.styleretsol.tsc {
+    width: 80mm !important; /* Exact 8cm width */
+    height: 25mm !important; /* Exact 2.5cm height */
+    float: left;
+    display: inline-block;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    overflow: hidden;
+}
+
+/* TSC printer 2-column layout with 3.8cm columns */
+.barcodea4 .styleretsol.tsc {
+    width: 38mm !important; /* 3.8cm width per column */
+    height: 25mm !important; /* 2.5cm height */
+    box-sizing: border-box;
+    float: left;
+    padding: 0;
+    margin: 0;
+}
+
+/* TSC printer item inner styles */
+.styleretsol.tsc .item-inner {
+    width: 95%;
+    height: 95%;
+    margin: 1px;
+    display: inline-block;
+    vertical-align: middle;
+    border: 1px solid #000;
+}
+
 /* Override for barcodea4 when using retsol */
 .barcodea4 {
     display: flex;
@@ -435,6 +468,68 @@
     content: "";
     display: table;
     clear: both;
+}
+
+/* TSC printer specific container styles */
+.barcode.tsc-container {
+    width: 80mm !important;
+    height: auto !important;
+    max-width: 80mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-after: avoid !important;
+    page-break-before: avoid !important;
+    page-break-inside: avoid !important;
+    overflow: hidden !important;
+    break-inside: avoid !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+}
+
+/* TSC printer 2-column layout */
+.barcode.tsc-container .styleretsol.tsc {
+    width: 38mm !important; /* 3.8cm per column */
+    height: 25mm !important; /* 2.5cm height */
+    box-sizing: border-box !important;
+    float: left !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    flex: 0 0 38mm !important;
+}
+
+/* TSC printer print-specific styles */
+@media print {
+    .barcode.tsc-container {
+        width: 80mm !important;
+        height: auto !important;
+        max-width: 80mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        page-break-after: avoid !important;
+        page-break-before: avoid !important;
+        page-break-inside: avoid !important;
+        overflow: hidden !important;
+        break-inside: avoid !important;
+        transform: none !important;
+        scale: 1 !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+    }
+    
+    .barcode.tsc-container .styleretsol.tsc {
+        width: 38mm !important; /* 3.8cm per column */
+        height: 25mm !important; /* 2.5cm height */
+        box-sizing: border-box !important;
+        float: left !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        flex: 0 0 38mm !important;
+    }
+    
+    @page {
+        size: 80mm 25mm;
+        margin: 0;
+    }
 }
 
 .min-w100{

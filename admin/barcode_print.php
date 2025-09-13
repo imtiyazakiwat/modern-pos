@@ -170,6 +170,7 @@ include ("left_sidebar.php") ;
                         >12 per sheet (a4) (2.5" x 2.834")</option>
                         <option value="10" <?php echo isset($request->post['per_page']) && $request->post['per_page'] == 10 ? 'selected' : null;?>>10 per sheet (4" x 2")</option>
                         <option value="retsol" <?php echo isset($request->post['per_page']) && $request->post['per_page'] == 'retsol' ? 'selected' : 'selected';?>>Retsol (10cm x 2.2cm - 2 columns)</option>
+                        <option value="tsc" <?php echo isset($request->post['per_page']) && $request->post['per_page'] == 'tsc' ? 'selected' : null;?>>TSC (8cm x 2.5cm - 2 columns of 3.8cm each)</option>
                       </select>
                     </div>
                   </div>
@@ -241,6 +242,9 @@ include ("left_sidebar.php") ;
                   case 'retsol':
                     $page_layout = 'a4';
                     break;
+                  case 'tsc':
+                    $page_layout = 'a4';
+                    break;
                   default:
                     $page_layout = '';
                     break;
@@ -273,6 +277,8 @@ include ("left_sidebar.php") ;
                       ?>
                       <?php if ($per_page == 'retsol'): ?>
                       <div class="item styleretsol" style="border: none; margin: 0; padding: 0;">
+                      <?php elseif ($per_page == 'tsc'): ?>
+                      <div class="item styleretsol tsc" style="border: none; margin: 0; padding: 0;">
                       <?php else: ?>
                       <div class="item <?php echo 'style'.$per_page; ?>" style="border: none; margin: 0; padding: 0;">
                       <?php endif; ?>
@@ -477,6 +483,8 @@ include ("left_sidebar.php") ;
                   <div id="single-page-container" style="max-width: 100%; max-height: 100%; overflow: hidden;">
                     <?php if ($per_page == 'retsol'): ?>
                     <div class="barcode barcodea4" style="width: 100%; max-width: 210mm; overflow: hidden; border: none;">
+                    <?php elseif ($per_page == 'tsc'): ?>
+                    <div class="barcode tsc-container" style="width: 80mm; height: auto; overflow: hidden; border: none;">
                     <?php else: ?>
                     <div class="barcode barcode<?php echo $page_layout;?>" style="width: 100%; max-width: 210mm; overflow: hidden; border: none;">
                     <?php endif; ?>
@@ -510,6 +518,7 @@ include ("left_sidebar.php") ;
                     '@page { size: auto; margin: 0mm; }' +
                     'html, body { height: 100%; width: 100%; margin: 0; padding: 0; }' +
                     '.barcode { max-width: 100%; overflow: visible; page-break-inside: avoid; }' +
+                    '.barcode.tsc-container { width: 80mm !important; height: auto !important; max-width: 80mm !important; margin: 0 !important; padding: 0 !important; }' +
                     '.barcode_site { font-size: 13px !important; font-weight: bold; margin: 0 !important; padding-top: 2px !important; padding-bottom: 1px !important; text-align: center !important; display: block !important; width: 100% !important; text-transform: uppercase !important; }' +
                     '.barcode_name { font-size: 11px !important; font-weight: bold; margin: 0 !important; padding: 0 !important; text-align: center !important; display: block !important; width: 100% !important; }' +
                     '.barcode_image { margin: 0 !important; padding: 0 !important; text-align: center !important; display: flex !important; justify-content: center !important; align-items: center !important; width: 100% !important; }' +
