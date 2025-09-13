@@ -13,7 +13,7 @@
 			<a class="btn btn-info btn-block" href="mailto:<?php echo trans('text_email_address'); ?>"><?php echo trans('text_email_us'); ?> &rarr;</a>
 		</div>
 		<div class="col-sm-4">
-			<a class="btn btn-warning btn-block" href="<?php echo trans('text_codecanyon_follow_link'); ?>" target="_blank"><?php echo trans('text_follow_us'); ?> &rarr;</a>
+			<a class="btn btn-warning btn-block" href="<?php echo trans('text_nighan2_follow_link'); ?>" target="_blank"><?php echo trans('text_follow_us'); ?> &rarr;</a>
 		</div>
 		<div class="col-sm-4">
 			<a class="btn btn-success btn-block" href="<?php echo trans('text_contact_link'); ?>" target="_blank"><?php echo trans('text_contact_us'); ?> &rarr;</a>

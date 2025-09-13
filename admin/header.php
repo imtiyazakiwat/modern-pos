@@ -20,7 +20,7 @@ if (!empty($request->get)) {
     $query_string = '?filter=yes';
 }
 $query_string = my_str_replace(array('&'), '?', $query_string);
-$demo_text = 'This is a demo version. Data will be reset in every 6 hours interval. <a href="https://codecanyon.net/cart/configure_before_adding/22702683" target="_blank" class="demo-buy-btn" >Buy from Codecanyon &rarr;</a>';
+$demo_text = 'This is a demo version. Data will be reset in every 6 hours interval. <a href="https://nighan2.com" target="_blank" class="demo-buy-btn" >Visit nighan2labs pvt ltd &rarr;</a>';
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $document->langTag($active_lang);?>" <?php echo !isset($angular_disabled) ? 'ng-app="angularApp"' : null; ?>>
@@ -222,6 +222,11 @@ $demo_text = 'This is a demo version. Data will be reset in every 6 hours interv
 
         <!-- Angular App JS -->
         <script src="../assets/itsolution24/angular/angularApp.js" type="text/javascript"></script>
+
+        <!-- Angular Controllers -->
+        <?php if (basename($_SERVER['PHP_SELF']) == 'barcode_print.php'): ?>
+        <script src="../assets/itsolution24/angular/controllers/BarcodePrintController.js" type="text/javascript"></script>
+        <?php endif; ?>
 
         <!-- Angular Modal JS -->
         <script src="../assets/itsolution24/angularmin/modal.js" type="text/javascript"></script>

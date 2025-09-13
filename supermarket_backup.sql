@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jul 03, 2025 at 10:51 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- Host: localhost
+-- Generation Time: Sep 13, 2025 at 07:57 AM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `shreshta_collections`
+-- Database: `supermarket`
 --
 
 -- --------------------------------------------------------
@@ -50,7 +50,7 @@ CREATE TABLE `bank_accounts` (
 --
 
 INSERT INTO `bank_accounts` (`id`, `account_name`, `account_details`, `initial_balance`, `account_no`, `contact_person`, `phone_number`, `opening_date`, `url`, `total_deposit`, `total_withdraw`, `total_transfer_from_other`, `total_transfer_to_other`, `created_at`, `updated_at`) VALUES
-(1, 'Default Account', 'This is a default account for any store', 0.0000, '1234567890', 'iAngryboy', '+880133333333', '2019-05-15 08:27:03', 'http://itsolution24.com', 0.0000, 0.0000, 0.0000, 0.0000, '2025-07-03 08:43:15', '2025-07-03 08:43:15'),
+(1, 'Default Account', 'This is a default account for any store', 0.0000, '1234567890', 'iAngryboy', '+880133333333', '2019-05-15 08:27:03', 'http://itsolution24.com', 45.0000, 0.0000, 0.0000, 0.0000, '2025-07-03 08:43:15', '2025-07-04 10:26:52'),
 (2, 'Default', 'default', 0.0000, '1000000000000000', 'default', '11111111111111', NULL, '', 0.0000, 0.0000, 0.0000, 0.0000, '2025-07-03 08:43:15', '2025-07-03 08:43:15');
 
 -- --------------------------------------------------------
@@ -105,6 +105,14 @@ CREATE TABLE `bank_transaction_info` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Dumping data for table `bank_transaction_info`
+--
+
+INSERT INTO `bank_transaction_info` (`info_id`, `store_id`, `transaction_type`, `is_substract`, `is_hide`, `account_id`, `source_id`, `exp_category_id`, `ref_no`, `invoice_id`, `title`, `details`, `from_account_id`, `status`, `image`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 1, 'withdraw', 0, 0, 1, NULL, 9, 'W1', 'B4f2679b1', 'Debit for Product Purchase', 'Supplier name: No Supplier', NULL, 1, 'NULL', 1, '2025-07-04 10:26:12', '2025-07-04 10:26:12'),
+(2, 1, 'deposit', 0, 0, 1, 1, NULL, 'D2', '100000001', 'Deposit for selling', 'Customer name: Walking Customer', NULL, 1, 'NULL', 1, '2025-07-04 10:26:52', '2025-07-04 10:26:52');
+
 -- --------------------------------------------------------
 
 --
@@ -118,6 +126,14 @@ CREATE TABLE `bank_transaction_price` (
   `ref_no` varchar(100) NOT NULL COMMENT 'e.g. Transaction ID, Check No.',
   `amount` decimal(25,4) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `bank_transaction_price`
+--
+
+INSERT INTO `bank_transaction_price` (`price_id`, `store_id`, `info_id`, `ref_no`, `amount`) VALUES
+(1, 1, 1, 'W1', 40.0000),
+(2, 1, 2, 'D2', 5.0000);
 
 -- --------------------------------------------------------
 
@@ -181,7 +197,11 @@ CREATE TABLE `brands` (
 --
 
 INSERT INTO `brands` (`brand_id`, `brand_name`, `code_name`, `brand_details`, `brand_image`, `created_at`, `updated_at`) VALUES
-(1, 'No brand', 'no_brand', '', NULL, '2025-07-03 08:43:15', '2025-07-03 08:43:15');
+(1, 'No brand', 'no_brand', '', NULL, '2025-07-03 08:43:15', '2025-07-03 08:43:15'),
+(2, 'maggie', 'maggie', '', '', '2025-07-04 10:30:05', '2025-07-04 10:30:05'),
+(3, 'red lebel', 'red_lebel', '', '', '2025-07-04 10:30:17', '2025-07-04 10:30:17'),
+(4, 'parle', 'parle', '', '', '2025-07-04 10:30:59', '2025-07-04 10:30:59'),
+(5, 'Nestle', 'nestle', '', '', '2025-07-05 10:33:23', '2025-07-05 10:33:23');
 
 -- --------------------------------------------------------
 
@@ -202,7 +222,12 @@ CREATE TABLE `brand_to_store` (
 --
 
 INSERT INTO `brand_to_store` (`b2s_id`, `brand_id`, `store_id`, `status`, `sort_order`) VALUES
-(1, 1, 1, 1, 0);
+(1, 1, 1, 1, 0),
+(2, 2, 1, 1, 0),
+(3, 3, 1, 1, 0),
+(4, 4, 1, 1, 0),
+(5, 5, 1, 1, 0),
+(6, 0, 1, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -226,7 +251,9 @@ CREATE TABLE `categorys` (
 --
 
 INSERT INTO `categorys` (`category_id`, `category_name`, `category_slug`, `parent_id`, `category_details`, `category_image`, `created_at`, `updated_at`) VALUES
-(1, 'uncategory', 'uncategory', 0, 'this is a category details, simple text will be display here', NULL, '2025-07-03 08:43:15', '2025-07-03 08:43:15');
+(1, 'uncategory', 'uncategory', 0, 'this is a category details, simple text will be display here', NULL, '2025-07-03 08:43:15', '2025-07-03 08:43:15'),
+(2, 'grocerry', 'grocerry', 0, '', '', '2025-07-04 10:29:17', '2025-07-04 10:29:17'),
+(3, 'biscuit', 'biscuit', 0, '', '', '2025-07-04 10:31:15', '2025-07-04 10:31:15');
 
 -- --------------------------------------------------------
 
@@ -247,7 +274,9 @@ CREATE TABLE `category_to_store` (
 --
 
 INSERT INTO `category_to_store` (`c2s_id`, `ccategory_id`, `store_id`, `status`, `sort_order`) VALUES
-(1, 1, 1, 1, 0);
+(1, 1, 1, 1, 0),
+(2, 2, 1, 1, 0),
+(3, 3, 1, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -351,7 +380,9 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`customer_id`, `customer_name`, `customer_email`, `customer_mobile`, `customer_address`, `dob`, `customer_sex`, `customer_age`, `gtin`, `customer_city`, `customer_state`, `customer_country`, `is_giftcard`, `password`, `created_at`, `updated_at`) VALUES
-(1, 'Walking Customer', 'wc@itsolution24.com', '0170000000000', 'BD', '1993-01-01', 1, 20, '147258', 'AN', 'AN', 'US', 0, 'c33367701511b4f6020ec61ded352059', '2025-07-03 08:43:15', '2025-07-03 08:43:15');
+(1, 'Walking Customer', 'wc@itsolution24.com', '0170000000000', 'athani', '1993-01-01', 1, 20, '147258', 'AN', 'AN', 'IN', 0, 'c33367701511b4f6020ec61ded352059', '2025-07-03 08:43:15', '2025-07-04 10:27:52'),
+(2, 'imtiyaz', 'imtiyazakiwat0@gmail.com', '8217291743', 'athani', '2002-07-15', 1, 22, '', 'AN', 'AN', 'IN', 0, NULL, '2025-07-04 10:35:07', '2025-07-04 10:55:25'),
+(3, 'IMTIYAZ AKIWAT', 'ab1878@gmail.com', '08217291743', 'athani', '2003-07-15', 1, 21, '', 'AN', 'AN', 'IN', 0, NULL, '2025-07-05 10:39:45', '2025-07-18 04:07:42');
 
 -- --------------------------------------------------------
 
@@ -374,7 +405,9 @@ CREATE TABLE `customer_to_store` (
 --
 
 INSERT INTO `customer_to_store` (`c2s_id`, `customer_id`, `store_id`, `balance`, `due`, `status`, `sort_order`) VALUES
-(1, 1, 1, 0.0000, 0.0000, 1, 1);
+(1, 1, 1, 0.0000, 0.0000, 1, 1),
+(2, 2, 1, 0.0000, 0.0000, 1, 0),
+(3, 3, 1, 0.0000, 0.0000, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -397,6 +430,14 @@ CREATE TABLE `customer_transactions` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `customer_transactions`
+--
+
+INSERT INTO `customer_transactions` (`id`, `type`, `reference_no`, `ref_invoice_id`, `customer_id`, `store_id`, `pmethod_id`, `notes`, `amount`, `balance`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 'due_paid', 'CT250705100001', '100000012', 3, 1, 1, 'Substract while due paid', 5.0000, 0.0000, 1, '2025-07-05 10:40:26', '2025-07-05 10:40:26'),
+(2, 'due_paid', 'CT2507181002', '100000014', 3, 1, 1, 'Substract while due paid', 4.0000, 0.0000, 1, '2025-07-18 03:58:33', '2025-07-18 03:58:33');
 
 -- --------------------------------------------------------
 
@@ -1924,7 +1965,7 @@ INSERT INTO `language_translations` (`id`, `lang_id`, `lang_key`, `key_type`, `l
 (1209, 1, 'title_purchase_log', 'specific', 'Purchase log'),
 (1210, 1, 'text_purchase_log_title', 'specific', 'Purchase Log'),
 (1211, 1, 'title_log_in', 'specific', ''),
-(1212, 1, 'text_demo', 'specific', 'This is a demo version. Data will be reset in every 6 hours interval. &lt;a style=&quot;font-weight:bold&quot; href=&quot;http://docs.itsolution24.com/pos/&quot;&gt;Online Documentation&lt;/a&gt;  |  &lt;a style=&quot;color:#aafff0;font-weight:bold&quot; href=&quot;https://nighan2.com&quot;&gt;Visit nighan2labs pvt ltd&lt;/a&gt;'),
+(1212, 1, 'text_demo', 'specific', 'This is a demo version. Data will be reset in every 6 hours interval. &lt;a style=&quot;font-weight:bold&quot; href=&quot;http://docs.itsolution24.com/pos/&quot;&gt;Online Documentation&lt;/a&gt;  |  &lt;a style=&quot;color:#aafff0;font-weight:bold&quot; href=&quot;https://codecanyon.net/cart/configure_before_adding/22702683&quot;&gt;Buy Now&lt;/a&gt;'),
 (1213, 1, 'error_disabled_in_demo', 'specific', 'This feature is disable in error!'),
 (1214, 1, 'text_order_title', 'specific', ''),
 (1215, 1, 'error_purchase_price', 'specific', ''),
@@ -2056,7 +2097,7 @@ INSERT INTO `language_translations` (`id`, `lang_id`, `lang_key`, `key_type`, `l
 (1341, 1, 'button_product_purchase', 'specific', 'Product purchase'),
 (1342, 1, 'button_add_purchase', 'specific', 'Add Purchase'),
 (1343, 1, 'label_change', 'specific', 'Change'),
-(1344, 1, 'text_demo', 'specific', 'This is a demo version. Data will be reset in every 6 hours interval. &lt;a style=&quot;color:#aafff0;font-weight:bold&quot; href=&quot;https://nighan2.com&quot;&gt;Visit nighan2labs pvt ltd&lt;/a&gt;'),
+(1344, 1, 'text_demo', 'specific', 'This is a demo version. Data will be reset in every 6 hours interval. &lt;a style=&quot;color:#aafff0;font-weight:bold&quot; href=&quot;https://codecanyon.net/cart/configure_before_adding/22702683&quot;&gt;Buy Now&lt;/a&gt;'),
 (1345, 1, 'error_disabled_in_demo', 'specific', 'This feature disabled in demo.'),
 (1346, 1, 'button_substract_balance', 'specific', 'Substract Balance'),
 (1347, 1, 'error_amount_exceed', 'specific', 'Amount is exceed.'),
@@ -2147,8 +2188,8 @@ INSERT INTO `language_translations` (`id`, `lang_id`, `lang_key`, `key_type`, `l
 (1432, 1, 'text_install_instruction', 'specific', '*** This action may take several minutes. Please keep patience while processing this action and never close the browser. Otherwise system will not work properly. Enjoy a cup of coffee while you are waiting... :)'),
 (1433, 1, 'text_prev_step', 'specific', 'Previous Step'),
 (1434, 1, 'text_next_step', 'specific', 'Next Step'),
-(1435, 1, 'text_footer_link', 'specific', 'https://nighan2.com'),
-(1436, 1, 'text_footer_link_text', 'specific', 'nighan2labs pvt ltd'),
+(1435, 1, 'text_footer_link', 'specific', 'https://codecanyon.net'),
+(1436, 1, 'text_footer_link_text', 'specific', 'codecanyon.net'),
 (1437, 1, 'text_all_right_reserved', 'specific', 'All right reserved.'),
 (1438, 1, 'text_congrats_almost_done', 'specific', 'Congratulations! Almost Done... :)'),
 (1439, 1, 'text_login_credentials', 'specific', 'Login Credentials'),
@@ -2186,13 +2227,13 @@ INSERT INTO `language_translations` (`id`, `lang_id`, `lang_key`, `key_type`, `l
 (1471, 1, 'text_pay_now', 'specific', 'Pay Now'),
 (1472, 1, 'text_toggle_dropdown', 'specific', 'Toggle Dropdown'),
 (1473, 1, 'text_for_sell_return', 'specific', 'for sell return'),
-(1474, 1, 'text_support_comment_box', 'specific', 'For any query just knock us via nighan2labs pvt ltd contact form'),
+(1474, 1, 'text_support_comment_box', 'specific', 'For any query just knock us via codecanyon comment box'),
 (1475, 1, 'text_email_us', 'specific', 'Email Us'),
 (1476, 1, 'text_follow_us', 'specific', 'Follow Us'),
 (1477, 1, 'text_contact_us', 'specific', 'Contact Us'),
 (1478, 1, 'text_contact_link', 'specific', 'https://itsolution24.com/contact.php'),
 (1479, 1, 'text_email_address', 'specific', 'itsolution24bd@gmail.com'),
-(1480, 1, 'text_nighan2_follow_link', 'specific', 'https://nighan2.com/contact'),
+(1480, 1, 'text_codecanyon_follow_link', 'specific', 'https://codecanyon.net/user/itsolution-24/follow'),
 (1481, 1, 'text_thank_you_for_choose', 'specific', 'Thank you for choosing us!'),
 (1482, 1, 'text_quotation', 'specific', 'Quotation'),
 (1483, 1, 'text_windows_instruction', 'specific', '(Local USB, Serial or Parallel Printer): Share the printer and enter the share name for your printer here or for Server Message Block (SMB): enter as a smb:// url format such as '),
@@ -2394,7 +2435,649 @@ INSERT INTO `language_translations` (`id`, `lang_id`, `lang_key`, `key_type`, `l
 (1679, 4, 'button_last_7_days', 'specific', NULL),
 (1680, 4, 'button_last_30_days', 'specific', NULL),
 (1681, 4, 'button_last_365_days', 'specific', NULL),
-(1682, 4, 'button_filter', 'specific', NULL);
+(1682, 4, 'button_filter', 'specific', NULL),
+(1683, 4, 'text_redirecting_to_dashbaord', 'specific', NULL),
+(1684, 4, 'title_dashboard', 'specific', NULL),
+(1685, 4, 'button_pos', 'specific', NULL),
+(1686, 4, 'button_sell_list', 'specific', NULL);
+INSERT INTO `language_translations` (`id`, `lang_id`, `lang_key`, `key_type`, `lang_value`) VALUES
+(1687, 4, 'button_overview_report', 'specific', NULL),
+(1688, 4, 'button_sell_report', 'specific', NULL),
+(1689, 4, 'button_purchase_report', 'specific', NULL),
+(1690, 4, 'button_stock_alert', 'specific', NULL),
+(1691, 4, 'button_expired_alert', 'specific', NULL),
+(1692, 4, 'button_backup_restore', 'specific', NULL),
+(1693, 4, 'button_stores', 'specific', NULL),
+(1694, 4, 'text_total_invoice', 'specific', NULL),
+(1695, 4, 'text_total_invoice_today', 'specific', NULL),
+(1696, 4, 'text_details', 'specific', NULL),
+(1697, 4, 'text_total_customer', 'specific', NULL),
+(1698, 4, 'text_total_customer_today', 'specific', NULL),
+(1699, 4, 'text_total_supplier', 'specific', NULL),
+(1700, 4, 'text_total_supplier_today', 'specific', NULL),
+(1701, 4, 'text_total_product', 'specific', NULL),
+(1702, 4, 'text_total_product_today', 'specific', NULL),
+(1703, 4, 'text_recent_activities', 'specific', NULL),
+(1704, 4, 'text_sales', 'specific', NULL),
+(1705, 4, 'text_quotations', 'specific', NULL),
+(1706, 4, 'text_purchases', 'specific', NULL),
+(1707, 4, 'text_transfers', 'specific', NULL),
+(1708, 4, 'text_customers', 'specific', NULL),
+(1709, 4, 'text_suppliers', 'specific', NULL),
+(1710, 4, 'label_invoice_id', 'specific', NULL),
+(1711, 4, 'label_created_at', 'specific', NULL),
+(1712, 4, 'label_customer_name', 'specific', NULL),
+(1713, 4, 'label_amount', 'specific', NULL),
+(1714, 4, 'label_payment_status', 'specific', NULL),
+(1715, 4, 'button_add_sales', 'specific', NULL),
+(1716, 4, 'button_list_sales', 'specific', NULL),
+(1717, 4, 'text_sales_amount', 'specific', NULL),
+(1718, 4, 'text_discount_given', 'specific', NULL),
+(1719, 4, 'text_due_given', 'specific', NULL),
+(1720, 4, 'text_received_amount', 'specific', NULL),
+(1721, 4, 'label_date', 'specific', NULL),
+(1722, 4, 'label_reference_no', 'specific', NULL),
+(1723, 4, 'label_customer', 'specific', NULL),
+(1724, 4, 'label_status', 'specific', NULL),
+(1725, 4, 'button_add_quotations', 'specific', NULL),
+(1726, 4, 'button_list_quotations', 'specific', NULL),
+(1727, 4, 'label_supplier_name', 'specific', NULL),
+(1728, 4, 'button_add_purchases', 'specific', NULL),
+(1729, 4, 'button_list_purchases', 'specific', NULL),
+(1730, 4, 'label_from', 'specific', NULL),
+(1731, 4, 'label_to', 'specific', NULL),
+(1732, 4, 'label_quantity', 'specific', NULL),
+(1733, 4, 'button_add_transfers', 'specific', NULL),
+(1734, 4, 'button_list_transfers', 'specific', NULL),
+(1735, 4, 'label_phone', 'specific', NULL),
+(1736, 4, 'label_email', 'specific', NULL),
+(1737, 4, 'label_address', 'specific', NULL),
+(1738, 4, 'button_add_customer', 'specific', NULL),
+(1739, 4, 'button_list_customers', 'specific', NULL),
+(1740, 4, 'button_add_supplier', 'specific', NULL),
+(1741, 4, 'button_list_suppliers', 'specific', NULL),
+(1742, 4, 'text_deposit_today', 'specific', NULL),
+(1743, 4, 'text_withdraw_today', 'specific', NULL),
+(1744, 4, 'text_recent_deposit', 'specific', NULL),
+(1745, 4, 'label_description', 'specific', NULL),
+(1746, 4, 'button_view_all', 'specific', NULL),
+(1747, 4, 'text_recent_withdraw', 'specific', NULL),
+(1748, 4, 'title_income_vs_expense', 'specific', NULL),
+(1749, 4, 'text_download_as_jpg', 'specific', NULL),
+(1750, 4, 'label_day', 'specific', NULL),
+(1751, 4, 'text_income', 'specific', NULL),
+(1752, 4, 'text_expense', 'specific', NULL),
+(1753, 4, 'text_income_vs_expense', 'specific', NULL),
+(1754, 4, 'title_product', 'specific', NULL),
+(1755, 4, 'text_products', 'specific', NULL),
+(1756, 4, 'text_add_new', 'specific', NULL),
+(1757, 4, 'text_product', 'specific', NULL),
+(1758, 4, 'text_general', 'specific', NULL),
+(1759, 4, 'text_images', 'specific', NULL),
+(1760, 4, 'label_serial_no', 'specific', NULL),
+(1761, 4, 'label_image', 'specific', NULL),
+(1762, 4, 'label_url', 'specific', NULL),
+(1763, 4, 'label_sort_order', 'specific', NULL),
+(1764, 4, 'label_action', 'specific', NULL),
+(1765, 4, 'label_thumbnail', 'specific', NULL),
+(1766, 4, 'label_product_type', 'specific', NULL),
+(1767, 4, 'text_standard', 'specific', NULL),
+(1768, 4, 'text_service', 'specific', NULL),
+(1769, 4, 'label_name', 'specific', NULL),
+(1770, 4, 'label_pcode', 'specific', NULL),
+(1771, 4, 'label_category', 'specific', NULL),
+(1772, 4, 'text_select', 'specific', NULL),
+(1773, 4, 'label_supplier', 'specific', NULL),
+(1774, 4, 'label_brand', 'specific', NULL),
+(1775, 4, 'label_barcode_symbology', 'specific', NULL),
+(1776, 4, 'label_box', 'specific', NULL),
+(1777, 4, 'label_expired_date', 'specific', NULL),
+(1778, 4, 'label_unit', 'specific', NULL),
+(1779, 4, 'label_product_cost', 'specific', NULL),
+(1780, 4, 'label_product_price', 'specific', NULL),
+(1781, 4, 'label_product_tax', 'specific', NULL),
+(1782, 4, 'label_tax_method', 'specific', NULL),
+(1783, 4, 'text_inclusive', 'specific', NULL),
+(1784, 4, 'text_exclusive', 'specific', NULL),
+(1785, 4, 'label_store', 'specific', NULL),
+(1786, 4, 'search', 'specific', NULL),
+(1787, 4, 'label_alert_quantity', 'specific', NULL),
+(1788, 4, 'text_active', 'specific', NULL),
+(1789, 4, 'text_inactive', 'specific', NULL),
+(1790, 4, 'button_save', 'specific', NULL),
+(1791, 4, 'button_reset', 'specific', NULL),
+(1792, 4, 'text_view_all', 'specific', NULL),
+(1793, 4, 'text_toggle_dropdown', 'specific', NULL),
+(1794, 4, 'label_all_product', 'specific', NULL),
+(1795, 4, 'button_trash', 'specific', NULL),
+(1796, 4, 'button_bulk', 'specific', NULL),
+(1797, 4, 'button_add_stock', 'specific', NULL),
+(1798, 4, 'button_delete_all', 'specific', NULL),
+(1799, 4, 'label_stock', 'specific', NULL),
+(1800, 4, 'label_purchase_price', 'specific', NULL),
+(1801, 4, 'label_selling_price', 'specific', NULL),
+(1802, 4, 'label_view', 'specific', NULL),
+(1803, 4, 'label_edit', 'specific', NULL),
+(1804, 4, 'label_purchase', 'specific', NULL),
+(1805, 4, 'label_print_barcode', 'specific', NULL),
+(1806, 4, 'label_delete', 'specific', NULL),
+(1807, 4, 'text_product_created', 'specific', NULL),
+(1808, 4, 'button_view', 'specific', NULL),
+(1809, 4, 'button_edit', 'specific', NULL),
+(1810, 4, 'button_purchase_product', 'specific', NULL),
+(1811, 4, 'button_stock_adjustment', 'specific', NULL),
+(1812, 4, 'button_barcode', 'specific', NULL),
+(1813, 4, 'button_delete', 'specific', NULL),
+(1814, 4, 'title_purchase', 'specific', NULL),
+(1815, 4, 'text_purchase_title', 'specific', NULL),
+(1816, 4, 'text_add', 'specific', NULL),
+(1817, 4, 'text_new_purchase_title', 'specific', NULL),
+(1818, 4, 'label_note', 'specific', NULL),
+(1819, 4, 'text_received', 'specific', NULL),
+(1820, 4, 'text_pending', 'specific', NULL),
+(1821, 4, 'text_ordered', 'specific', NULL),
+(1822, 4, 'label_attachment', 'specific', NULL),
+(1823, 4, 'label_add_product', 'specific', NULL),
+(1824, 4, 'placeholder_search_product', 'specific', NULL),
+(1825, 4, 'label_product', 'specific', NULL),
+(1826, 4, 'label_available', 'specific', NULL),
+(1827, 4, 'label_cost', 'specific', NULL),
+(1828, 4, 'label_sell_price', 'specific', NULL),
+(1829, 4, 'label_item_tax', 'specific', NULL),
+(1830, 4, 'label_item_total', 'specific', NULL),
+(1831, 4, 'label_subtotal', 'specific', NULL),
+(1832, 4, 'label_order_tax', 'specific', NULL),
+(1833, 4, 'label_shipping_charge', 'specific', NULL),
+(1834, 4, 'label_others_charge', 'specific', NULL),
+(1835, 4, 'label_discount_amount', 'specific', NULL),
+(1836, 4, 'label_payable_amount', 'specific', NULL),
+(1837, 4, 'label_payment_method', 'specific', NULL),
+(1838, 4, 'label_paid_amount', 'specific', NULL),
+(1839, 4, 'label_due_amount', 'specific', NULL),
+(1840, 4, 'label_change_amount', 'specific', NULL),
+(1841, 4, 'button_submit', 'specific', NULL),
+(1842, 4, 'text_purchase_list_title', 'specific', NULL),
+(1843, 4, 'button_pay_all', 'specific', NULL),
+(1844, 4, 'button_today_invoice', 'specific', NULL),
+(1845, 4, 'button_all_invoice', 'specific', NULL),
+(1846, 4, 'button_due_invoice', 'specific', NULL),
+(1847, 4, 'button_all_due_invoice', 'specific', NULL),
+(1848, 4, 'button_paid_invoice', 'specific', NULL),
+(1849, 4, 'button_inactive_invoice', 'specific', NULL),
+(1850, 4, 'label_datetime', 'specific', NULL),
+(1851, 4, 'label_creator', 'specific', NULL),
+(1852, 4, 'label_invoice_paid', 'specific', NULL),
+(1853, 4, 'label_due', 'specific', NULL),
+(1854, 4, 'label_pay', 'specific', NULL),
+(1855, 4, 'label_return', 'specific', NULL),
+(1856, 4, 'text_success', 'specific', NULL),
+(1857, 4, 'text_paid', 'specific', NULL),
+(1858, 4, 'button_return', 'specific', NULL),
+(1859, 4, 'button_view_receipt', 'specific', NULL),
+(1860, 4, 'title_barcode', 'specific', NULL),
+(1861, 4, 'text_barcode_title', 'specific', NULL),
+(1862, 4, 'text_barcode_generate_title', 'specific', NULL),
+(1863, 4, 'label_product_name_with_code', 'specific', NULL),
+(1864, 4, 'label_page_layout', 'specific', NULL),
+(1865, 4, 'label_fields', 'specific', NULL),
+(1866, 4, 'button_generate', 'specific', NULL),
+(1867, 4, 'button_print', 'specific', NULL),
+(1868, 4, 'title_pos', 'specific', NULL),
+(1869, 4, 'text_gift_card', 'specific', NULL),
+(1870, 4, 'button_sell_gift_card', 'specific', NULL),
+(1871, 4, 'text_add_product', 'specific', NULL),
+(1872, 4, 'button_add_product', 'specific', NULL),
+(1873, 4, 'text_keyboard_shortcut', 'specific', NULL),
+(1874, 4, 'text_holding_order', 'specific', NULL),
+(1875, 4, 'text_search_product', 'specific', NULL),
+(1876, 4, 'button_add_purchase', 'specific', NULL),
+(1877, 4, 'label_add_to_cart', 'specific', NULL),
+(1878, 4, 'text_add_note', 'specific', NULL),
+(1879, 4, 'label_price', 'specific', NULL),
+(1880, 4, 'label_total_items', 'specific', NULL),
+(1881, 4, 'label_total', 'specific', NULL),
+(1882, 4, 'label_discount', 'specific', NULL),
+(1883, 4, 'label_tax_amount', 'specific', NULL),
+(1884, 4, 'label_total_payable', 'specific', NULL),
+(1885, 4, 'button_pay', 'specific', NULL),
+(1886, 4, 'button_hold', 'specific', NULL),
+(1887, 4, 'text_pmethod', 'specific', NULL),
+(1888, 4, 'button_full_payment', 'specific', NULL),
+(1889, 4, 'button_full_due', 'specific', NULL),
+(1890, 4, 'button_sell_with_installment', 'specific', NULL),
+(1891, 4, 'text_pay_amount', 'specific', NULL),
+(1892, 4, 'placeholder_input_an_amount', 'specific', NULL),
+(1893, 4, 'placeholder_note_here', 'specific', NULL),
+(1894, 4, 'title_installment_details', 'specific', NULL),
+(1895, 4, 'label_duration', 'specific', NULL),
+(1896, 4, 'text_days', 'specific', NULL),
+(1897, 4, 'label_interval', 'specific', NULL),
+(1898, 4, 'label_total_installment', 'specific', NULL),
+(1899, 4, 'label_interest_percentage', 'specific', NULL),
+(1900, 4, 'label_interest_amount', 'specific', NULL),
+(1901, 4, 'text_order_details', 'specific', NULL),
+(1902, 4, 'label_previous_due', 'specific', NULL),
+(1903, 4, 'label_balance', 'specific', NULL),
+(1904, 4, 'text_invoice_create_success', 'specific', NULL),
+(1905, 4, 'title_invoice', 'specific', NULL),
+(1906, 4, 'text_sell_list_title', 'specific', NULL),
+(1907, 4, 'text_invoices', 'specific', NULL),
+(1908, 4, 'text_invoice_title', 'specific', NULL),
+(1909, 4, 'button_send_email', 'specific', NULL),
+(1910, 4, 'button_back_to_pos', 'specific', NULL),
+(1911, 4, 'title_settings', 'specific', NULL),
+(1912, 4, 'title_store', 'specific', NULL),
+(1913, 4, 'text_pos_setting', 'specific', NULL),
+(1914, 4, 'text_email_setting', 'specific', NULL),
+(1915, 4, 'text_ftp_setting', 'specific', NULL),
+(1916, 4, 'text_cronjob', 'specific', NULL),
+(1917, 4, 'label_deposit_account', 'specific', NULL),
+(1918, 4, 'label_code_name', 'specific', NULL),
+(1919, 4, 'label_country', 'specific', NULL),
+(1920, 4, 'label_mobile', 'specific', NULL),
+(1921, 4, 'label_zip_code', 'specific', NULL),
+(1922, 4, 'label_gst_reg_no', 'specific', NULL),
+(1923, 4, 'label_vat_reg_no', 'specific', NULL),
+(1924, 4, 'label_cashier_name', 'specific', NULL),
+(1925, 4, 'label_timezone', 'specific', NULL),
+(1926, 4, 'label_invoice_edit_lifespan', 'specific', NULL),
+(1927, 4, 'hint_invoice_edit_lifespan', 'specific', NULL),
+(1928, 4, 'text_minute', 'specific', NULL),
+(1929, 4, 'text_second', 'specific', NULL),
+(1930, 4, 'label_invoice_delete_lifespan', 'specific', NULL),
+(1931, 4, 'hint_invoice_delete_lifespan', 'specific', NULL),
+(1932, 4, 'label_tax', 'specific', NULL),
+(1933, 4, 'hint_tax', 'specific', NULL),
+(1934, 4, 'label_sms_gateway', 'specific', NULL),
+(1935, 4, 'hint_sms_gateway', 'specific', NULL),
+(1936, 4, 'label_sms_alert', 'specific', NULL),
+(1937, 4, 'hint_sms_alert', 'specific', NULL),
+(1938, 4, 'text_yes', 'specific', NULL),
+(1939, 4, 'text_no', 'specific', NULL),
+(1940, 4, 'label_auto_sms', 'specific', NULL),
+(1941, 4, 'text_sms_after_creating_invoice', 'specific', NULL),
+(1942, 4, 'label_expiration_system', 'specific', NULL),
+(1943, 4, 'label_datatable_item_limit', 'specific', NULL),
+(1944, 4, 'hint_datatable_item_limit', 'specific', NULL),
+(1945, 4, 'label_reference_format', 'specific', NULL),
+(1946, 4, 'label_sales_reference_prefix', 'specific', NULL),
+(1947, 4, 'label_receipt_template', 'specific', NULL),
+(1948, 4, 'label_pos_printing', 'specific', NULL),
+(1949, 4, 'text_installation_info', 'specific', NULL),
+(1950, 4, 'label_receipt_printer', 'specific', NULL),
+(1951, 4, 'label_auto_print_receipt', 'specific', NULL),
+(1952, 4, 'label_invoice_view', 'specific', NULL),
+(1953, 4, 'hint_invoice_view', 'specific', NULL),
+(1954, 4, 'text_tax_invoice', 'specific', NULL),
+(1955, 4, 'text_indian_gst', 'specific', NULL),
+(1956, 4, 'label_change_item_price_while_billing', 'specific', NULL),
+(1957, 4, 'hint_change_item_price_while_billing', 'specific', NULL),
+(1958, 4, 'label_pos_product_display_limit', 'specific', NULL),
+(1959, 4, 'hint_pos_product_display_limit', 'specific', NULL),
+(1960, 4, 'label_after_sell_page', 'specific', NULL),
+(1961, 4, 'hint_after_sell_page', 'specific', NULL),
+(1962, 4, 'label_invoice_footer_text', 'specific', NULL),
+(1963, 4, 'hint_invoice_footer_text', 'specific', NULL),
+(1964, 4, 'label_sound_effect', 'specific', NULL),
+(1965, 4, 'label_email_from', 'specific', NULL),
+(1966, 4, 'hint_email_from', 'specific', NULL),
+(1967, 4, 'label_email_address', 'specific', NULL),
+(1968, 4, 'hint_email_address', 'specific', NULL),
+(1969, 4, 'label_email_driver', 'specific', NULL),
+(1970, 4, 'hint_email_driver', 'specific', NULL),
+(1971, 4, 'label_send_mail_path', 'specific', NULL),
+(1972, 4, 'hint_send_mail_path', 'specific', NULL),
+(1973, 4, 'label_smtp_host', 'specific', NULL),
+(1974, 4, 'hint_smtp_host', 'specific', NULL),
+(1975, 4, 'label_smtp_username', 'specific', NULL),
+(1976, 4, 'hint_smtp_username', 'specific', NULL),
+(1977, 4, 'label_smtp_password', 'specific', NULL),
+(1978, 4, 'hint_smtp_password', 'specific', NULL),
+(1979, 4, 'label_smtp_port', 'specific', NULL),
+(1980, 4, 'hint_smtp_port', 'specific', NULL),
+(1981, 4, 'label_ssl_tls', 'specific', NULL),
+(1982, 4, 'hint_ssl_tls', 'specific', NULL),
+(1983, 4, 'label_ftp_hostname', 'specific', NULL),
+(1984, 4, 'label_ftp_username', 'specific', NULL),
+(1985, 4, 'label_ftp_password', 'specific', NULL),
+(1986, 4, 'button_back', 'specific', NULL),
+(1987, 4, 'button_update', 'specific', NULL),
+(1988, 4, 'text_logo', 'specific', NULL),
+(1989, 4, 'button_upload', 'specific', NULL),
+(1990, 4, 'text_favicon', 'specific', NULL),
+(1991, 4, 'timezone_not_change_in_init.php', 'specific', NULL),
+(1992, 4, 'text_category_title', 'specific', NULL),
+(1993, 4, 'text_new_category_title', 'specific', NULL),
+(1994, 4, 'label_category_name', 'specific', NULL),
+(1995, 4, 'label_category_slug', 'specific', NULL),
+(1996, 4, 'label_parent', 'specific', NULL),
+(1997, 4, 'label_category_details', 'specific', NULL),
+(1998, 4, 'text_category_list_title', 'specific', NULL),
+(1999, 4, 'label_id', 'specific', NULL),
+(2000, 4, 'label_total_item', 'specific', NULL),
+(2001, 4, 'text_update_title', 'specific', NULL),
+(2002, 4, 'label_unit_name', 'specific', NULL),
+(2003, 4, 'label_unit_details', 'specific', NULL),
+(2004, 4, 'text_in_active', 'specific', NULL),
+(2005, 4, 'label_details', 'specific', NULL),
+(2006, 4, 'title_user', 'specific', NULL),
+(2007, 4, 'text_user_title', 'specific', NULL),
+(2008, 4, 'text_new_user_title', 'specific', NULL),
+(2009, 4, 'label_password', 'specific', NULL),
+(2010, 4, 'label_password_retype', 'specific', NULL),
+(2011, 4, 'label_group', 'specific', NULL),
+(2012, 4, 'hint_group', 'specific', NULL),
+(2013, 4, 'label_date_of_birth', 'specific', NULL),
+(2014, 4, 'text_user_list_title', 'specific', NULL),
+(2015, 4, 'label_profile', 'specific', NULL),
+(2016, 4, 'button_view_profile', 'specific', NULL),
+(2017, 4, 'error_password_not_match', 'specific', NULL),
+(2018, 4, 'title_create_store', 'specific', NULL),
+(2019, 4, 'text_create_store_title', 'specific', NULL),
+(2020, 4, 'text_stores', 'specific', NULL),
+(2021, 4, 'text_currency', 'specific', NULL),
+(2022, 4, 'text_payment_method', 'specific', NULL),
+(2023, 4, 'text_printer', 'specific', NULL),
+(2024, 4, 'label_stock_alert_quantity', 'specific', NULL),
+(2025, 4, 'hint_stock_alert_quantity', 'specific', NULL),
+(2026, 4, 'text_customer_list_title', 'specific', NULL),
+(2027, 4, 'text_customer_title', 'specific', NULL),
+(2028, 4, 'text_new_customer_title', 'specific', NULL),
+(2029, 4, 'label_credit_balance', 'specific', NULL),
+(2030, 4, 'label_sex', 'specific', NULL),
+(2031, 4, 'label_male', 'specific', NULL),
+(2032, 4, 'label_female', 'specific', NULL),
+(2033, 4, 'label_others', 'specific', NULL),
+(2034, 4, 'label_age', 'specific', NULL),
+(2035, 4, 'label_city', 'specific', NULL),
+(2036, 4, 'label_state', 'specific', NULL),
+(2037, 4, 'label_sell', 'specific', NULL),
+(2038, 4, 'button_sell', 'specific', NULL),
+(2039, 4, 'title_stock_alert', 'specific', NULL),
+(2040, 4, 'text_stock_alert_title', 'specific', NULL),
+(2041, 4, 'text_stock_alert_box_title', 'specific', NULL),
+(2042, 4, 'title_quotation', 'specific', NULL),
+(2043, 4, 'text_quotation_title', 'specific', NULL),
+(2044, 4, 'text_new_quotation_title', 'specific', NULL),
+(2045, 4, 'text_sent', 'specific', NULL),
+(2046, 4, 'text_complete', 'specific', NULL),
+(2047, 4, 'text_all_suppliers', 'specific', NULL),
+(2048, 4, 'text_quotation_list_title', 'specific', NULL),
+(2049, 4, 'button_all', 'specific', NULL),
+(2050, 4, 'button_sent', 'specific', NULL),
+(2051, 4, 'button_pending', 'specific', NULL),
+(2052, 4, 'button_complete', 'specific', NULL),
+(2053, 4, 'label_biller', 'specific', NULL),
+(2054, 4, 'title_loan', 'specific', NULL),
+(2055, 4, 'text_loan_title', 'specific', NULL),
+(2056, 4, 'text_take_loan_title', 'specific', NULL),
+(2057, 4, 'label_loan_from', 'specific', NULL),
+(2058, 4, 'label_ref_no', 'specific', NULL),
+(2059, 4, 'label_title', 'specific', NULL),
+(2060, 4, 'label_interest', 'specific', NULL),
+(2061, 4, 'label_payable', 'specific', NULL),
+(2062, 4, 'text_loan_list_title', 'specific', NULL),
+(2063, 4, 'text_all', 'specific', NULL),
+(2064, 4, 'button_paid', 'specific', NULL),
+(2065, 4, 'button_due', 'specific', NULL),
+(2066, 4, 'label_basic_amount', 'specific', NULL),
+(2067, 4, 'label_paid', 'specific', NULL),
+(2068, 4, 'text_supplier_list_title', 'specific', NULL),
+(2069, 4, 'text_supplier_title', 'specific', NULL),
+(2070, 4, 'text_new_supplier_title', 'specific', NULL),
+(2071, 4, 'title_currency', 'specific', NULL),
+(2072, 4, 'text_currency_title', 'specific', NULL),
+(2073, 4, 'text_new_currency_title', 'specific', NULL),
+(2074, 4, 'label_code', 'specific', NULL),
+(2075, 4, 'hint_code', 'specific', NULL),
+(2076, 4, 'label_symbol_left', 'specific', NULL),
+(2077, 4, 'hint_symbol_left', 'specific', NULL),
+(2078, 4, 'label_symbol_right', 'specific', NULL),
+(2079, 4, 'hint_symbol_right', 'specific', NULL),
+(2080, 4, 'label_decimal_place', 'specific', NULL),
+(2081, 4, 'hint_decimal_place', 'specific', NULL),
+(2082, 4, 'text_currency_list_title', 'specific', NULL),
+(2083, 4, 'text_enabled', 'specific', NULL),
+(2084, 4, 'button_activate', 'specific', NULL),
+(2085, 4, 'button_activated', 'specific', NULL),
+(2086, 4, 'button_product_list', 'specific', NULL),
+(2087, 4, 'button_customers', 'specific', NULL),
+(2088, 4, 'button_invoices', 'specific', NULL),
+(2089, 4, 'text_today', 'specific', NULL),
+(2090, 4, 'text_accounting_summary', 'specific', NULL),
+(2091, 4, 'text_income_expense_graph', 'specific', NULL),
+(2092, 4, 'text_dashboard_data_loading', 'specific', NULL),
+(2093, 4, 'text_dashboard_data_not_found', 'specific', NULL),
+(2094, 4, 'text_purchase_amount', 'specific', NULL),
+(2095, 4, 'text_due_amount', 'specific', NULL),
+(2096, 4, 'text_income_amount', 'specific', NULL),
+(2097, 4, 'text_sales_analytics', 'specific', NULL),
+(2098, 4, 'text_this_month', 'specific', NULL),
+(2099, 4, 'text_this_week', 'specific', NULL),
+(2100, 4, 'text_this_year', 'specific', NULL),
+(2101, 4, 'text_payment', 'specific', NULL),
+(2102, 4, 'text_no_activity', 'specific', NULL),
+(2103, 4, 'text_view_all_activity', 'specific', NULL),
+(2104, 4, 'text_top_products', 'specific', NULL),
+(2105, 4, 'label_product_name', 'specific', NULL),
+(2106, 4, 'label_sold', 'specific', NULL),
+(2107, 4, 'label_revenue', 'specific', NULL),
+(2108, 4, 'text_no_product', 'specific', NULL),
+(2109, 4, 'text_view_all_products', 'specific', NULL),
+(2110, 4, 'text_top_customers', 'specific', NULL),
+(2111, 4, 'label_invoice_count', 'specific', NULL),
+(2112, 4, 'label_total_amount', 'specific', NULL),
+(2113, 4, 'text_no_customer', 'specific', NULL),
+(2114, 4, 'text_view_all_customers', 'specific', NULL),
+(2115, 4, 'text_low_stock', 'specific', NULL),
+(2116, 4, 'text_no_low_stock', 'specific', NULL),
+(2117, 4, 'text_view_inventory', 'specific', NULL),
+(2118, 4, 'text_recent_sales', 'specific', NULL),
+(2119, 4, 'text_no_sales', 'specific', NULL),
+(2120, 4, 'text_view_all_sales', 'specific', NULL),
+(2121, 4, 'text_store_overview', 'specific', NULL),
+(2122, 4, 'text_total_expired_product', 'specific', NULL),
+(2123, 4, 'text_have_stock_alert', 'specific', NULL),
+(2124, 4, 'text_check_alert_list', 'specific', NULL),
+(2125, 4, 'button_view_all_product', 'specific', NULL),
+(2126, 4, 'button_view_all_customer', 'specific', NULL),
+(2127, 4, 'button_view_all_reports', 'specific', NULL),
+(2128, 4, 'text_invoice_amount', 'specific', NULL),
+(2129, 4, 'button_details', 'specific', NULL),
+(2130, 4, 'title_overview', 'specific', NULL),
+(2131, 4, 'text_overview_title', 'specific', NULL),
+(2132, 4, 'text_sell_overview', 'specific', NULL),
+(2133, 4, 'text_purchase_overview', 'specific', NULL),
+(2134, 4, 'text_title_sells_overview', 'specific', NULL),
+(2135, 4, 'text_discount_amount', 'specific', NULL),
+(2136, 4, 'text_due_collection', 'specific', NULL),
+(2137, 4, 'text_shipping_charge', 'specific', NULL),
+(2138, 4, 'text_others_charge', 'specific', NULL),
+(2139, 4, 'text_order_tax', 'specific', NULL),
+(2140, 4, 'text_item_tax', 'specific', NULL),
+(2141, 4, 'text_total_tax', 'specific', NULL),
+(2142, 4, 'text_title_purchase_overview', 'specific', NULL),
+(2143, 4, 'text_due_taken', 'specific', NULL),
+(2144, 4, 'text_due_paid', 'specific', NULL),
+(2145, 4, 'text_total_paid', 'specific', NULL),
+(2146, 4, 'text_return_amount', 'specific', NULL),
+(2147, 4, 'label_invoice_amount', 'specific', NULL),
+(2148, 4, 'label_customer_mobile', 'specific', NULL),
+(2149, 4, 'label_invoice_note', 'specific', NULL),
+(2150, 4, 'title_cashbook', 'specific', NULL),
+(2151, 4, 'text_cashbook_title', 'specific', NULL),
+(2152, 4, 'text_cashbook_details_title', 'specific', NULL),
+(2153, 4, 'text_print', 'specific', NULL),
+(2154, 4, 'label_opening_balance', 'specific', NULL),
+(2155, 4, 'title_income', 'specific', NULL),
+(2156, 4, 'title_expense', 'specific', NULL),
+(2157, 4, 'label_today_income', 'specific', NULL),
+(2158, 4, 'label_total_income', 'specific', NULL),
+(2159, 4, 'label_today_expense', 'specific', NULL),
+(2160, 4, 'label_cash_in_hand', 'specific', NULL),
+(2161, 4, 'label_today_closing_balance', 'specific', NULL),
+(2162, 4, 'text_login_title', 'specific', NULL),
+(2163, 4, 'text_notifications', 'specific', NULL),
+(2164, 4, 'title_sell_return', 'specific', NULL),
+(2165, 4, 'text_sell_return_title', 'specific', NULL),
+(2166, 4, 'text_return_list_title', 'specific', NULL),
+(2167, 4, 'text_sell_return_list_title', 'specific', NULL),
+(2168, 4, 'label_old_invoice_id', 'specific', NULL),
+(2169, 4, 'label_purchase_invoice_id', 'specific', NULL),
+(2170, 4, 'label_return_note', 'specific', NULL),
+(2171, 4, 'label_return_items', 'specific', NULL),
+(2172, 4, 'label_returned_by', 'specific', NULL),
+(2173, 4, 'title_user_preference', 'specific', NULL),
+(2174, 4, 'text_user_preference_title', 'specific', NULL),
+(2175, 4, 'text_language_preference_title', 'specific', NULL),
+(2176, 4, 'label_select_language', 'specific', NULL),
+(2177, 4, 'text_color_preference_title', 'specific', NULL),
+(2178, 4, 'label_base_color', 'specific', NULL),
+(2179, 4, 'text_color_black', 'specific', NULL),
+(2180, 4, 'text_color_blue', 'specific', NULL),
+(2181, 4, 'text_color_green', 'specific', NULL),
+(2182, 4, 'text_color_red', 'specific', NULL),
+(2183, 4, 'text_color_yellow', 'specific', NULL),
+(2184, 4, 'text_pos_side_panel_position_title', 'specific', NULL),
+(2185, 4, 'label_pos_side_panel_position', 'specific', NULL),
+(2186, 4, 'text_right', 'specific', NULL),
+(2187, 4, 'text_left', 'specific', NULL),
+(2188, 4, 'text_pos_pattern_title', 'specific', NULL),
+(2189, 4, 'label_select_pos_pattern', 'specific', NULL),
+(2190, 4, 'label_qty', 'specific', NULL),
+(2191, 4, 'text_update_success', 'specific', NULL),
+(2192, 4, 'title_sms_setting', 'specific', NULL),
+(2193, 4, 'text_sms_setting_title', 'specific', NULL),
+(2194, 4, 'text_sms_setting', 'specific', NULL),
+(2195, 4, 'text_twilio', 'specific', NULL),
+(2196, 4, 'text_msg91', 'specific', NULL),
+(2197, 4, 'text_mimsms', 'specific', NULL),
+(2198, 4, 'label_sender_id', 'specific', NULL),
+(2199, 4, 'label_auth_key', 'specific', NULL),
+(2200, 4, 'label_contact', 'specific', NULL),
+(2201, 4, 'label_country_code', 'specific', NULL),
+(2202, 4, 'label_api_key', 'specific', NULL),
+(2203, 4, 'label_api_token', 'specific', NULL),
+(2204, 4, 'title_printer', 'specific', NULL),
+(2205, 4, 'text_printer_title', 'specific', NULL),
+(2206, 4, 'text_new_printer_title', 'specific', NULL),
+(2207, 4, 'label_type', 'specific', NULL),
+(2208, 4, 'label_char_per_line', 'specific', NULL),
+(2209, 4, 'label_path', 'specific', NULL),
+(2210, 4, 'text_windows_instruction', 'specific', NULL),
+(2211, 4, 'label_ip_address', 'specific', NULL),
+(2212, 4, 'label_port', 'specific', NULL),
+(2213, 4, 'text_printer_port', 'specific', NULL),
+(2214, 4, 'text_printer_list_title', 'specific', NULL),
+(2215, 4, 'title_backup_restore', 'specific', NULL),
+(2216, 4, 'text_backup_restore_title', 'specific', NULL),
+(2217, 4, 'text_backup', 'specific', NULL),
+(2218, 4, 'text_restore', 'specific', NULL),
+(2219, 4, 'label_databases', 'specific', NULL),
+(2220, 4, 'label_select_all', 'specific', NULL),
+(2221, 4, 'label_unselect_all', 'specific', NULL),
+(2222, 4, 'button_export', 'specific', NULL),
+(2223, 4, 'text_restore_instruction', 'specific', NULL),
+(2224, 4, 'label_progress', 'specific', NULL),
+(2225, 4, 'text_only_sql_file_accepted', 'specific', NULL),
+(2226, 4, 'button_select_sql_file', 'specific', NULL),
+(2227, 4, 'error_store', 'specific', NULL),
+(2228, 4, 'text_due', 'specific', NULL),
+(2229, 4, 'label_taxrate_name', 'specific', NULL),
+(2230, 4, 'label_taxrate', 'specific', NULL),
+(2231, 4, 'title_taxrate', 'specific', NULL),
+(2232, 4, 'text_taxrate_title', 'specific', NULL),
+(2233, 4, 'text_new_taxrate_title', 'specific', NULL),
+(2234, 4, 'text_taxrate_list_title', 'specific', NULL),
+(2235, 4, 'text_unpaid', 'specific', NULL),
+(2236, 4, 'error_category_name', 'specific', NULL),
+(2237, 4, 'error_unit_name', 'specific', NULL),
+(2238, 4, 'text_product_updated', 'specific', NULL),
+(2239, 4, 'text_store_title', 'specific', NULL),
+(2240, 4, 'text_store_list_title', 'specific', NULL),
+(2241, 4, 'label_gtin', 'specific', NULL),
+(2242, 4, 'label_created_by', 'specific', NULL),
+(2243, 4, 'text_product_list', 'specific', NULL),
+(2244, 4, 'label_sub_total', 'specific', NULL),
+(2245, 4, 'text_payments', 'specific', NULL),
+(2246, 4, 'label_purchase_note', 'specific', NULL),
+(2247, 4, 'error_reference_no', 'specific', NULL),
+(2248, 4, 'text_billing_details', 'specific', NULL),
+(2249, 4, 'label_previous_due_paid', 'specific', NULL),
+(2250, 4, 'title_analytics', 'specific', NULL),
+(2251, 4, 'text_analytics_title', 'specific', NULL),
+(2252, 4, 'text_top_suppliers', 'specific', NULL),
+(2253, 4, 'text_top_brands', 'specific', NULL),
+(2254, 4, 'title_customer_analytics', 'specific', NULL),
+(2255, 4, 'text_birthday_today', 'specific', NULL),
+(2256, 4, 'text_birthday_coming', 'specific', NULL),
+(2257, 4, 'label_member_since', 'specific', NULL),
+(2258, 4, 'text_not_found', 'specific', NULL),
+(2259, 4, 'text_best_customer', 'specific', NULL),
+(2260, 4, 'text_purchase', 'specific', NULL),
+(2261, 4, 'title_login_logs', 'specific', NULL),
+(2262, 4, 'label_username', 'specific', NULL),
+(2263, 4, 'label_ip', 'specific', NULL),
+(2264, 4, 'label_logged_in', 'specific', NULL),
+(2265, 4, 'title_purchase_report', 'specific', NULL),
+(2266, 4, 'text_purchase_report_title', 'specific', NULL),
+(2267, 4, 'text_purchase_report_sub_title', 'specific', NULL),
+(2268, 4, 'button_itemwise', 'specific', NULL),
+(2269, 4, 'button_categorywise', 'specific', NULL),
+(2270, 4, 'button_supplierwise', 'specific', NULL),
+(2271, 4, 'title_user_profile', 'specific', NULL),
+(2272, 4, 'text_profile_title', 'specific', NULL),
+(2273, 4, 'text_users', 'specific', NULL),
+(2274, 4, 'text_since', 'specific', NULL),
+(2275, 4, 'text_contact_information', 'specific', NULL),
+(2276, 4, 'label_collection', 'specific', NULL),
+(2277, 4, 'text_sell_report', 'specific', NULL),
+(2278, 4, 'text_login_log', 'specific', NULL),
+(2279, 4, 'button_collection_report', 'specific', NULL),
+(2280, 4, 'text_invoice_list', 'specific', NULL),
+(2281, 4, 'label_items', 'specific', NULL),
+(2282, 4, 'label_time', 'specific', NULL),
+(2283, 4, 'label_mrp', 'specific', NULL),
+(2284, 4, 'label_cost_price', 'specific', NULL),
+(2285, 4, 'error_walking_customer_can_not_craete_due', 'specific', NULL),
+(2286, 4, 'text_trx_id', 'specific', NULL),
+(2287, 4, 'text_mobile_number', 'specific', NULL),
+(2288, 4, 'text_card_no', 'specific', NULL),
+(2289, 4, 'text_transaction_id', 'specific', NULL),
+(2290, 1, 'error_access_permission', 'specific', NULL),
+(2291, 4, 'text_retrieve_session', 'specific', NULL),
+(2292, 4, 'text_sign_as_different', 'specific', NULL),
+(2293, 4, 'text_footer_link', 'specific', NULL),
+(2294, 4, 'text_footer_link_text', 'specific', NULL),
+(2295, 4, 'text_receipt_preview', 'specific', NULL),
+(2296, 4, 'text_template_content_update_success', 'specific', NULL),
+(2297, 4, 'label_card_no', 'specific', NULL),
+(2298, 4, 'label_giftcard_value', 'specific', NULL),
+(2299, 4, 'label_expiry_date', 'specific', NULL),
+(2300, 4, 'button_create_giftcard', 'specific', NULL),
+(2301, 4, 'text_purchase_update_success', 'specific', NULL),
+(2302, 4, 'text_stock_register', 'specific', NULL),
+(2303, 4, 'text_chart', 'specific', NULL),
+(2304, 4, 'label_select', 'specific', NULL),
+(2305, 4, 'error_taxrate_name_exist', 'specific', NULL),
+(2306, 4, 'text_delete_title', 'specific', NULL),
+(2307, 4, 'text_delete_instruction', 'specific', NULL),
+(2308, 4, 'label_delete_the_product', 'specific', NULL),
+(2309, 4, 'label_soft_delete_the_product', 'specific', NULL),
+(2310, 4, 'text_delete', 'specific', NULL),
+(2311, 4, 'error_total_amount', 'specific', NULL),
+(2312, 4, 'title_sell_report', 'specific', NULL),
+(2313, 4, 'text_selling_report_title', 'specific', NULL),
+(2314, 4, 'text_selling_report_sub_title', 'specific', NULL),
+(2315, 4, 'title_collection_report', 'specific', NULL),
+(2316, 4, 'text_collection_report_title', 'specific', NULL),
+(2317, 4, 'text_collection_report', 'specific', NULL),
+(2318, 4, 'label_total_inv', 'specific', NULL),
+(2319, 4, 'label_net_amount', 'specific', NULL),
+(2320, 4, 'label_prev_due_collection', 'specific', NULL),
+(2321, 4, 'label_due_collection', 'specific', NULL),
+(2322, 4, 'label_due_given', 'specific', NULL),
+(2323, 4, 'label_received', 'specific', NULL);
 
 -- --------------------------------------------------------
 
@@ -2458,7 +3141,12 @@ CREATE TABLE `login_logs` (
 --
 
 INSERT INTO `login_logs` (`id`, `user_id`, `username`, `ip`, `status`, `created_at`) VALUES
-(1, 1, 'mokashihanama@gmail.com', '::1', 'success', '2025-07-03 08:46:41');
+(21, 1, 'mokashihanama@gmail.com', '::1', 'success', '2025-09-06 03:55:04'),
+(22, 1, 'mokashihanama@gmail.com', '::1', 'success', '2025-09-06 04:47:34'),
+(23, 1, 'mokashihanama@gmail.com', '::1', 'success', '2025-09-06 05:15:46'),
+(24, 1, 'mokashihanama@gmail.com', '::1', 'success', '2025-09-06 05:58:53'),
+(25, 1, 'mokashihanama@gmail.com', '::1', 'success', '2025-09-08 10:02:54'),
+(26, 1, 'mokashihanama@gmail.com', '::1', 'success', '2025-09-10 07:36:27');
 
 -- --------------------------------------------------------
 
@@ -2521,6 +3209,62 @@ CREATE TABLE `payments` (
   `created_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Dumping data for table `payments`
+--
+
+INSERT INTO `payments` (`id`, `type`, `is_profit`, `is_hide`, `store_id`, `invoice_id`, `reference_no`, `pmethod_id`, `transaction_id`, `capital`, `amount`, `details`, `attachment`, `note`, `total_paid`, `pos_balance`, `created_by`, `created_at`) VALUES
+(1, 'sell', 1, 0, 1, '100000001', NULL, 1, NULL, 4.0000, 5.0000, 'a:0:{}', NULL, '', 5.0000, 0.0000, 1, '2025-07-04 10:26:52'),
+(2, 'sell', 1, 0, 1, '100000002', NULL, 1, NULL, 4.0000, 5.0000, 'a:0:{}', NULL, '', 5.0000, 0.0000, 1, '2025-07-05 07:45:01'),
+(3, 'sell', 1, 0, 1, '100000003', NULL, 1, NULL, 4.0000, 5.0000, 'a:0:{}', NULL, '', 5.0000, 0.0000, 1, '2025-07-05 07:46:09'),
+(4, 'sell', 1, 0, 1, '100000004', NULL, 1, NULL, 4.0000, 5.0000, 'a:0:{}', NULL, '', 5.0000, 0.0000, 1, '2025-07-05 07:48:24'),
+(5, 'sell', 1, 0, 1, '100000005', NULL, 1, NULL, 4.0000, 5.0000, 'a:0:{}', NULL, '', 5.0000, 0.0000, 1, '2025-07-05 07:48:34'),
+(6, 'sell', 1, 0, 1, '100000006', NULL, 1, NULL, 4.0000, 5.0000, 'a:0:{}', NULL, '', 5.0000, 0.0000, 1, '2025-07-05 07:49:15'),
+(7, 'sell', 1, 0, 1, '100000007', NULL, 1, NULL, 4.0000, 5.0000, 'a:0:{}', NULL, '', 5.0000, 0.0000, 1, '2025-07-05 07:55:09'),
+(8, 'sell', 1, 0, 1, '100000008', NULL, 1, NULL, 4.0000, 5.0000, 'a:0:{}', NULL, '', 5.0000, 0.0000, 1, '2025-07-05 07:56:36'),
+(9, 'sell', 1, 0, 1, '100000009', NULL, 1, NULL, 4.0000, 5.0000, 'a:0:{}', NULL, '', 5.0000, 0.0000, 1, '2025-07-05 07:57:26'),
+(10, 'sell', 1, 0, 1, '100000010', NULL, 1, NULL, 4.0000, 5.0000, 'a:0:{}', NULL, '', 5.0000, 0.0000, 1, '2025-07-05 07:58:17'),
+(11, 'sell', 1, 0, 1, '100000011', NULL, 1, NULL, 4.0000, 5.0000, 'a:0:{}', NULL, '', 5.0000, 0.0000, 1, '2025-07-05 07:59:55'),
+(12, 'sell', 1, 0, 1, '100000012', NULL, 1, NULL, 4.0000, 5.0000, 'a:0:{}', NULL, '', 5.0000, 0.0000, 1, '2025-07-05 10:39:54'),
+(13, 'due_paid', 1, 0, 1, '100000012', NULL, 1, NULL, 4.0000, 5.0000, 'a:0:{}', NULL, '', 5.0000, 0.0000, 1, '2025-07-05 10:40:26'),
+(14, 'sell', 1, 0, 1, '100000013', NULL, 1, NULL, 4.0000, 5.0000, 'a:0:{}', NULL, '', 10.0000, 0.0000, 1, '2025-07-05 10:40:26'),
+(15, 'sell', 1, 0, 1, '100000014', NULL, 1, NULL, 0.8000, 1.0000, 'a:0:{}', NULL, '', 1.0000, 0.0000, 1, '2025-07-05 10:41:22'),
+(16, 'sell', 1, 0, 1, '100000015', NULL, 1, NULL, 8.0000, 10.0000, 'a:0:{}', NULL, '', 10.0000, 0.0000, 1, '2025-07-05 11:03:37'),
+(17, 'sell', 1, 0, 1, '100000016', NULL, 1, NULL, 8.0000, 12.8000, 'a:0:{}', NULL, '', 12.8000, 0.0000, 1, '2025-07-06 08:05:26'),
+(18, 'sell', 1, 0, 1, '100000017', NULL, 1, NULL, 22.0000, 29.8000, 'a:0:{}', NULL, '', 29.8000, 0.0000, 1, '2025-07-07 07:44:15'),
+(19, 'sell', 1, 0, 1, '100000018', NULL, 1, NULL, 8.0000, 12.8000, 'a:0:{}', NULL, '', 12.8000, 0.0000, 1, '2025-07-09 04:27:27'),
+(20, 'sell', 1, 0, 1, '100000019', NULL, 5, NULL, 4.0000, 5.0000, 's:0:\"\";', NULL, '', 5.0000, 0.0000, 1, '2025-07-15 09:26:02'),
+(21, 'sell', 1, 0, 1, '100000020', NULL, 5, NULL, 8.0000, 12.8000, 's:0:\"\";', NULL, '', 12.8000, 0.0000, 1, '2025-07-15 09:42:06'),
+(22, 'sell', 1, 0, 1, '100000021', NULL, 5, NULL, 8.0000, 12.8000, 's:0:\"\";', NULL, '', 12.8000, 0.0000, 1, '2025-07-15 09:58:06'),
+(23, 'sell', 1, 0, 1, '100000022', NULL, 5, NULL, 8.0000, 12.8000, 's:0:\"\";', NULL, '', 12.8000, 0.0000, 1, '2025-07-15 10:05:27'),
+(24, 'sell', 1, 0, 1, '100000023', NULL, 5, NULL, 7.0000, 10.0000, 's:0:\"\";', NULL, '', 10.0000, 0.0000, 1, '2025-07-15 10:09:45'),
+(25, 'sell', 1, 0, 1, '100000024', NULL, 5, NULL, 20.0000, 25.0000, 's:0:\"\";', NULL, '', 25.0000, 0.0000, 1, '2025-07-15 10:32:40'),
+(26, 'sell', 1, 0, 1, '100000025', NULL, 5, NULL, 7.0000, 10.0000, 's:0:\"\";', NULL, '', 10.0000, 0.0000, 1, '2025-07-16 04:20:03'),
+(27, 'sell', 1, 0, 1, '100000026', NULL, 5, NULL, 7.0000, 10.0000, 's:0:\"\";', NULL, 'gst : 23456789', 10.0000, 0.0000, 1, '2025-07-17 05:00:56'),
+(28, 'sell', 1, 0, 1, '100000027', NULL, 5, NULL, 20.0000, 25.0000, 's:0:\"\";', NULL, '', 25.0000, 0.0000, 1, '2025-07-17 05:01:29'),
+(29, 'sell', 1, 0, 1, '100000028', NULL, 5, NULL, 7.0000, 10.0000, 's:0:\"\";', NULL, '', 10.0000, 0.0000, 1, '2025-07-17 15:20:10'),
+(30, 'sell', 1, 0, 1, '100000029', NULL, 5, NULL, 7.0000, 10.0000, 's:0:\"\";', NULL, '', 10.0000, 0.0000, 1, '2025-07-17 15:25:47'),
+(31, 'sell', 1, 0, 1, '100000030', NULL, 5, NULL, 20.0000, 25.0000, 's:0:\"\";', NULL, '', 25.0000, 0.0000, 1, '2025-07-17 15:26:24'),
+(32, 'sell', 1, 0, 1, '100000031', NULL, 5, NULL, 7.0000, 10.0000, 's:0:\"\";', NULL, '', 10.0000, 0.0000, 1, '2025-07-17 15:29:08'),
+(33, 'sell', 1, 0, 1, '100000032', NULL, 5, NULL, 7.0000, 10.0000, 's:0:\"\";', NULL, '', 10.0000, 0.0000, 1, '2025-07-17 16:07:14'),
+(34, 'sell', 1, 0, 1, '100000033', NULL, 5, NULL, 7.0000, 10.0000, 's:0:\"\";', NULL, '', 10.0000, 0.0000, 1, '2025-07-17 16:19:38'),
+(35, 'sell', 1, 0, 1, '100000034', NULL, 5, NULL, 20.0000, 25.0000, 's:0:\"\";', NULL, '', 25.0000, 0.0000, 1, '2025-07-17 16:28:01'),
+(36, 'sell', 1, 0, 1, '100000035', NULL, 5, NULL, 7.0000, 10.0000, 's:0:\"\";', NULL, 'Customer GST Number: gst12345678', 10.0000, 0.0000, 1, '2025-07-17 16:38:00'),
+(37, 'sell', 1, 0, 1, '100000036', NULL, 5, NULL, 4.0000, 5.0000, 's:0:\"\";', NULL, '', 5.0000, 0.0000, 1, '2025-07-17 17:03:55'),
+(38, 'sell', 1, 0, 1, '100000037', NULL, 5, NULL, 30.0000, 45.0000, 's:0:\"\";', NULL, '', 45.0000, 0.0000, 1, '2025-07-17 17:35:44'),
+(39, 'due_paid', 1, 0, 1, '100000014', NULL, 1, NULL, 3.2000, 4.0000, 'a:0:{}', NULL, '', 4.0000, 0.0000, 1, '2025-07-18 03:58:33'),
+(40, 'sell', 1, 0, 1, '100000038', NULL, 5, NULL, 8.0000, 12.8000, 's:0:\"\";', NULL, '', 12.8000, 0.0000, 1, '2025-07-18 03:59:55'),
+(41, 'sell', 1, 0, 1, '100000039', NULL, 5, NULL, 7.0000, 10.0000, 's:0:\"\";', NULL, '', 10.0000, 0.0000, 1, '2025-07-18 04:00:31'),
+(42, 'sell', 1, 0, 1, '100000040', NULL, 5, NULL, 4.0000, 5.0000, 's:0:\"\";', NULL, '', 5.0000, 0.0000, 1, '2025-07-18 04:01:05'),
+(43, 'sell', 1, 0, 1, '100000041', NULL, 5, NULL, 4.0000, 5.0000, 's:0:\"\";', NULL, '', 5.0000, 0.0000, 1, '2025-07-18 04:10:56'),
+(44, 'sell', 1, 0, 1, '100000042', NULL, 5, NULL, 8.0000, 12.8000, 's:0:\"\";', NULL, '', 12.8000, 0.0000, 1, '2025-07-18 04:13:40'),
+(45, 'sell', 1, 0, 1, '100000043', NULL, 5, NULL, 20.0000, 25.0000, 's:0:\"\";', NULL, '', 25.0000, 0.0000, 1, '2025-07-18 07:01:45'),
+(46, 'sell', 1, 0, 1, '100000044', NULL, 5, NULL, 7.0000, 10.0000, 's:0:\"\";', NULL, '', 10.0000, 0.0000, 1, '2025-07-18 07:15:21'),
+(47, 'sell', 1, 0, 1, '100000045', NULL, 5, NULL, 4.0000, 5.0000, 's:0:\"\";', NULL, '', 5.0000, 0.0000, 1, '2025-07-18 07:28:11'),
+(48, 'sell', 1, 0, 1, '100000046', NULL, 5, NULL, 4.0000, 5.0000, 's:0:\"\";', NULL, '', 5.0000, 0.0000, 1, '2025-07-18 07:28:23'),
+(49, 'sell', 1, 0, 1, '100000047', NULL, 5, NULL, 7.0000, 10.0000, 's:0:\"\";', NULL, '', 10.0000, 0.0000, 1, '2025-07-18 07:28:31'),
+(50, 'sell', 1, 0, 1, '100000048', NULL, 5, NULL, 4.0000, 5.0000, 's:0:\"\";', NULL, '', 5.0000, 0.0000, 1, '2025-07-18 07:42:30');
+
 -- --------------------------------------------------------
 
 --
@@ -2544,7 +3288,8 @@ INSERT INTO `pmethods` (`pmethod_id`, `name`, `code_name`, `details`, `created_a
 (1, 'Cash on Delivery', 'cod', 'Payment method details goes here...', '2025-07-03 08:43:17', '2025-07-03 08:43:17'),
 (2, 'Bkash', 'bkash', 'Bkash a Brack Bank Service', '2025-07-03 08:43:17', '2025-07-03 08:43:17'),
 (3, 'Gift card', 'gift_card', 'Details of giftcard payment method', '2025-07-03 08:43:17', '2025-07-03 08:43:17'),
-(4, 'Credit', 'credit', 'Payment by customer credited balance', '2025-07-03 08:43:17', '2025-07-03 08:43:17');
+(4, 'Credit', 'credit', 'Payment by customer credited balance', '2025-07-03 08:43:17', '2025-07-03 08:43:17'),
+(5, 'UPI Payment', 'upi', 'Payment through UPI (Unified Payments Interface) with dynamic QR code', '2025-07-15 09:25:39', '2025-07-15 09:25:39');
 
 -- --------------------------------------------------------
 
@@ -2609,7 +3354,7 @@ CREATE TABLE `pos_templates` (
 --
 
 INSERT INTO `pos_templates` (`template_id`, `template_name`, `template_content`, `template_css`, `created_at`, `updated_at`, `created_by`) VALUES
-(1, 'Default', '&lt;section class=&quot;receipt-template&quot;&gt;\n\n        &lt;header class=&quot;receipt-header&quot;&gt;\n            &lt;div class=&quot;logo-area&quot;&gt;\n                &lt;img class=&quot;logo&quot; src=&quot;{{ logo_url }}&quot;&gt;\n            &lt;/div&gt;\n            &lt;h2 class=&quot;store-name&quot;&gt;{{ store_name }}&lt;/h2&gt;\n            &lt;div class=&quot;address-area&quot;&gt;\n                &lt;span class=&quot;info address&quot;&gt;{{ store_address }}&lt;/span&gt;\n                &lt;div class=&quot;block&quot;&gt;\n                    &lt;span class=&quot;info phone&quot;&gt;Mobile: {{ store_phone }}&lt;/span&gt;, &lt;span class=&quot;info email&quot;&gt;Email: {{ store_email }}&lt;/span&gt;\n                &lt;/div&gt;\n            &lt;/div&gt;\n        &lt;/header&gt;\n        \n        &lt;section class=&quot;info-area&quot;&gt;\n            &lt;table&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-30&quot;&gt;&lt;span&gt;Invoice ID:&lt;/td&gt;\n                    &lt;td&gt;{{ invoice_id }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-30&quot;&gt;VAT-Reg:&lt;/td&gt;\n                    &lt;td&gt;{{ vat_reg }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-30&quot;&gt;&lt;span&gt;Date:&lt;/td&gt;\n                    &lt;td&gt;{{ date_time }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-30&quot;&gt;&lt;span&gt;GST Reg:&lt;/td&gt;\n                    &lt;td&gt;{{ gst_reg }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-30&quot;&gt;Customer Name:&lt;/td&gt;\n                    &lt;td&gt;{{ customer_name }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-30&quot;&gt;Phone:&lt;/td&gt;\n                    &lt;td&gt;{{ customer_phone }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-30&quot;&gt;Address:&lt;/td&gt;\n                    &lt;td&gt;{{ customer_address }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-30&quot;&gt;GTIN:&lt;/td&gt;\n                    &lt;td&gt;{{ gtin }}&lt;/td&gt;\n                &lt;/tr&gt;\n            &lt;/table&gt;\n        &lt;/section&gt;\n        \n        &lt;h4 class=&quot;main-title&quot;&gt;INVOICE&lt;/h4&gt;\n        \n        {{ if items }}\n        &lt;section class=&quot;listing-area item-list&quot;&gt;\n            &lt;table&gt;\n                &lt;thead&gt;\n                    &lt;tr&gt;\n                        &lt;td class=&quot;w-10 text-center&quot;&gt;Sl.&lt;/td&gt;\n                        &lt;td class=&quot;w-40 text-center&quot;&gt;Name&lt;/td&gt;\n                        &lt;td class=&quot;w-15 text-center&quot;&gt;Qty&lt;/td&gt;\n                        &lt;td class=&quot;w-15 text-right&quot;&gt;Price&lt;/td&gt;\n                        &lt;td class=&quot;w-20 text-right&quot;&gt;Amount&lt;/td&gt;\n                    &lt;/tr&gt;\n                &lt;/thead&gt;\n                &lt;tbody&gt;\n                    {{ items }}\n                        &lt;tr&gt;\n                            &lt;td class=&quot;text-center&quot;&gt;{{ sl }}&lt;/td&gt;\n                            &lt;td&gt;{{ item_name }} \n                                {{ if invoice_view == indian_gst }} \n                                    &lt;small&gt;[HSN-{{ hsn_code }}]&lt;/small&gt;\n                                {{ endif }}\n                            &lt;/td&gt;\n                            &lt;td class=&quot;text-center&quot;&gt;{{ item_quantity }} {{ unitName }}&lt;/td&gt;\n                            &lt;td class=&quot;text-right&quot;&gt;{{ item_price }}&lt;/td&gt;\n                            &lt;td class=&quot;text-right&quot;&gt;{{ item_total }}&lt;/td&gt;   \n                        &lt;/tr&gt;\n                    {{ /items }}\n                &lt;/tbody&gt;\n            &lt;/table&gt;\n        &lt;/section&gt;\n        {{ endif }}\n        \n        &lt;section class=&quot;info-area calculation-area&quot;&gt;\n            &lt;table&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Total Amt:&lt;/td&gt;\n                    &lt;td&gt;{{ subtotal }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Order Tax:&lt;/td&gt;\n                    &lt;td&gt;{{ order_tax }}&lt;/td&gt;\n                &lt;/tr&gt;\n                {{ if invoice_view == \'indian_gst\' }}\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;CGST:&lt;/td&gt;\n                    &lt;td&gt;{{ cgst }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;SGST:&lt;/td&gt;\n                    &lt;td&gt;{{ sgst }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;IGST:&lt;/td&gt;\n                    &lt;td&gt;{{ igst }}&lt;/td&gt;\n                &lt;/tr&gt;\n                {{ endif }}\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Discount:&lt;/td&gt;\n                    &lt;td&gt;{{ discount_amount }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Shipping Chrg:&lt;/td&gt;\n                    &lt;td&gt;{{ shipping_amount }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Others Chrg:&lt;/td&gt;\n                    &lt;td&gt;{{ others_charge }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Previous Due:&lt;/td&gt;\n                    &lt;td&gt;{{ previous_due }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Total Due:&lt;/td&gt;\n                    &lt;td&gt;{{ payable_amount }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Amount Paid:&lt;/td&gt;\n                    &lt;td&gt;{{ paid_amount }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Prev. Due Paid:&lt;/td&gt;\n                    &lt;td&gt;{{ prev_due_paid }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Change:&lt;/td&gt;\n                    &lt;td&gt;{{ change }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Due:&lt;/td&gt;\n                    &lt;td&gt;{{ due }}&lt;/td&gt;\n                &lt;/tr&gt;\n            &lt;/table&gt;\n        &lt;/section&gt;\n        \n        &lt;section class=&quot;info-area italic&quot;&gt;\n            &lt;span class=&quot;text-small&quot;&gt;&lt;b&gt;In Text:&lt;/b&gt; {{ amount_in_text }}&lt;/span&gt;&lt;br&gt;\n            {{ if invoice_note }}\n                &lt;span class=&quot;text-small&quot;&gt;&lt;b&gt;Note:&lt;/b&gt; {{ invoice_note }}&lt;/span&gt;\n            {{ endif }}\n        &lt;/section&gt;\n\n        {{ if return_items }}\n        &lt;section class=&quot;listing-area payment-list&quot;&gt;\n            &lt;div class=&quot;heading&quot;&gt;\n                &lt;h2 class=&quot;sub-title&quot;&gt;Returns&lt;/h2&gt;\n            &lt;/div&gt;\n            &lt;table&gt;\n                &lt;thead&gt;\n                    &lt;td class=&quot;w-5 text-center&quot;&gt;Sl.&lt;/td&gt;\n                    &lt;td class=&quot;w-25 text-center&quot;&gt;Returned at&lt;/td&gt;\n                    &lt;td class=&quot;w-30 text-center&quot;&gt;Item Name&lt;/td&gt;\n                    &lt;td class=&quot;w-20 text-right&quot;&gt;Qty&lt;/td&gt;\n                    &lt;td class=&quot;w-20 text-right&quot;&gt;Amt&lt;/td&gt;\n                &lt;/thead&gt;\n                &lt;tbody&gt;\n                    {{return_items}}\n                        &lt;tr&gt;\n                            &lt;td class=&quot;text-center&quot;&gt;{{ sl }}&lt;/td&gt;\n                            &lt;td class=&quot;text-center&quot;&gt;{{ created_at }}&lt;/td&gt;\n                            &lt;td class=&quot;text-center&quot;&gt;{{ item_name }}&lt;/td&gt;\n                            &lt;td class=&quot;text-right&quot;&gt;{{ item_quantity }}&lt;/td&gt;\n                            &lt;td class=&quot;text-right&quot;&gt;{{ item_total }}&lt;/td&gt; \n                        &lt;/tr&gt;\n                    {{/return_items}}\n                &lt;/tbody&gt;\n            &lt;/table&gt;\n        &lt;/section&gt;\n        {{ endif }}\n        \n        {{ if payments }}\n        &lt;section class=&quot;listing-area payment-list&quot;&gt;\n            &lt;div class=&quot;heading&quot;&gt;\n                &lt;h2 class=&quot;sub-title&quot;&gt;Payments&lt;/h2&gt;\n            &lt;/div&gt;\n            &lt;table&gt;\n                &lt;thead&gt;\n                    &lt;td class=&quot;w-10 text-center&quot;&gt;Sl.&lt;/td&gt;\n                    &lt;td class=&quot;w-50 text-center&quot;&gt;Payment Method&lt;/td&gt;\n                    &lt;td class=&quot;w-20 text-right&quot;&gt;Amount&lt;/td&gt;\n                    &lt;td class=&quot;w-20 text-right&quot;&gt;Balance&lt;/td&gt;\n                &lt;/thead&gt;\n                &lt;tbody&gt;\n                    {{ payments }}\n                        &lt;tr&gt;\n                            &lt;td class=&quot;text-center&quot;&gt;{{ sl }}&lt;/td&gt;\n                            &lt;td&gt;{{ name }} by {{ by }} on {{ created_at }}&lt;/td&gt;\n                            &lt;td class=&quot;text-right&quot;&gt;{{ amount }}&lt;/td&gt;\n                            &lt;td class=&quot;text-right&quot;&gt;{{ pos_balance }}&lt;/td&gt; \n                        &lt;/tr&gt;\n                    {{ /payments }}\n                &lt;/tbody&gt;\n            &lt;/table&gt;\n        &lt;/section&gt;\n        {{ endif }}\n           \n        {{ if invoice_view != \'standard\' }}\n        {{ if taxes }}\n        &lt;section class=&quot;listing-area payment-list&quot;&gt;\n            &lt;div class=&quot;heading&quot;&gt;\n                &lt;h2 class=&quot;sub-title&quot;&gt;Tax Information&lt;/h2&gt;\n            &lt;/div&gt;\n            &lt;table&gt;\n                &lt;thead&gt;\n                    &lt;td class=&quot;w-25&quot;&gt;Name&lt;/td&gt;\n                    &lt;td class=&quot;w-25 text-center&quot;&gt;Code&lt;/td&gt;\n                    &lt;td class=&quot;w-25 text-right&quot;&gt;Qty&lt;/td&gt;\n                    &lt;td class=&quot;w-25 text-right&quot;&gt;Tax Amt.&lt;/td&gt;\n                &lt;/thead&gt;\n                &lt;tbody&gt;\n                    {{ taxes }}\n                        &lt;tr&gt;\n                            &lt;td&gt;{{ taxrate_name }}&lt;/td&gt;\n                            &lt;td class=&quot;text-center&quot;&gt;{{ code_name }}&lt;/td&gt;\n                            &lt;td class=&quot;text-right&quot;&gt;{{ qty }}&lt;/td&gt; \n                            &lt;td class=&quot;text-right&quot;&gt;{{ item_tax }}&lt;/td&gt; \n                        &lt;/tr&gt;\n                    {{ /taxes }}\n                    {{ if invoice_view == \'indian_gst\' }}\n                        &lt;tr class=&quot;bg-gray&quot;&gt;\n                            &lt;td&gt;Order Tax: {{ order_tax }}&lt;/td&gt;\n                            &lt;td class=&quot;text-right&quot;&gt;CGST: {{ cgst }}&lt;/td&gt;\n                            &lt;td class=&quot;text-right&quot;&gt;SGST: {{ sgst }}&lt;/td&gt;\n                            &lt;td class=&quot;text-right&quot;&gt;IGST: {{ igst }}&lt;/td&gt;\n                        &lt;/tr&gt;\n                     {{ endif }}\n                &lt;/tbody&gt;\n            &lt;/table&gt;\n        &lt;/section&gt;\n        {{ endif }}\n        {{ endif }}\n        \n        {{ if barcode }}\n        &lt;section class=&quot;info-area barcode-area&quot;&gt;\n            {{ barcode }}\n        &lt;/section&gt;\n        {{ endif }}\n        \n        &lt;section class=&quot;info-area align-center footer-area&quot;&gt;\n            &lt;span class=&quot;block&quot;&gt;Sold product No Claim. No Change, New product One Month Warranty.&lt;/span&gt;\n            &lt;span class=&quot;block bold&quot;&gt;{{ footer_text }}&lt;/span&gt;\n        &lt;/section&gt;\n        \n &lt;/section&gt;', '/*Common CSS*/\n        .receipt-template {\n            width:302px;\n            margin:0 auto;\n        }\n        .receipt-template .text-small {\n            font-size: 10px;\n        }\n        .receipt-template .block {\n            display: block;\n        }\n        .receipt-template .inline-block {\n            display: inline-block;\n        }\n        .receipt-template .bold {\n            font-weight: 700;\n        }\n        .receipt-template .italic {\n            font-style: italic;\n        }\n        .receipt-template .align-right {\n            text-align: right;\n        }\n        .receipt-template .align-center {\n            text-align: center;\n        }\n        .receipt-template .main-title {\n            font-size: 14px;\n            font-weight: 700;\n            text-align: center;\n            margin: 10px 0 5px 0;\n            padding: 0;\n        }\n        .receipt-template .heading {\n            position: relation;\n        }\n        .receipt-template .title {\n            font-size: 16px;\n            font-weight: 700;\n            margin: 10px 0 5px 0;\n        }\n        .receipt-template .sub-title {\n            font-size: 12px;\n            font-weight: 700;\n            margin: 10px 0 5px 0;\n        }\n        .receipt-template table {\n            width: 100%;\n        }\n        .receipt-template td,\n        .receipt-template th {\n            font-size:12px;\n        }\n        .receipt-template .info-area {\n            font-size: 12px;      \n            line-height: 1.222;  \n        }\n        .receipt-template .listing-area {\n            line-height: 1.222;\n        }\n        .receipt-template .listing-area table {}\n        .receipt-template .listing-area table thead tr {\n            border-top: 1px solid #000;\n            border-bottom: 1px solid #000;\n            font-weight: 700;\n        }\n        .receipt-template .listing-area table tbody tr {\n            border-top: 1px dashed #000;\n            border-bottom: 1px dashed #000;\n        }\n        .receipt-template .listing-area table tbody tr:last-child {\n            border-bottom: none;\n        }\n        .receipt-template .listing-area table td {\n            vertical-align: top;\n        }\n        .receipt-template .info-area table {}\n        .receipt-template .info-area table thead tr {\n            border-top: 1px solid #000;\n            border-bottom: 1px solid #000;\n        }\n    \n /*Receipt Heading*/\n        .receipt-template .receipt-header {\n            text-align: center;\n        }\n        .receipt-template .receipt-header .logo-area {\n            width: 80px;\n            height: 80px;\n            margin: 0 auto;\n        }\n        .receipt-template .receipt-header .logo-area img.logo {\n            display: inline-block;\n            max-width: 100%;\n            max-height: 100%;\n        }\n        .receipt-template .receipt-header .address-area {\n            margin-bottom: 5px;\n            line-height: 1;\n        }\n        .receipt-template .receipt-header .info {\n            font-size: 12px;\n        }\n        .receipt-template .receipt-header .store-name {\n            font-size: 24px;\n            font-weight: 700;\n            margin: 0;\n            padding: 0;\n        }\n        \n        \n/*Invoice Info Area*/ \n    .receipt-template .invoice-info-area {}\n    \n/*Customer Customer Area*/\n    .receipt-template .customer-area {\n        margin-top:10px;\n    }\n\n/*Calculation Area*/\n    .receipt-template .calculation-area {\n        border-top: 2px solid #000;\n        font-weight: bold;\n    }\n    .receipt-template .calculation-area table td {\n        text-align: right;\n    }\n    .receipt-template .calculation-area table td:nth-child(2) {\n        border-bottom: 1px dashed #000;\n    }\n\n/*Item Listing*/\n    .receipt-template .item-list table tr {\n    }\n    \n/*Barcode Area*/\n    .receipt-template .barcode-area {\n        margin-top: 10px;\n        text-align: center;\n    }\n    .receipt-template .barcode-area img {\n        max-width: 100%;\n        display: inline-block;\n    }\n    \n/*Footer Area*/\n    .receipt-template .footer-area {\n        line-height: 1.222;\n        font-size: 10px;\n    }\n \n/*Media Query*/\n    @media print {\n        .receipt-template {\n            width: 100%;\n        }\n    }\n    @media all and (max-width: 215px) {}', '2025-07-03 08:43:17', '2025-07-03 08:43:17', 1),
+(1, 'Default', '&lt;section class=&quot;receipt-template&quot;&gt;\n\n    &lt;header class=&quot;receipt-header&quot;&gt;\n        &lt;div class=&quot;logo-area&quot;&gt;\n            &lt;img class=&quot;logo&quot; src=&quot;{{ logo_url }}&quot;&gt;\n        &lt;/div&gt;\n        &lt;h2 class=&quot;store-name&quot;&gt;{{ store_name }}&lt;/h2&gt;\n        &lt;div class=&quot;address-area&quot;&gt;\n            &lt;span class=&quot;info address&quot;&gt;{{ store_address }}&lt;/span&gt;\n            &lt;div class=&quot;block&quot;&gt;\n                &lt;span class=&quot;info phone&quot;&gt;Mobile: {{ store_phone }}&lt;/span&gt;, &lt;span class=&quot;info email&quot;&gt;Email: {{ store_email }}&lt;/span&gt;\n            &lt;/div&gt;\n        &lt;/div&gt;\n    &lt;/header&gt;\n    \n    &lt;section class=&quot;info-area&quot;&gt;\n        &lt;table&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-30&quot;&gt;&lt;span&gt;Invoice ID:&lt;/td&gt;\n                &lt;td&gt;{{ invoice_id }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-30&quot;&gt;VAT-Reg:&lt;/td&gt;\n                &lt;td&gt;{{ vat_reg }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-30&quot;&gt;&lt;span&gt;Date:&lt;/td&gt;\n                &lt;td&gt;{{ date_time }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-30&quot;&gt;&lt;span&gt;GST Reg:&lt;/td&gt;\n                &lt;td&gt;{{ gst_reg }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-30&quot;&gt;Customer Name:&lt;/td&gt;\n                &lt;td&gt;{{ customer_name }}&lt;/td&gt;\n            &lt;/tr&gt;\n            {{ if customer_gst_number }}\n            &lt;tr&gt;\n                &lt;td class=&quot;w-30&quot;&gt;Customer GST:&lt;/td&gt;\n                &lt;td&gt;{{ customer_gst_number }}&lt;/td&gt;\n            &lt;/tr&gt;\n            {{ endif }}\n            &lt;tr&gt;\n                &lt;td class=&quot;w-30&quot;&gt;Phone:&lt;/td&gt;\n                &lt;td&gt;{{ customer_phone }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-30&quot;&gt;Address:&lt;/td&gt;\n                &lt;td&gt;{{ customer_address }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-30&quot;&gt;GTIN:&lt;/td&gt;\n                &lt;td&gt;{{ gtin }}&lt;/td&gt;\n            &lt;/tr&gt;\n        &lt;/table&gt;\n    &lt;/section&gt;\n    \n    &lt;h4 class=&quot;main-title&quot;&gt;INVOICE&lt;/h4&gt;\n    \n    {{ if items }}\n    &lt;section class=&quot;listing-area item-list&quot;&gt;\n        &lt;table&gt;\n            &lt;thead&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-10 text-center&quot;&gt;Sl.&lt;/td&gt;\n                    &lt;td class=&quot;w-40 text-center&quot;&gt;Name&lt;/td&gt;\n                    &lt;td class=&quot;w-15 text-center&quot;&gt;Qty&lt;/td&gt;\n                    &lt;td class=&quot;w-15 text-right&quot;&gt;Price&lt;/td&gt;\n                    &lt;td class=&quot;w-20 text-right&quot;&gt;Amount&lt;/td&gt;\n                &lt;/tr&gt;\n            &lt;/thead&gt;\n            &lt;tbody&gt;\n                {{ items }}\n                    &lt;tr&gt;\n                        &lt;td class=&quot;text-center&quot;&gt;{{ sl }}&lt;/td&gt;\n                        &lt;td&gt;{{ item_name }} \n                            {{ if invoice_view == indian_gst }} \n                                &lt;small&gt;[HSN-{{ hsn_code }}]&lt;/small&gt;\n                            {{ endif }}\n                        &lt;/td&gt;\n                        &lt;td class=&quot;text-center&quot;&gt;{{ item_quantity }} {{ unitName }}&lt;/td&gt;\n                        &lt;td class=&quot;text-right&quot;&gt;{{ item_price }}&lt;/td&gt;\n                        &lt;td class=&quot;text-right&quot;&gt;{{ item_total }}&lt;/td&gt;   \n                    &lt;/tr&gt;\n                {{ /items }}\n            &lt;/tbody&gt;\n        &lt;/table&gt;\n    &lt;/section&gt;\n    {{ endif }}\n    \n    &lt;section class=&quot;info-area calculation-area&quot;&gt;\n        &lt;table&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-70&quot;&gt;Total Amt:&lt;/td&gt;\n                &lt;td&gt;{{ subtotal }}&lt;/td&gt;\n            &lt;/tr&gt;\n            {{ if invoice_view == \'indian_gst\' }}\n            &lt;tr&gt;\n                &lt;td class=&quot;w-70&quot;&gt;CGST:&lt;/td&gt;\n                &lt;td&gt;{{ cgst }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-70&quot;&gt;SGST:&lt;/td&gt;\n                &lt;td&gt;{{ sgst }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-70&quot;&gt;IGST:&lt;/td&gt;\n                &lt;td&gt;{{ igst }}&lt;/td&gt;\n            &lt;/tr&gt;\n            {{ endif }}\n            &lt;tr&gt;\n                &lt;td class=&quot;w-70&quot;&gt;Discount:&lt;/td&gt;\n                &lt;td&gt;{{ discount_amount }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-70&quot;&gt;Shipping Chrg:&lt;/td&gt;\n                &lt;td&gt;{{ shipping_amount }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-70&quot;&gt;Others Chrg:&lt;/td&gt;\n                &lt;td&gt;{{ others_charge }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-70&quot;&gt;Previous Due:&lt;/td&gt;\n                &lt;td&gt;{{ previous_due }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-70&quot;&gt;Total Due:&lt;/td&gt;\n                &lt;td&gt;{{ payable_amount }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-70&quot;&gt;Amount Paid:&lt;/td&gt;\n                &lt;td&gt;{{ paid_amount }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-70&quot;&gt;Prev. Due Paid:&lt;/td&gt;\n                &lt;td&gt;{{ prev_due_paid }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-70&quot;&gt;Change:&lt;/td&gt;\n                &lt;td&gt;{{ change }}&lt;/td&gt;\n            &lt;/tr&gt;\n            &lt;tr&gt;\n                &lt;td class=&quot;w-70&quot;&gt;Due:&lt;/td&gt;\n                &lt;td&gt;{{ due }}&lt;/td&gt;\n            &lt;/tr&gt;\n        &lt;/table&gt;\n    &lt;/section&gt;\n    \n    &lt;section class=&quot;info-area italic&quot;&gt;\n        &lt;span class=&quot;text-small&quot;&gt;&lt;b&gt;In Text:&lt;/b&gt; {{ amount_in_text }}&lt;/span&gt;&lt;br&gt;\n        {{ if invoice_note }}\n            &lt;span class=&quot;text-small&quot;&gt;&lt;b&gt;Note:&lt;/b&gt; {{ invoice_note }}&lt;/span&gt;\n        {{ endif }}\n    &lt;/section&gt;\n\n    {{ if return_items }}\n    &lt;section class=&quot;listing-area payment-list&quot;&gt;\n        &lt;div class=&quot;heading&quot;&gt;\n            &lt;h2 class=&quot;sub-title&quot;&gt;Returns&lt;/h2&gt;\n        &lt;/div&gt;\n        &lt;table&gt;\n            &lt;thead&gt;\n                &lt;td class=&quot;w-5 text-center&quot;&gt;Sl.&lt;/td&gt;\n                &lt;td class=&quot;w-25 text-center&quot;&gt;Returned at&lt;/td&gt;\n                &lt;td class=&quot;w-30 text-center&quot;&gt;Item Name&lt;/td&gt;\n                &lt;td class=&quot;w-20 text-right&quot;&gt;Qty&lt;/td&gt;\n                &lt;td class=&quot;w-20 text-right&quot;&gt;Amt&lt;/td&gt;\n            &lt;/thead&gt;\n            &lt;tbody&gt;\n                {{return_items}}\n                    &lt;tr&gt;\n                        &lt;td class=&quot;text-center&quot;&gt;{{ sl }}&lt;/td&gt;\n                        &lt;td class=&quot;text-center&quot;&gt;{{ created_at }}&lt;/td&gt;\n                        &lt;td class=&quot;text-center&quot;&gt;{{ item_name }}&lt;/td&gt;\n                        &lt;td class=&quot;text-right&quot;&gt;{{ item_quantity }}&lt;/td&gt;\n                        &lt;td class=&quot;text-right&quot;&gt;{{ item_total }}&lt;/td&gt; \n                    &lt;/tr&gt;\n                {{/return_items}}\n            &lt;/tbody&gt;\n        &lt;/table&gt;\n    &lt;/section&gt;\n    {{ endif }}\n    \n    {{ if payments }}\n    &lt;section class=&quot;listing-area payment-list&quot;&gt;\n        &lt;div class=&quot;heading&quot;&gt;\n            &lt;h2 class=&quot;sub-title&quot;&gt;Payments&lt;/h2&gt;\n        &lt;/div&gt;\n        &lt;table&gt;\n            &lt;thead&gt;\n                &lt;td class=&quot;w-10 text-center&quot;&gt;Sl.&lt;/td&gt;\n                &lt;td class=&quot;w-50 text-center&quot;&gt;Payment Method&lt;/td&gt;\n                &lt;td class=&quot;w-20 text-right&quot;&gt;Amount&lt;/td&gt;\n                &lt;td class=&quot;w-20 text-right&quot;&gt;Balance&lt;/td&gt;\n            &lt;/thead&gt;\n            &lt;tbody&gt;\n                {{ payments }}\n                    &lt;tr&gt;\n                        &lt;td class=&quot;text-center&quot;&gt;{{ sl }}&lt;/td&gt;\n                        &lt;td&gt;{{ name }} by {{ by }} on {{ created_at }}&lt;/td&gt;\n                        &lt;td class=&quot;text-right&quot;&gt;{{ amount }}&lt;/td&gt;\n                        &lt;td class=&quot;text-right&quot;&gt;{{ pos_balance }}&lt;/td&gt; \n                    &lt;/tr&gt;\n                {{ /payments }}\n            &lt;/tbody&gt;\n        &lt;/table&gt;\n    &lt;/section&gt;\n    {{ endif }}\n       \n    {{ if invoice_view != \'standard\' }}\n    {{ if taxes }}\n    &lt;section class=&quot;listing-area payment-list&quot;&gt;\n        &lt;div class=&quot;heading&quot;&gt;\n            &lt;h2 class=&quot;sub-title&quot;&gt;Tax Information&lt;/h2&gt;\n        &lt;/div&gt;\n        &lt;table&gt;\n            &lt;thead&gt;\n                &lt;td class=&quot;w-25&quot;&gt;Name&lt;/td&gt;\n                &lt;td class=&quot;w-25 text-center&quot;&gt;Code&lt;/td&gt;\n                &lt;td class=&quot;w-25 text-right&quot;&gt;Qty&lt;/td&gt;\n                &lt;td class=&quot;w-25 text-right&quot;&gt;Tax Amt.&lt;/td&gt;\n            &lt;/thead&gt;\n            &lt;tbody&gt;\n                {{ taxes }}\n                    &lt;tr&gt;\n                        &lt;td&gt;{{ taxrate_name }}&lt;/td&gt;\n                        &lt;td class=&quot;text-center&quot;&gt;{{ code_name }}&lt;/td&gt;\n                        &lt;td class=&quot;text-right&quot;&gt;{{ qty }}&lt;/td&gt; \n                        &lt;td class=&quot;text-right&quot;&gt;{{ item_tax }}&lt;/td&gt; \n                    &lt;/tr&gt;\n                {{ /taxes }}\n                {{ if invoice_view == \'indian_gst\' }}\n                    &lt;tr class=&quot;bg-gray&quot;&gt;\n                        &lt;td&gt;&lt;/td&gt;\n                        &lt;td class=&quot;text-right&quot;&gt;CGST: {{ cgst }}&lt;/td&gt;\n                        &lt;td class=&quot;text-right&quot;&gt;SGST: {{ sgst }}&lt;/td&gt;\n                        &lt;td class=&quot;text-right&quot;&gt;IGST: {{ igst }}&lt;/td&gt;\n                    &lt;/tr&gt;\n                {{ endif }}\n            &lt;/tbody&gt;\n        &lt;/table&gt;\n    &lt;/section&gt;\n    {{ endif }}\n    {{ endif }}\n    \n    {{ if barcode }}\n    &lt;section class=&quot;info-area barcode-area&quot;&gt;\n        {{ barcode }}\n    &lt;/section&gt;\n    {{ endif }}\n    \n    &lt;section class=&quot;info-area align-center footer-area&quot;&gt;\n        &lt;span class=&quot;block&quot;&gt;Sold product No Claim. No Change, New product One Month Warranty.&lt;/span&gt;\n        &lt;span class=&quot;block bold&quot;&gt;{{ footer_text }}&lt;/span&gt;\n    &lt;/section&gt;\n    \n&lt;/section&gt;', '/*Common CSS*/\n        .receipt-template {\n            width:302px;\n            margin:0 auto;\n        }\n        .receipt-template .text-small {\n            font-size: 10px;\n        }\n        .receipt-template .block {\n            display: block;\n        }\n        .receipt-template .inline-block {\n            display: inline-block;\n        }\n        .receipt-template .bold {\n            font-weight: 700;\n        }\n        .receipt-template .italic {\n            font-style: italic;\n        }\n        .receipt-template .align-right {\n            text-align: right;\n        }\n        .receipt-template .align-center {\n            text-align: center;\n        }\n        .receipt-template .main-title {\n            font-size: 14px;\n            font-weight: 700;\n            text-align: center;\n            margin: 10px 0 5px 0;\n            padding: 0;\n        }\n        .receipt-template .heading {\n            position: relation;\n        }\n        .receipt-template .title {\n            font-size: 16px;\n            font-weight: 700;\n            margin: 10px 0 5px 0;\n        }\n        .receipt-template .sub-title {\n            font-size: 12px;\n            font-weight: 700;\n            margin: 10px 0 5px 0;\n        }\n        .receipt-template table {\n            width: 100%;\n        }\n        .receipt-template td,\n        .receipt-template th {\n            font-size:12px;\n        }\n        .receipt-template .info-area {\n            font-size: 12px;      \n            line-height: 1.222;  \n        }\n        .receipt-template .listing-area {\n            line-height: 1.222;\n        }\n        .receipt-template .listing-area table {}\n        .receipt-template .listing-area table thead tr {\n            border-top: 1px solid #000;\n            border-bottom: 1px solid #000;\n            font-weight: 700;\n        }\n        .receipt-template .listing-area table tbody tr {\n            border-top: 1px dashed #000;\n            border-bottom: 1px dashed #000;\n        }\n        .receipt-template .listing-area table tbody tr:last-child {\n            border-bottom: none;\n        }\n        .receipt-template .listing-area table td {\n            vertical-align: top;\n        }\n        .receipt-template .info-area table {}\n        .receipt-template .info-area table thead tr {\n            border-top: 1px solid #000;\n            border-bottom: 1px solid #000;\n        }\n    \n /*Receipt Heading*/\n        .receipt-template .receipt-header {\n            text-align: center;\n        }\n        .receipt-template .receipt-header .logo-area {\n            width: 80px;\n            height: 80px;\n            margin: 0 auto;\n        }\n        .receipt-template .receipt-header .logo-area img.logo {\n            display: inline-block;\n            max-width: 100%;\n            max-height: 100%;\n        }\n        .receipt-template .receipt-header .address-area {\n            margin-bottom: 5px;\n            line-height: 1;\n        }\n        .receipt-template .receipt-header .info {\n            font-size: 12px;\n        }\n        .receipt-template .receipt-header .store-name {\n            font-size: 24px;\n            font-weight: 700;\n            margin: 0;\n            padding: 0;\n        }\n        \n        \n/*Invoice Info Area*/ \n    .receipt-template .invoice-info-area {}\n    \n/*Customer Customer Area*/\n    .receipt-template .customer-area {\n        margin-top:10px;\n    }\n\n/*Calculation Area*/\n    .receipt-template .calculation-area {\n        border-top: 2px solid #000;\n        font-weight: bold;\n    }\n    .receipt-template .calculation-area table td {\n        text-align: right;\n    }\n    .receipt-template .calculation-area table td:nth-child(2) {\n        border-bottom: 1px dashed #000;\n    }\n\n/*Item Listing*/\n    .receipt-template .item-list table tr {\n    }\n    \n/*Barcode Area*/\n    .receipt-template .barcode-area {\n        margin-top: 10px;\n        text-align: center;\n    }\n    .receipt-template .barcode-area img {\n        max-width: 100%;\n        display: inline-block;\n    }\n    \n/*Footer Area*/\n    .receipt-template .footer-area {\n        line-height: 1.222;\n        font-size: 10px;\n    }\n \n/*Media Query*/\n    @media print {\n        .receipt-template {\n            width: 100%;\n        }\n    }\n    @media all and (max-width: 215px) {}', '2025-07-03 08:43:17', '2025-07-18 04:06:03', 1),
 (2, 'Minimal', '&lt;section class=&quot;receipt-template&quot;&gt;\n\n        &lt;header class=&quot;receipt-header&quot;&gt;\n            &lt;div class=&quot;logo-area&quot;&gt;\n                &lt;img class=&quot;logo&quot; src=&quot;{{  logo_url  }}&quot;&gt;\n            &lt;/div&gt;\n            &lt;h2 class=&quot;store-name&quot;&gt;{{ store_name }}&lt;/h2&gt;\n            &lt;div class=&quot;address-area&quot;&gt;\n                &lt;span class=&quot;info address&quot;&gt;{{ store_address }}&lt;/span&gt;\n                &lt;div class=&quot;block&quot;&gt;\n                    &lt;span class=&quot;info phone&quot;&gt;Mobile: {{ store_phone }}&lt;/span&gt;, &lt;span class=&quot;info email&quot;&gt;Email: {{ store_email }}&lt;/span&gt;\n                &lt;/div&gt;\n            &lt;/div&gt;\n        &lt;/header&gt;\n        \n        &lt;div class=&quot;heading&quot;&gt;\n            &lt;h2 class=&quot;title text-center zero-around title-lg&quot;&gt;INVOICE&lt;/h2&gt;\n        &lt;/div&gt;\n        \n        &lt;section class=&quot;info-area&quot;&gt;\n            &lt;table&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-10&quot;&gt;&lt;span&gt;Bill #:&lt;/td&gt;\n                    &lt;td class=&quot;w-40 text-center sinfo billno&quot;&gt;&lt;span&gt;{{ invoice_id }}&lt;/span&gt;&lt;/td&gt;\n                    &lt;td class=&quot;w-10 text-right&quot;&gt;&lt;span&gt;Date:&lt;/td&gt;\n                    &lt;td class=&quot;w-40 text-center sinfo date&quot;&gt;&lt;span&gt;{{ date_time }}&lt;/span&gt;&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-10&quot;&gt;M/S:&lt;/td&gt;\n                    &lt;td class=&quot;w-90&quot; colspan=&quot;3&quot;&gt;&lt;span class=&quot;text-lg&quot;&gt;{{ customer_name }}&lt;/span&gt;&lt;/td&gt;\n                &lt;/tr&gt;\n            &lt;/table&gt;\n        &lt;/section&gt;\n        \n        &lt;section class=&quot;listing-area item-list&quot;&gt;\n            &lt;table&gt;\n                &lt;thead&gt;\n                    &lt;tr&gt;\n                        &lt;td class=&quot;w-40 text-center&quot;&gt;DESC.&lt;/td&gt;\n                        &lt;td class=&quot;w-15 text-center&quot;&gt;Qty&lt;/td&gt;\n                        &lt;td class=&quot;w-15 text-right&quot;&gt;Price&lt;/td&gt;\n                        &lt;td class=&quot;w-20 text-right&quot;&gt;AMT&lt;/td&gt;\n                    &lt;/tr&gt;\n                &lt;/thead&gt;\n                &lt;tbody&gt;\n                    {{ items }}\n                        &lt;tr&gt;\n                            &lt;td&gt;{{ item_name }}&lt;/td&gt;\n                            &lt;td class=&quot;text-center&quot;&gt;{{ item_quantity }}&lt;/td&gt;\n                            &lt;td class=&quot;text-right&quot;&gt;{{ item_price }}&lt;/td&gt;\n                            &lt;td class=&quot;text-right&quot;&gt;{{ item_total }}&lt;/td&gt;   \n                        &lt;/tr&gt;\n                    {{ /items }}\n                &lt;/tbody&gt;\n            &lt;/table&gt;\n        &lt;/section&gt;\n        \n        &lt;section class=&quot;info-area calculation-area&quot;&gt;\n            &lt;table&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Subtotal:&lt;/td&gt;\n                    &lt;td&gt;{{ subtotal }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Order Tax:&lt;/td&gt;\n                    &lt;td&gt;{{ order_tax }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Discount:&lt;/td&gt;\n                    &lt;td&gt;{{ discount_amount }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Shipping Chrg:&lt;/td&gt;\n                    &lt;td&gt;{{ shipping_amount }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Others Chrg:&lt;/td&gt;\n                    &lt;td&gt;{{ others_charge }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Previous Due:&lt;/td&gt;\n                    &lt;td&gt;{{ previous_due }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Amount Total:&lt;/td&gt;\n                    &lt;td&gt;{{ payable_amount }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Amount Paid:&lt;/td&gt;\n                    &lt;td&gt;{{ paid_amount }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Due:&lt;/td&gt;\n                    &lt;td&gt;{{ due }}&lt;/td&gt;\n                &lt;/tr&gt;\n                &lt;tr&gt;\n                    &lt;td class=&quot;w-70&quot;&gt;Change:&lt;/td&gt;\n                    &lt;td&gt;{{ change }}&lt;/td&gt;\n                &lt;/tr&gt;\n            &lt;/table&gt;\n        &lt;/section&gt;\n        \n        &lt;section class=&quot;stylish-footer text-center&quot;&gt;\n            &lt;span&gt;Printed On: {{ printed_on }}&lt;/span&gt;\n        &lt;/section&gt;\n        \n        &lt;section class=&quot;info-area align-center footer-area&quot;&gt;\n            &lt;span class=&quot;block&quot;&gt;Sold product No Claim. No Change, New product One Month Warranty.&lt;/span&gt;\n            &lt;span class=&quot;block bold&quot;&gt;Thank You for Choosing Us.&lt;/span&gt;\n        &lt;/section&gt;\n        \n &lt;/section&gt;', '/*Common CSS*/\n        .receipt-template {\n            width:302px;\n            margin:0 auto;\n        }\n        .receipt-template .text-small {\n            font-size: 10px;\n        }\n        .receipt-template .block {\n            display: block;\n        }\n        .receipt-template .inline-block {\n            display: inline-block;\n        }\n        .receipt-template .bold {\n            font-weight: 700;\n        }\n        .receipt-template .italic {\n            font-style: italic;\n        }\n        .receipt-template .align-right {\n            text-align: right;\n        }\n        .receipt-template .align-center {\n            text-align: center;\n        }\n        .receipt-template .heading {\n            position: relation;\n        }\n        .receipt-template .title {\n            font-size: 16px;\n            font-weight: 700;\n            margin: 10px 0 5px 0;\n        }\n        .receipt-template .sub-title {\n            font-size: 12px;\n            font-weight: 700;\n            margin: 10px 0 5px 0;\n        }\n        .receipt-template table {\n            width: 100%;\n        }\n        .receipt-template td,\n        .receipt-template th {\n            font-size:10px;\n        }\n        .receipt-template .info-area {\n            font-size: 12px;      \n            line-height: 1.222;  \n        }\n        .receipt-template .listing-area {\n            line-height: 1.222;\n        }\n        .receipt-template .listing-area table {}\n        .receipt-template .listing-area table thead tr {\n            border-top: 1px solid #000;\n            border-bottom: 1px solid #000;\n            font-weight: 700;\n        }\n        .receipt-template .listing-area table tbody tr {\n            border-top: 1px dashed #000;\n            border-bottom: 1px dashed #000;\n        }\n        .receipt-template .listing-area table tbody tr:last-child {\n            border-bottom: none;\n        }\n        .receipt-template .listing-area table td {\n            vertical-align: top;\n        }\n        .receipt-template .info-area table {}\n        .receipt-template .info-area table thead tr {\n            border-top: 1px solid #000;\n            border-bottom: 1px solid #000;\n        }\n\n /*Receipt Heading*/\n        .receipt-template .receipt-header {\n            text-align: center;\n        }\n        .receipt-template .receipt-header .logo-area {\n            width: 80px;\n            height: 80px;\n            margin: 0 auto;\n        }\n        .receipt-template .receipt-header .logo-area img.logo {\n            display: inline-block;\n            max-width: 100%;\n            max-height: 100%;\n        }\n        .receipt-template .receipt-header .address-area {\n            margin-bottom: 5px;\n            line-height: 1;\n        }\n        .receipt-template .receipt-header .info {\n            font-size: 12px;\n        }\n        .receipt-template .receipt-header .store-name {\n            font-size: 28px;\n            font-weight: 700;\n            margin: 0;\n            padding: 0;\n        }\n        \n        \n/*Invoice Info Area*/ \n    .receipt-template .invoice-info-area {}\n    \n/*Customer Info Area*/\n    .receipt-template .customer-area {\n        margin-top:10px;\n    }\n\n/*Calculation Area*/\n    .receipt-template .calculation-area {\n        border-top: 2px solid #000;\n    }\n    .receipt-template .calculation-area table td {\n        text-align: right;\n    }\n    .receipt-template .calculation-area table td:nth-child(2) {\n        border-bottom: 1px dashed #000;\n    }\n\n/*Item Listing*/\n    .receipt-template .item-list table tr {\n    }\n    \n/*Barcode Area*/\n    .receipt-template .barcode-area {\n        margin-top: 10px;\n        text-align: center;\n    }\n    .receipt-template .barcode-area img {\n        max-width: 100%;\n        display: inline-block;\n    }\n    \n/*Footer Area*/\n    .receipt-template .footer-area {\n        line-height: 1.222;\n        font-size: 10px;\n    }\n \n/*Media Query*/\n    @media print {\n        .receipt-template {\n            width: 100%;\n        }\n    }\n    @media all and (max-width: 215px) {}\n    \n    \n/* Additional */\n        .receipt-template .zero-around {\n            margin:0;\n            padding: 0;\n        }\n        .receipt-template .title-lg {\n            font-size: 18px!important;\n            margin-bottom: 5px;\n         }\n         .receipt-template .text-lg {\n             font-size: 18px;\n             font-weight: 700;\n         }\n         .receipt-template .info-area td {\n             vertical-align: center;\n         }\n         .receipt-template .info-area td.sinfo {\n             padding: 1px!important;\n         }\n         .receipt-template .info-area td.sinfo span {\n             display: block;\n             font-weight: 700;\n             border: 1px solid #000;\n             padding: 2px;\n         }\n         .receipt-template .listing-area td, .receipt-template .listing-area th, .receipt-template .calculation-area table td {\n             font-size: 13px;\n             font-weight: 700;\n         }\n         .receipt-template .item-list table thead td {\n             text-align: center;\n             padding: 3px;\n             border: 2px solid #000;\n          }\n          .receipt-template .stylish-footer {\n              margin: 10px 0 5px 0;\n          }\n          .receipt-template .stylish-footer span {\n              display: inline-block;\n              font-size: 12px;\n              border-top: 1px dashed #000;\n              border-bottom: 1px dashed #000; \n          }\n', '2025-07-03 08:43:17', '2025-07-03 08:43:17', 1);
 
 -- --------------------------------------------------------
@@ -2700,6 +3445,21 @@ CREATE TABLE `products` (
   `description` longtext DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`p_id`, `p_type`, `p_code`, `hsn_code`, `barcode_symbology`, `p_name`, `category_id`, `unit_id`, `p_image`, `description`) VALUES
+(2, 'standard', '04008358', NULL, 'code128', 'pen', 1, 1, '', ''),
+(3, 'standard', '49858965', NULL, 'code128', 'Maggie', 2, 1, '', ''),
+(4, 'standard', '05637171', NULL, 'code128', 'tobacco', 1, 1, '', ''),
+(5, 'standard', '58742879', NULL, 'code128', 'paan', 1, 1, '', ''),
+(6, 'standard', '14609482', NULL, 'code128', 'burger', 1, 1, '', ''),
+(8, 'standard', '05068636', NULL, 'code128', 'tissue paper_55', 1, 1, '', ''),
+(9, 'standard', '85424794', NULL, 'code128', 'tobacco_ui-800', 1, 1, '', ''),
+(10, 'standard', '70526742', NULL, 'code128', 'tobacco ujbfutg-300', 1, 1, '', ''),
+(11, 'standard', '49886672', NULL, 'code128', 'test1-12', 1, 1, '', '');
+
 -- --------------------------------------------------------
 
 --
@@ -2739,6 +3499,21 @@ CREATE TABLE `product_to_store` (
   `sort_order` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Dumping data for table `product_to_store`
+--
+
+INSERT INTO `product_to_store` (`id`, `product_id`, `store_id`, `purchase_price`, `sell_price`, `quantity_in_stock`, `alert_quantity`, `sup_id`, `brand_id`, `box_id`, `taxrate_id`, `tax_method`, `preference`, `e_date`, `p_date`, `status`, `sort_order`) VALUES
+(2, 2, 1, 4.0000, 5.0000, 7.0000, 10.0000, 1, 1, 1, 3, 'inclusive', 'a:0:{}', '2026-07-04', '2025-07-04', 1, 0),
+(3, 3, 1, 10.0000, 12.0000, 0.0000, 10.0000, 2, 5, 1, 2, 'inclusive', 'a:0:{}', '2026-07-05', '2025-07-05', 1, 0),
+(4, 4, 1, 8.0000, 10.0000, 121.0000, 10.0000, 1, 1, 1, 12, 'exclusive', 'a:0:{}', '2026-07-05', '2025-07-05', 1, 0),
+(5, 5, 1, 7.0000, 10.0000, 11292.0000, 10.0000, 2, 1, 1, 13, 'inclusive', 'a:0:{}', '2026-07-15', '2025-07-15', 1, 0),
+(6, 6, 1, 20.0000, 25.0000, 95.0000, 10.0000, 1, 0, 1, 14, 'inclusive', 'a:0:{}', '2026-07-15', '2025-07-15', 1, 0),
+(8, 8, 1, 30.0000, 45.0000, 997.0000, 10.0000, 2, 1, 1, 13, 'inclusive', 'a:0:{}', '2026-07-17', '2025-07-17', 1, 0),
+(9, 9, 1, 200.0000, 500.0000, 100.0000, 10.0000, 2, 2, 1, 2, 'inclusive', 'a:0:{}', '2026-07-19', '2025-07-19', 1, 0),
+(10, 10, 1, 100.0000, 200.0000, 100.0000, 10.0000, 2, 5, 1, 3, 'inclusive', 'a:0:{}', '2026-07-19', '2025-07-19', 1, 0),
+(11, 11, 1, 8.0000, 10.0000, 10.0000, 10.0000, 2, 2, 1, 3, 'inclusive', 'a:0:{}', '2026-09-13', '2025-09-13', 1, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -2765,6 +3540,32 @@ CREATE TABLE `purchase_info` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `purchase_info`
+--
+
+INSERT INTO `purchase_info` (`info_id`, `invoice_id`, `inv_type`, `store_id`, `sup_id`, `total_item`, `status`, `total_sell`, `purchase_note`, `attachment`, `is_visible`, `payment_status`, `checkout_status`, `shipping_status`, `created_by`, `purchase_date`, `created_at`, `updated_at`) VALUES
+(1, 'B4f2679b1', 'purchase', 1, 1, 1.0000, 'stock', 0.0000, '', '', 1, 'paid', 1, 'received', 1, '2025-07-04 00:00:00', '2025-07-04 10:26:12', '2025-07-04 10:26:12'),
+(2, 'B0b2b5f43', 'purchase', 1, 1, 1.0000, 'stock', 0.0000, '', '', 1, 'paid', 1, 'received', 1, '2025-07-05 00:00:00', '2025-07-05 10:31:00', '2025-07-05 10:31:00'),
+(3, 'B133455456', 'purchase', 1, 2, 1.0000, 'stock', 0.0000, '', '', 1, 'paid', 1, 'received', 1, '2025-07-05 00:00:00', '2025-07-05 10:36:26', '2025-07-05 10:36:26'),
+(4, 'B92af28cb', 'purchase', 1, 1, 1.0000, 'stock', 0.0000, '', '', 1, 'paid', 1, 'received', 1, '2025-07-05 00:00:00', '2025-07-05 10:54:20', '2025-07-05 10:54:20'),
+(5, 'B83214fe7', 'purchase', 1, 1, 1.0000, 'stock', 0.0000, '', '', 1, 'paid', 1, 'received', 1, '2025-07-05 00:00:00', '2025-07-05 11:01:42', '2025-07-05 11:01:42'),
+(6, 'Bnbc6r7u', 'purchase', 1, 1, 1.0000, 'stock', 0.0000, '', '', 1, 'paid', 1, 'received', 1, '2025-07-05 00:00:00', '2025-07-05 11:02:36', '2025-07-05 11:02:36'),
+(7, 'Ba5f85708', 'purchase', 1, 1, 1.0000, 'stock', 0.0000, '', '', 1, 'paid', 1, 'received', 1, '2025-07-05 00:00:00', '2025-07-05 11:04:58', '2025-07-05 11:04:58'),
+(8, 'Bb5158172', 'purchase', 1, 2, 1.0000, 'stock', 0.0000, '', '', 1, 'paid', 1, 'received', 1, '2025-07-15 00:00:00', '2025-07-15 10:09:37', '2025-07-15 10:09:37'),
+(9, 'B44f6595d', 'purchase', 1, 1, 1.0000, 'stock', 0.0000, 'tax : cgst @18\r\n', '', 1, 'paid', 1, 'received', 1, '2025-07-15 00:00:00', '2025-07-15 10:32:30', '2025-07-15 11:13:47'),
+(10, 'B7b18845a', 'purchase', 1, 2, 1.0000, 'stock', 0.0000, '', '', 1, 'paid', 1, 'received', 1, '2025-07-15 00:00:00', '2025-07-15 11:20:39', '2025-07-15 11:20:39'),
+(11, 'B50a32156', 'purchase', 1, 2, 1.0000, 'stock', 0.0000, '', '', 1, 'paid', 1, 'received', 1, '2025-07-16 00:00:00', '2025-07-16 05:47:46', '2025-07-16 05:47:46'),
+(12, 'B48fa06bd', 'purchase', 1, 2, 1.0000, 'stock', 0.0000, '\nGST: , CGST: , SGST: , IGST: , Item Tax: , Order Tax: ', '', 1, 'paid', 1, 'received', 1, '2025-07-16 00:00:00', '2025-07-16 05:52:35', '2025-07-16 05:52:35'),
+(13, 'B9fa11713', 'purchase', 1, 2, 1.0000, 'stock', 0.0000, '\nSupplier GST: , Total Tax: 1.96, Order Tax: 0', '', 1, 'paid', 1, 'received', 1, '2025-07-16 00:00:00', '2025-07-16 05:54:38', '2025-07-16 05:54:38'),
+(14, 'B0e46da27', 'purchase', 1, 2, 1.0000, 'stock', 0.0000, '', '', 1, 'paid', 1, 'received', 1, '2025-07-16 00:00:00', '2025-07-16 05:57:21', '2025-07-16 05:57:21'),
+(15, 'Be9d3ac40', 'purchase', 1, 2, 1.0000, 'stock', 0.0000, 'Supplier GST: gst45678\nTax Info: vhjf6878iu', '', 1, 'paid', 1, 'received', 1, '2025-07-16 00:00:00', '2025-07-16 09:48:43', '2025-07-16 09:48:43'),
+(16, 'B25c38850', 'purchase', 1, 2, 1.0000, 'stock', 0.0000, 'Supplier GST: gst 12345678\nTax Info: cgst 1800\r\nsgst 1500', '', 1, 'paid', 1, 'received', 1, '2025-07-17 00:00:00', '2025-07-17 05:00:29', '2025-07-17 05:00:29'),
+(17, 'Bcdd2bcf9', 'purchase', 1, 2, 1.0000, 'stock', 0.0000, 'Supplier GST: gst567\nTax Info: cgst. 56\r\nsgst 4567', '', 1, 'paid', 1, 'received', 1, '2025-07-17 00:00:00', '2025-07-17 17:35:15', '2025-07-17 17:35:15'),
+(18, 'B2a5a61df', 'purchase', 1, 2, 1.0000, 'stock', 0.0000, '', '', 1, 'paid', 1, 'received', 1, '2025-07-19 00:00:00', '2025-07-19 04:25:25', '2025-07-19 04:25:25'),
+(19, 'B071992ab', 'purchase', 1, 2, 1.0000, 'stock', 0.0000, '', '', 1, 'paid', 1, 'received', 1, '2025-07-19 00:00:00', '2025-07-19 04:34:06', '2025-07-19 04:34:06'),
+(20, 'B4f3a937c', 'purchase', 1, 2, 1.0000, 'stock', 0.0000, '', '', 1, 'paid', 1, 'received', 1, '2025-09-13 00:00:00', '2025-09-13 05:57:08', '2025-09-13 05:57:08');
 
 -- --------------------------------------------------------
 
@@ -2797,6 +3598,32 @@ CREATE TABLE `purchase_item` (
   `installment_quantity` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Dumping data for table `purchase_item`
+--
+
+INSERT INTO `purchase_item` (`id`, `invoice_id`, `store_id`, `item_id`, `category_id`, `brand_id`, `item_name`, `item_purchase_price`, `item_selling_price`, `item_quantity`, `total_sell`, `status`, `item_total`, `item_tax`, `tax_method`, `tax`, `gst`, `cgst`, `sgst`, `igst`, `return_quantity`, `installment_quantity`) VALUES
+(1, 'B4f2679b1', 1, 2, 1, 1, 'pen', 4.0000, 5.0000, 20.0000, 20.0000, 'sold', 40.0000, 0.0000, 'inclusive', '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 0.0000, 0),
+(2, 'B0b2b5f43', 1, 2, 1, 1, 'pen', 4.0000, 5.0000, 10.0000, 3.0000, 'active', 40.0000, 0.0000, 'inclusive', '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 0.0000, 0),
+(3, 'B133455456', 1, 3, 2, 5, 'Maggie', 10.0000, 12.0000, 1.0000, 1.0000, 'sold', 10.0000, 1.8000, 'inclusive', '18.0000', '18.0000', 0.0000, 0.0000, 1.8000, 0.0000, 0),
+(4, 'B92af28cb', 1, 4, 1, 1, 'tobacco', 8.0000, 10.0000, 100.0000, 9.0000, 'active', 1024.0000, 224.0000, 'exclusive', '28.0000', '28.0000', 112.0000, 112.0000, 0.0000, 0.0000, 0),
+(5, 'B83214fe7', 1, 4, 1, 1, 'tobacco', 8.0000, 10.0000, 10.0000, 0.0000, 'stock', 80.0000, 22.4000, 'inclusive', '28.0000', '28.0000', 11.2000, 11.2000, 0.0000, 0.0000, 0),
+(6, 'Bnbc6r7u', 1, 4, 1, 1, 'tobacco', 8.0000, 10.0000, 10.0000, 0.0000, 'stock', 80.0000, 22.4000, 'inclusive', '28.0000', '28.0000', 11.2000, 11.2000, 0.0000, 0.0000, 0),
+(7, 'Ba5f85708', 1, 4, 1, 1, 'tobacco', 8.0000, 10.0000, 10.0000, 0.0000, 'stock', 102.4000, 22.4000, 'exclusive', '28.0000', '28.0000', 11.2000, 11.2000, 0.0000, 0.0000, 0),
+(8, 'Bb5158172', 1, 5, 1, 1, 'paan', 7.0000, 10.0000, 200.0000, 12.0000, 'active', 700.0000, 196.0000, 'inclusive', '28.0000', '28.0000', 0.0000, 0.0000, 196.0000, 0.0000, 0),
+(9, 'B44f6595d', 1, 6, 1, 0, 'burger', 20.0000, 25.0000, 100.0000, 5.0000, 'active', 2000.0000, 720.0000, 'inclusive', '36.0000', '36.0000', 360.0000, 360.0000, 0.0000, 0.0000, 0),
+(10, 'B7b18845a', 1, 5, 1, 1, 'paan', 7.0000, 10.0000, 200.0000, 3.0000, 'active', 700.0000, 196.0000, 'inclusive', '28.0000', '28.0000', 0.0000, 0.0000, 196.0000, 0.0000, 0),
+(11, 'B50a32156', 1, 5, 1, 1, 'paan', 7.0000, 10.0000, 10100.0000, 3.0000, 'active', 70000.0000, 19600.0000, 'inclusive', '28.0000', '28.0000', 0.0000, 0.0000, 19600.0000, 0.0000, 0),
+(12, 'B48fa06bd', 1, 5, 1, 1, 'paan', 7.0000, 10.0000, 101.0000, 3.0000, 'active', 7.0000, 1.9600, 'inclusive', '28.0000', '28.0000', 0.0000, 0.0000, 1.9600, 0.0000, 0),
+(13, 'B9fa11713', 1, 5, 1, 1, 'paan', 7.0000, 10.0000, 101.0000, 3.0000, 'active', 7.0000, 1.9600, 'inclusive', '28.0000', '28.0000', 0.0000, 0.0000, 1.9600, 0.0000, 0),
+(14, 'B0e46da27', 1, 5, 1, 1, 'paan', 7.0000, 10.0000, 101.0000, 3.0000, 'active', 7.0000, 1.9600, 'inclusive', '28.0000', '28.0000', 0.0000, 0.0000, 1.9600, 0.0000, 0),
+(15, 'Be9d3ac40', 1, 5, 1, 1, 'paan', 7.0000, 10.0000, 101.0000, 3.0000, 'active', 7.0000, 1.9600, 'inclusive', '28.0000', '28.0000', 0.0000, 0.0000, 1.9600, 0.0000, 0),
+(16, 'B25c38850', 1, 5, 1, 1, 'paan', 7.0000, 10.0000, 1100.0000, 3.0000, 'active', 7000.0000, 1960.0000, 'inclusive', '28.0000', '28.0000', 0.0000, 0.0000, 1960.0000, 0.0000, 0),
+(17, 'Bcdd2bcf9', 1, 8, 1, 1, 'tissue paper_55', 30.0000, 45.0000, 1000.0000, 3.0000, 'active', 30000.0000, 8400.0000, 'inclusive', '28.0000', '28.0000', 0.0000, 0.0000, 8400.0000, 0.0000, 0),
+(18, 'B2a5a61df', 1, 9, 1, 2, 'tobacco ui_800', 200.0000, 500.0000, 100.0000, 0.0000, 'active', 20000.0000, 3600.0000, 'inclusive', '18.0000', '18.0000', 0.0000, 0.0000, 3600.0000, 0.0000, 0),
+(19, 'B071992ab', 1, 10, 1, 5, 'tobacco ujbfutg-300', 100.0000, 200.0000, 100.0000, 0.0000, 'active', 10000.0000, 0.0000, 'inclusive', '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 0.0000, 0),
+(20, 'B4f3a937c', 1, 11, 1, 2, 'test1-12', 8.0000, 10.0000, 10.0000, 0.0000, 'active', 80.0000, 0.0000, 'inclusive', '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 0.0000, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -2817,6 +3644,32 @@ CREATE TABLE `purchase_logs` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `purchase_logs`
+--
+
+INSERT INTO `purchase_logs` (`id`, `sup_id`, `reference_no`, `ref_invoice_id`, `type`, `pmethod_id`, `description`, `amount`, `store_id`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 1, 'CT250704100001', 'B4f2679b1', 'purchase', 1, 'Paid while purchasing', 40.0000, 1, 1, '2025-07-04 10:26:12', '2025-07-04 10:26:12'),
+(2, 1, 'CT2507051002', 'B0b2b5f43', 'purchase', 1, 'Paid while purchasing', 40.0000, 1, 1, '2025-07-05 10:31:00', '2025-07-05 10:31:00'),
+(3, 2, 'CT25070511003', 'B133455456', 'purchase', 1, 'Paid while purchasing', 10.0000, 1, 1, '2025-07-05 10:36:26', '2025-07-05 10:36:26'),
+(4, 1, 'CT25070511004', 'B92af28cb', 'purchase', 1, 'Paid while purchasing', 1248.0000, 1, 1, '2025-07-05 10:54:20', '2025-07-05 10:54:20'),
+(5, 1, 'CT25070511005', 'B83214fe7', 'purchase', 1, 'Paid while purchasing', 96.1280, 1, 1, '2025-07-05 11:01:42', '2025-07-05 11:01:42'),
+(6, 1, 'CT25070511006', 'Bnbc6r7u', 'purchase', 1, 'Paid while purchasing', 80.0000, 1, 1, '2025-07-05 11:02:36', '2025-07-05 11:02:36'),
+(7, 1, 'CT25070511007', 'Ba5f85708', 'purchase', 1, 'Paid while purchasing', 102.4000, 1, 1, '2025-07-05 11:04:58', '2025-07-05 11:04:58'),
+(8, 2, 'CT25071511008', 'Bb5158172', 'purchase', 5, 'Paid while purchasing', 700.0000, 1, 1, '2025-07-15 10:09:37', '2025-07-15 10:09:37'),
+(9, 1, 'CT25071511009', 'B44f6595d', 'purchase', 5, 'Paid while purchasing', 2000.0000, 1, 1, '2025-07-15 10:32:30', '2025-07-15 10:32:30'),
+(10, 2, 'CT25071511010', 'B7b18845a', 'purchase', 5, 'Paid while purchasing', 700.0000, 1, 1, '2025-07-15 11:20:39', '2025-07-15 11:20:39'),
+(11, 2, 'CT25071611011', 'B50a32156', 'purchase', 5, 'Paid while purchasing', 70000.0000, 1, 1, '2025-07-16 05:47:46', '2025-07-16 05:47:46'),
+(12, 2, 'CT25071611012', 'B48fa06bd', 'purchase', 5, 'Paid while purchasing', 7.0000, 1, 1, '2025-07-16 05:52:35', '2025-07-16 05:52:35'),
+(13, 2, 'CT25071611013', 'B9fa11713', 'purchase', 5, 'Paid while purchasing', 7.0000, 1, 1, '2025-07-16 05:54:38', '2025-07-16 05:54:38'),
+(14, 2, 'CT25071611014', 'B0e46da27', 'purchase', 5, 'Paid while purchasing', 7.0000, 1, 1, '2025-07-16 05:57:21', '2025-07-16 05:57:21'),
+(15, 2, 'CT25071611015', 'Be9d3ac40', 'purchase', 5, 'Paid while purchasing', 7.0000, 1, 1, '2025-07-16 09:48:43', '2025-07-16 09:48:43'),
+(16, 2, 'CT25071711016', 'B25c38850', 'purchase', 5, 'Paid while purchasing', 7000.0000, 1, 1, '2025-07-17 05:00:29', '2025-07-17 05:00:29'),
+(17, 2, 'CT25071711017', 'Bcdd2bcf9', 'purchase', 5, 'Paid while purchasing', 30000.0000, 1, 1, '2025-07-17 17:35:15', '2025-07-17 17:35:15'),
+(18, 2, 'CT25071911018', 'B2a5a61df', 'purchase', 5, 'Paid while purchasing', 20000.0000, 1, 1, '2025-07-19 04:25:25', '2025-07-19 04:25:25'),
+(19, 2, 'CT25071911019', 'B071992ab', 'purchase', 5, 'Paid while purchasing', 10000.0000, 1, 1, '2025-07-19 04:34:06', '2025-07-19 04:34:06'),
+(20, 2, 'CT25091311020', 'B4f3a937c', 'purchase', 5, 'Paid while purchasing', 80.0000, 1, 1, '2025-09-13 05:57:08', '2025-09-13 05:57:08');
 
 -- --------------------------------------------------------
 
@@ -2842,6 +3695,32 @@ CREATE TABLE `purchase_payments` (
   `created_by` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `purchase_payments`
+--
+
+INSERT INTO `purchase_payments` (`id`, `type`, `is_hide`, `store_id`, `invoice_id`, `reference_no`, `pmethod_id`, `transaction_id`, `details`, `attachment`, `note`, `amount`, `total_paid`, `balance`, `created_by`, `created_at`) VALUES
+(1, 'purchase', 0, 1, 'B4f2679b1', NULL, 1, NULL, NULL, NULL, '', 40.0000, 40.0000, 0.0000, 1, '2025-07-04 10:26:12'),
+(2, 'purchase', 0, 1, 'B0b2b5f43', NULL, 1, NULL, NULL, NULL, '', 40.0000, 40.0000, 0.0000, 1, '2025-07-05 10:31:00'),
+(3, 'purchase', 0, 1, 'B133455456', NULL, 1, NULL, NULL, NULL, '', 10.0000, 10.0000, 0.0000, 1, '2025-07-05 10:36:26'),
+(4, 'purchase', 0, 1, 'B92af28cb', NULL, 1, NULL, NULL, NULL, '', 1248.0000, 1248.0000, 0.0000, 1, '2025-07-05 10:54:20'),
+(5, 'purchase', 0, 1, 'B83214fe7', NULL, 1, NULL, NULL, NULL, '', 96.1280, 96.1280, 0.0000, 1, '2025-07-05 11:01:42'),
+(6, 'purchase', 0, 1, 'Bnbc6r7u', NULL, 1, NULL, NULL, NULL, '', 80.0000, 80.0000, 0.0000, 1, '2025-07-05 11:02:36'),
+(7, 'purchase', 0, 1, 'Ba5f85708', NULL, 1, NULL, NULL, NULL, '', 102.4000, 102.4000, 0.0000, 1, '2025-07-05 11:04:58'),
+(8, 'purchase', 0, 1, 'Bb5158172', NULL, 5, NULL, NULL, NULL, '', 700.0000, 700.0000, 0.0000, 1, '2025-07-15 10:09:37'),
+(9, 'purchase', 0, 1, 'B44f6595d', NULL, 5, NULL, NULL, NULL, '', 2000.0000, 2000.0000, 0.0000, 1, '2025-07-15 10:32:30'),
+(10, 'purchase', 0, 1, 'B7b18845a', NULL, 5, NULL, NULL, NULL, '', 700.0000, 700.0000, 0.0000, 1, '2025-07-15 11:20:39'),
+(11, 'purchase', 0, 1, 'B50a32156', NULL, 5, NULL, NULL, NULL, '', 70000.0000, 70000.0000, 0.0000, 1, '2025-07-16 05:47:46'),
+(12, 'purchase', 0, 1, 'B48fa06bd', NULL, 5, NULL, NULL, NULL, '\nGST: , CGST: , SGST: , IGST: , Item Tax: , Order Tax: ', 7.0000, 7.0000, 0.0000, 1, '2025-07-16 05:52:35'),
+(13, 'purchase', 0, 1, 'B9fa11713', NULL, 5, NULL, NULL, NULL, '\nSupplier GST: , Total Tax: 1.96, Order Tax: 0', 7.0000, 7.0000, 0.0000, 1, '2025-07-16 05:54:38'),
+(14, 'purchase', 0, 1, 'B0e46da27', NULL, 5, NULL, NULL, NULL, '', 7.0000, 7.0000, 0.0000, 1, '2025-07-16 05:57:21'),
+(15, 'purchase', 0, 1, 'Be9d3ac40', NULL, 5, NULL, NULL, NULL, 'Supplier GST: gst45678\nTax Info: vhjf6878iu', 7.0000, 7.0000, 0.0000, 1, '2025-07-16 09:48:43'),
+(16, 'purchase', 0, 1, 'B25c38850', NULL, 5, NULL, NULL, NULL, 'Supplier GST: gst 12345678\nTax Info: cgst 1800\r\nsgst 1500', 7000.0000, 7000.0000, 0.0000, 1, '2025-07-17 05:00:29'),
+(17, 'purchase', 0, 1, 'Bcdd2bcf9', NULL, 5, NULL, NULL, NULL, 'Supplier GST: gst567\nTax Info: cgst. 56\r\nsgst 4567', 30000.0000, 30000.0000, 0.0000, 1, '2025-07-17 17:35:15'),
+(18, 'purchase', 0, 1, 'B2a5a61df', NULL, 5, NULL, NULL, NULL, '', 20000.0000, 20000.0000, 0.0000, 1, '2025-07-19 04:25:25'),
+(19, 'purchase', 0, 1, 'B071992ab', NULL, 5, NULL, NULL, NULL, '', 10000.0000, 10000.0000, 0.0000, 1, '2025-07-19 04:34:06'),
+(20, 'purchase', 0, 1, 'B4f3a937c', NULL, 5, NULL, NULL, NULL, '', 80.0000, 80.0000, 0.0000, 1, '2025-09-13 05:57:08');
 
 -- --------------------------------------------------------
 
@@ -2871,6 +3750,32 @@ CREATE TABLE `purchase_price` (
   `return_amount` decimal(25,4) UNSIGNED NOT NULL DEFAULT 0.0000,
   `balance` decimal(25,4) NOT NULL DEFAULT 0.0000
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `purchase_price`
+--
+
+INSERT INTO `purchase_price` (`price_id`, `invoice_id`, `store_id`, `subtotal`, `discount_type`, `discount_amount`, `shipping_type`, `shipping_amount`, `others_charge`, `item_tax`, `order_tax`, `cgst`, `sgst`, `igst`, `payable_amount`, `paid_amount`, `due_paid`, `due`, `return_amount`, `balance`) VALUES
+(1, 'B4f2679b1', 1, 40.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 40.0000, 40.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(2, 'B0b2b5f43', 1, 40.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 40.0000, 40.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(3, 'B133455456', 1, 10.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 1.8000, 0.0000, 0.0000, 0.0000, 1.8000, 10.0000, 10.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(4, 'B92af28cb', 1, 1024.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 224.0000, 224.0000, 224.0000, 224.0000, 0.0000, 1248.0000, 1248.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(5, 'B83214fe7', 1, 80.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 22.4000, 16.1280, 19.2640, 19.2640, 0.0000, 96.1280, 96.1280, 0.0000, 0.0000, 0.0000, 0.0000),
+(6, 'Bnbc6r7u', 1, 80.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 22.4000, 0.0000, 11.2000, 11.2000, 0.0000, 80.0000, 80.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(7, 'Ba5f85708', 1, 102.4000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 22.4000, 0.0000, 11.2000, 11.2000, 0.0000, 102.4000, 102.4000, 0.0000, 0.0000, 0.0000, 0.0000),
+(8, 'Bb5158172', 1, 700.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 196.0000, 0.0000, 0.0000, 0.0000, 196.0000, 700.0000, 700.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(9, 'B44f6595d', 1, 2000.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 720.0000, 0.0000, 360.0000, 360.0000, 0.0000, 2000.0000, 2000.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(10, 'B7b18845a', 1, 700.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 196.0000, 0.0000, 0.0000, 0.0000, 196.0000, 700.0000, 700.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(11, 'B50a32156', 1, 70000.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 19600.0000, 0.0000, 0.0000, 0.0000, 19600.0000, 70000.0000, 70000.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(12, 'B48fa06bd', 1, 7.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 1.9600, 0.0000, 0.0000, 0.0000, 1.9600, 7.0000, 7.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(13, 'B9fa11713', 1, 7.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 1.9600, 0.0000, 0.0000, 0.0000, 1.9600, 7.0000, 7.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(14, 'B0e46da27', 1, 7.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 1.9600, 0.0000, 0.0000, 0.0000, 1.9600, 7.0000, 7.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(15, 'Be9d3ac40', 1, 7.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 1.9600, 0.0000, 0.0000, 0.0000, 1.9600, 7.0000, 7.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(16, 'B25c38850', 1, 7000.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 1960.0000, 0.0000, 0.0000, 0.0000, 1960.0000, 7000.0000, 7000.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(17, 'Bcdd2bcf9', 1, 30000.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 8400.0000, 0.0000, 0.0000, 0.0000, 8400.0000, 30000.0000, 30000.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(18, 'B2a5a61df', 1, 20000.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 3600.0000, 0.0000, 0.0000, 0.0000, 3600.0000, 20000.0000, 20000.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(19, 'B071992ab', 1, 10000.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 10000.0000, 10000.0000, 0.0000, 0.0000, 0.0000, 0.0000),
+(20, 'B4f3a937c', 1, 80.0000, 'plain', 0.0000, 'plain', 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 80.0000, 80.0000, 0.0000, 0.0000, 0.0000, 0.0000);
 
 -- --------------------------------------------------------
 
@@ -3072,6 +3977,8 @@ CREATE TABLE `selling_info` (
   `store_id` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `customer_id` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `customer_mobile` varchar(20) DEFAULT NULL,
+  `gst_number` varchar(50) DEFAULT NULL,
+  `customer_gst_number` varchar(15) DEFAULT NULL,
   `ref_invoice_id` varchar(100) DEFAULT NULL,
   `ref_user_id` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `invoice_note` text DEFAULT NULL,
@@ -3085,6 +3992,60 @@ CREATE TABLE `selling_info` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `selling_info`
+--
+
+INSERT INTO `selling_info` (`info_id`, `invoice_id`, `edit_counter`, `inv_type`, `store_id`, `customer_id`, `customer_mobile`, `gst_number`, `customer_gst_number`, `ref_invoice_id`, `ref_user_id`, `invoice_note`, `total_items`, `is_installment`, `status`, `pmethod_id`, `payment_status`, `checkout_status`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, '100000001', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-04 10:26:52', '2025-07-04 10:26:52'),
+(2, '100000002', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-05 07:45:01', '2025-07-05 07:45:01'),
+(3, '100000003', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-05 07:46:09', '2025-07-05 07:46:09'),
+(4, '100000004', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-05 07:48:24', '2025-07-05 07:48:24'),
+(5, '100000005', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-05 07:48:34', '2025-07-05 07:48:34'),
+(6, '100000006', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-05 07:49:15', '2025-07-05 07:49:15'),
+(7, '100000007', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-05 07:55:09', '2025-07-05 07:55:09'),
+(8, '100000008', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-05 07:56:36', '2025-07-05 07:56:36'),
+(9, '100000009', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-05 07:57:26', '2025-07-05 07:57:26'),
+(10, '100000010', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-05 07:58:17', '2025-07-05 07:58:17'),
+(11, '100000011', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-05 07:59:55', '2025-07-05 07:59:55'),
+(12, '100000012', 0, 'sell', 1, 3, '08217291743', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-05 10:39:54', '2025-07-05 10:40:26'),
+(13, '100000013', 0, 'sell', 1, 3, '08217291743', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-05 10:40:26', '2025-07-05 10:40:26'),
+(14, '100000014', 0, 'sell', 1, 3, '08217291743', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-05 10:41:22', '2025-07-18 03:58:33'),
+(15, '100000015', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-05 11:03:37', '2025-07-05 11:03:37'),
+(16, '100000016', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-06 08:05:26', '2025-07-06 08:05:26'),
+(17, '100000017', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 3, 0, 1, 1, 'paid', 1, 1, '2025-07-07 07:44:15', '2025-07-07 07:44:15'),
+(18, '100000018', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 1, 'paid', 1, 1, '2025-07-09 04:27:27', '2025-07-09 04:27:27'),
+(19, '100000019', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-15 09:26:02', '2025-07-15 09:26:02'),
+(20, '100000020', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-15 09:42:06', '2025-07-15 09:42:06'),
+(21, '100000021', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-15 09:58:06', '2025-07-15 09:58:06'),
+(22, '100000022', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-15 10:05:27', '2025-07-15 10:05:27'),
+(23, '100000023', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-15 10:09:45', '2025-07-15 10:09:45'),
+(24, '100000024', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-15 10:32:40', '2025-07-15 10:32:40'),
+(25, '100000025', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-16 04:20:03', '2025-07-16 04:20:03'),
+(26, '100000026', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, 'gst : 23456789', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-17 05:00:56', '2025-07-17 05:00:56'),
+(27, '100000027', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-17 05:01:29', '2025-07-17 05:01:29'),
+(28, '100000028', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-17 15:20:10', '2025-07-17 15:20:10'),
+(29, '100000029', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-17 15:25:47', '2025-07-17 15:25:47'),
+(30, '100000030', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-17 15:26:24', '2025-07-17 15:26:24'),
+(31, '100000031', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-17 15:29:08', '2025-07-17 15:29:08'),
+(32, '100000032', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-17 16:07:14', '2025-07-17 16:07:14'),
+(33, '100000033', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-17 16:19:38', '2025-07-17 16:19:38'),
+(34, '100000034', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-17 16:28:01', '2025-07-17 16:28:01'),
+(35, '100000035', 0, 'sell', 1, 1, '0170000000000', NULL, NULL, NULL, 0, 'Customer GST Number: gst12345678', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-17 16:38:00', '2025-07-17 16:38:00'),
+(36, '100000036', 0, 'sell', 1, 1, '0170000000000', 'gst12345678', NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-17 17:03:55', '2025-07-17 17:03:55'),
+(37, '100000037', 0, 'sell', 1, 1, '0170000000000', 'gst12345678', NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-17 17:35:44', '2025-07-17 17:35:44'),
+(38, '100000038', 0, 'sell', 1, 3, '08217291743', '', NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-18 03:59:55', '2025-07-18 03:59:55'),
+(39, '100000039', 0, 'sell', 1, 3, '08217291743', 'gst12345678', NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-18 04:00:31', '2025-07-18 04:00:31'),
+(40, '100000040', 0, 'sell', 1, 1, '0170000000000', 'gst12345678', NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-18 04:01:05', '2025-07-18 04:01:05'),
+(41, '100000041', 0, 'sell', 1, 1, '0170000000000', '', NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-18 04:10:56', '2025-07-18 04:10:56'),
+(42, '100000042', 0, 'sell', 1, 1, '0170000000000', '', NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-18 04:13:40', '2025-07-18 04:13:40'),
+(43, '100000043', 0, 'sell', 1, 1, '0170000000000', '', NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-18 07:01:45', '2025-07-18 07:01:45'),
+(44, '100000044', 0, 'sell', 1, 1, '0170000000000', '', NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-18 07:15:21', '2025-07-18 07:15:21'),
+(45, '100000045', 0, 'sell', 1, 1, '0170000000000', '', NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-18 07:28:11', '2025-07-18 07:28:11'),
+(46, '100000046', 0, 'sell', 1, 1, '0170000000000', '', NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-18 07:28:23', '2025-07-18 07:28:23'),
+(47, '100000047', 0, 'sell', 1, 1, '0170000000000', '', NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-18 07:28:31', '2025-07-18 07:28:31'),
+(48, '100000048', 0, 'sell', 1, 1, '0170000000000', '', NULL, NULL, 0, '', 1, 0, 1, 5, 'paid', 1, 1, '2025-07-18 07:42:30', '2025-07-18 07:42:30');
 
 -- --------------------------------------------------------
 
@@ -3123,6 +4084,64 @@ CREATE TABLE `selling_item` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Dumping data for table `selling_item`
+--
+
+INSERT INTO `selling_item` (`id`, `invoice_id`, `category_id`, `brand_id`, `sup_id`, `store_id`, `item_id`, `item_name`, `item_price`, `item_discount`, `item_tax`, `tax_method`, `taxrate_id`, `tax`, `gst`, `cgst`, `sgst`, `igst`, `item_quantity`, `item_purchase_price`, `item_total`, `purchase_invoice_id`, `print_counter`, `print_counter_time`, `printed_by`, `return_quantity`, `installment_quantity`, `created_at`) VALUES
+(1, '100000001', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-04 10:26:52'),
+(2, '100000002', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-05 07:45:01'),
+(3, '100000003', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-05 07:46:09'),
+(4, '100000004', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-05 07:48:24'),
+(5, '100000005', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-05 07:48:34'),
+(6, '100000006', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-05 07:49:15'),
+(7, '100000007', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-05 07:55:09'),
+(8, '100000008', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-05 07:56:36'),
+(9, '100000009', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-05 07:57:26'),
+(10, '100000010', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-05 07:58:17'),
+(11, '100000011', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-05 07:59:55'),
+(12, '100000012', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 2.0000, 8.0000, 10.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-05 10:39:54'),
+(13, '100000013', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-05 10:40:26'),
+(14, '100000014', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-05 10:41:22'),
+(15, '100000015', 1, 1, 1, 1, 4, 'tobacco', 10.0000, 0.0000, 2.8000, 'inclusive', 12, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 8.0000, 10.0000, 'B92af28cb', 0, NULL, NULL, 0.0000, 0, '2025-07-05 11:03:37'),
+(16, '100000016', 1, 1, 1, 1, 4, 'tobacco', 12.8000, 0.0000, 2.8000, 'exclusive', 12, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 8.0000, 12.8000, 'B92af28cb', 0, NULL, NULL, 0.0000, 0, '2025-07-06 08:05:26'),
+(17, '100000017', 2, 5, 2, 1, 3, 'Maggie', 12.0000, 0.0000, 2.1600, 'inclusive', 2, '18.0000', '18.0000', 0.0000, 0.0000, 2.1600, 1.0000, 10.0000, 12.0000, 'B133455456', 0, NULL, NULL, 0.0000, 0, '2025-07-07 07:44:15'),
+(18, '100000017', 1, 1, 1, 1, 4, 'tobacco', 12.8000, 0.0000, 2.8000, 'exclusive', 12, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 8.0000, 12.8000, 'B92af28cb', 0, NULL, NULL, 0.0000, 0, '2025-07-07 07:44:15'),
+(19, '100000017', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-07 07:44:15'),
+(20, '100000018', 1, 1, 1, 1, 4, 'tobacco', 12.8000, 0.0000, 2.8000, 'exclusive', 12, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 8.0000, 12.8000, 'B92af28cb', 0, NULL, NULL, 0.0000, 0, '2025-07-09 04:27:27'),
+(21, '100000019', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-15 09:26:02'),
+(22, '100000020', 1, 1, 1, 1, 4, 'tobacco', 12.8000, 0.0000, 2.8000, 'exclusive', 12, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 8.0000, 12.8000, 'B92af28cb', 0, NULL, NULL, 0.0000, 0, '2025-07-15 09:42:06'),
+(23, '100000021', 1, 1, 1, 1, 4, 'tobacco', 12.8000, 0.0000, 2.8000, 'exclusive', 12, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 8.0000, 12.8000, 'B92af28cb', 0, NULL, NULL, 0.0000, 0, '2025-07-15 09:58:06'),
+(24, '100000022', 1, 1, 1, 1, 4, 'tobacco', 12.8000, 0.0000, 2.8000, 'exclusive', 12, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 8.0000, 12.8000, 'B92af28cb', 0, NULL, NULL, 0.0000, 0, '2025-07-15 10:05:27'),
+(25, '100000023', 1, 1, 2, 1, 5, 'paan', 10.0000, 0.0000, 2.8000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 7.0000, 10.0000, 'Bb5158172', 0, NULL, NULL, 0.0000, 0, '2025-07-15 10:09:45'),
+(26, '100000024', 1, 0, 1, 1, 6, 'burger', 25.0000, 0.0000, 9.0000, 'inclusive', 14, '36.0000', '36.0000', 0.0000, 0.0000, 9.0000, 1.0000, 20.0000, 25.0000, 'B44f6595d', 0, NULL, NULL, 0.0000, 0, '2025-07-15 10:32:40'),
+(27, '100000025', 1, 1, 2, 1, 5, 'paan', 10.0000, 0.0000, 2.8000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 7.0000, 10.0000, 'Bb5158172', 0, NULL, NULL, 0.0000, 0, '2025-07-16 04:20:03'),
+(28, '100000026', 1, 1, 2, 1, 5, 'paan', 10.0000, 0.0000, 2.8000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 7.0000, 10.0000, 'Bb5158172', 0, NULL, NULL, 0.0000, 0, '2025-07-17 05:00:56'),
+(29, '100000027', 1, 0, 1, 1, 6, 'burger', 25.0000, 0.0000, 9.0000, 'inclusive', 14, '36.0000', '36.0000', 0.0000, 0.0000, 9.0000, 1.0000, 20.0000, 25.0000, 'B44f6595d', 0, NULL, NULL, 0.0000, 0, '2025-07-17 05:01:29'),
+(30, '100000028', 1, 1, 2, 1, 5, 'paan', 10.0000, 0.0000, 2.8000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 7.0000, 10.0000, 'Bb5158172', 0, NULL, NULL, 0.0000, 0, '2025-07-17 15:20:10'),
+(31, '100000029', 1, 1, 2, 1, 5, 'paan', 10.0000, 0.0000, 2.8000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 7.0000, 10.0000, 'Bb5158172', 0, NULL, NULL, 0.0000, 0, '2025-07-17 15:25:47'),
+(32, '100000030', 1, 0, 1, 1, 6, 'burger', 25.0000, 0.0000, 9.0000, 'inclusive', 14, '36.0000', '36.0000', 0.0000, 0.0000, 9.0000, 1.0000, 20.0000, 25.0000, 'B44f6595d', 0, NULL, NULL, 0.0000, 0, '2025-07-17 15:26:24'),
+(33, '100000031', 1, 1, 2, 1, 5, 'paan', 10.0000, 0.0000, 2.8000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 7.0000, 10.0000, 'Bb5158172', 0, NULL, NULL, 0.0000, 0, '2025-07-17 15:29:08'),
+(34, '100000032', 1, 1, 2, 1, 5, 'paan', 10.0000, 0.0000, 2.8000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 7.0000, 10.0000, 'Bb5158172', 0, NULL, NULL, 0.0000, 0, '2025-07-17 16:07:14'),
+(35, '100000033', 1, 1, 2, 1, 5, 'paan', 10.0000, 0.0000, 2.8000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 7.0000, 10.0000, 'Bb5158172', 0, NULL, NULL, 0.0000, 0, '2025-07-17 16:19:38'),
+(36, '100000034', 1, 0, 1, 1, 6, 'burger', 25.0000, 0.0000, 9.0000, 'inclusive', 14, '36.0000', '36.0000', 0.0000, 0.0000, 9.0000, 1.0000, 20.0000, 25.0000, 'B44f6595d', 0, NULL, NULL, 0.0000, 0, '2025-07-17 16:28:01'),
+(37, '100000035', 1, 1, 2, 1, 5, 'paan', 10.0000, 0.0000, 2.8000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 7.0000, 10.0000, 'Bb5158172', 0, NULL, NULL, 0.0000, 0, '2025-07-17 16:38:00'),
+(38, '100000036', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-17 17:03:55'),
+(39, '100000037', 1, 1, 2, 1, 8, 'tissue paper_55', 45.0000, 0.0000, 12.6000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 12.6000, 1.0000, 30.0000, 45.0000, 'Bcdd2bcf9', 0, NULL, NULL, 0.0000, 0, '2025-07-17 17:35:44'),
+(40, '100000038', 1, 1, 2, 1, 8, 'tissue paper_55', 45.0000, 0.0000, 12.6000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 12.6000, 1.0000, 30.0000, 45.0000, 'Bcdd2bcf9', 0, NULL, NULL, 0.0000, 0, '2025-07-18 03:58:33'),
+(41, '100000038', 1, 1, 2, 1, 8, 'tissue paper_55', 45.0000, 0.0000, 12.6000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 12.6000, 1.0000, 30.0000, 45.0000, 'Bcdd2bcf9', 0, NULL, NULL, 0.0000, 0, '2025-07-18 03:59:00'),
+(42, '100000038', 1, 1, 1, 1, 4, 'tobacco', 12.8000, 0.0000, 2.8000, 'exclusive', 12, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 8.0000, 12.8000, 'B92af28cb', 0, NULL, NULL, 0.0000, 0, '2025-07-18 03:59:55'),
+(43, '100000039', 1, 1, 2, 1, 5, 'paan', 10.0000, 0.0000, 2.8000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 7.0000, 10.0000, 'Bb5158172', 0, NULL, NULL, 0.0000, 0, '2025-07-18 04:00:31'),
+(44, '100000040', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-18 04:01:05'),
+(45, '100000041', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B4f2679b1', 0, NULL, NULL, 0.0000, 0, '2025-07-18 04:10:56'),
+(46, '100000042', 1, 1, 1, 1, 4, 'tobacco', 12.8000, 0.0000, 2.8000, 'exclusive', 12, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 8.0000, 12.8000, 'B92af28cb', 0, NULL, NULL, 0.0000, 0, '2025-07-18 04:13:40'),
+(47, '100000043', 1, 0, 1, 1, 6, 'burger', 25.0000, 0.0000, 9.0000, 'inclusive', 14, '36.0000', '36.0000', 0.0000, 0.0000, 9.0000, 1.0000, 20.0000, 25.0000, 'B44f6595d', 0, NULL, NULL, 0.0000, 0, '2025-07-18 07:01:45'),
+(48, '100000044', 1, 1, 2, 1, 5, 'paan', 10.0000, 0.0000, 2.8000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 7.0000, 10.0000, 'Bb5158172', 0, NULL, NULL, 0.0000, 0, '2025-07-18 07:15:21'),
+(49, '100000045', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B0b2b5f43', 0, NULL, NULL, 0.0000, 0, '2025-07-18 07:28:11'),
+(50, '100000046', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B0b2b5f43', 0, NULL, NULL, 0.0000, 0, '2025-07-18 07:28:23'),
+(51, '100000047', 1, 1, 2, 1, 5, 'paan', 10.0000, 0.0000, 2.8000, 'inclusive', 13, '28.0000', '28.0000', 0.0000, 0.0000, 2.8000, 1.0000, 7.0000, 10.0000, 'Bb5158172', 0, NULL, NULL, 0.0000, 0, '2025-07-18 07:28:31'),
+(52, '100000048', 1, 1, 1, 1, 2, 'pen', 5.0000, 0.0000, 0.0000, 'inclusive', 3, '0.0000', '0.0000', 0.0000, 0.0000, 0.0000, 1.0000, 4.0000, 5.0000, 'B0b2b5f43', 0, NULL, NULL, 0.0000, 0, '2025-07-18 07:42:30');
+
 -- --------------------------------------------------------
 
 --
@@ -3158,6 +4177,60 @@ CREATE TABLE `selling_price` (
   `prev_due_paid` decimal(25,4) NOT NULL DEFAULT 0.0000
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Dumping data for table `selling_price`
+--
+
+INSERT INTO `selling_price` (`price_id`, `invoice_id`, `store_id`, `subtotal`, `discount_type`, `discount_amount`, `interest_amount`, `interest_percentage`, `item_tax`, `order_tax`, `cgst`, `sgst`, `igst`, `total_purchase_price`, `shipping_type`, `shipping_amount`, `others_charge`, `payable_amount`, `paid_amount`, `due`, `due_paid`, `return_amount`, `balance`, `profit`, `previous_due`, `prev_due_paid`) VALUES
+(1, '100000001', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(2, '100000002', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(3, '100000003', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(4, '100000004', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(5, '100000005', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(6, '100000006', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(7, '100000007', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(8, '100000008', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(9, '100000009', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(10, '100000010', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(11, '100000011', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(12, '100000012', 1, 10.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 8.0000, 'plain', 0.0000, 0.0000, 10.0000, 10.0000, 0.0000, 5.0000, 0.0000, 0.0000, 2.0000, 0.0000, 0.0000),
+(13, '100000013', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 5.0000, 5.0000),
+(14, '100000014', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 4.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(15, '100000015', 1, 10.0000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 8.0000, 'plain', 0.0000, 0.0000, 10.0000, 10.0000, 0.0000, 0.0000, 0.0000, 0.0000, 2.0000, 0.0000, 0.0000),
+(16, '100000016', 1, 12.8000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 8.0000, 'plain', 0.0000, 0.0000, 12.8000, 12.8000, 0.0000, 0.0000, 0.0000, 0.0000, 4.8000, 0.0000, 0.0000),
+(17, '100000017', 1, 29.8000, 'plain', 0.0000, 0.0000, 0, 4.9600, 0.0000, 0.0000, 0.0000, 4.9600, 22.0000, 'plain', 0.0000, 0.0000, 29.8000, 29.8000, 0.0000, 0.0000, 0.0000, 0.0000, 7.8000, 0.0000, 0.0000),
+(18, '100000018', 1, 12.8000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 8.0000, 'plain', 0.0000, 0.0000, 12.8000, 12.8000, 0.0000, 0.0000, 0.0000, 0.0000, 4.8000, 0.0000, 0.0000),
+(19, '100000019', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(20, '100000020', 1, 12.8000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 8.0000, 'plain', 0.0000, 0.0000, 12.8000, 12.8000, 0.0000, 0.0000, 0.0000, 0.0000, 4.8000, 0.0000, 0.0000),
+(21, '100000021', 1, 12.8000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 8.0000, 'plain', 0.0000, 0.0000, 12.8000, 12.8000, 0.0000, 0.0000, 0.0000, 0.0000, 4.8000, 0.0000, 0.0000),
+(22, '100000022', 1, 12.8000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 8.0000, 'plain', 0.0000, 0.0000, 12.8000, 12.8000, 0.0000, 0.0000, 0.0000, 0.0000, 4.8000, 0.0000, 0.0000),
+(23, '100000023', 1, 10.0000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 7.0000, 'plain', 0.0000, 0.0000, 10.0000, 10.0000, 0.0000, 0.0000, 0.0000, 0.0000, 3.0000, 0.0000, 0.0000),
+(24, '100000024', 1, 25.0000, 'plain', 0.0000, 0.0000, 0, 9.0000, 0.0000, 0.0000, 0.0000, 9.0000, 20.0000, 'plain', 0.0000, 0.0000, 25.0000, 25.0000, 0.0000, 0.0000, 0.0000, 0.0000, 5.0000, 0.0000, 0.0000),
+(25, '100000025', 1, 10.0000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 7.0000, 'plain', 0.0000, 0.0000, 10.0000, 10.0000, 0.0000, 0.0000, 0.0000, 0.0000, 3.0000, 0.0000, 0.0000),
+(26, '100000026', 1, 10.0000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 7.0000, 'plain', 0.0000, 0.0000, 10.0000, 10.0000, 0.0000, 0.0000, 0.0000, 0.0000, 3.0000, 0.0000, 0.0000),
+(27, '100000027', 1, 25.0000, 'plain', 0.0000, 0.0000, 0, 9.0000, 0.0000, 0.0000, 0.0000, 9.0000, 20.0000, 'plain', 0.0000, 0.0000, 25.0000, 25.0000, 0.0000, 0.0000, 0.0000, 0.0000, 5.0000, 0.0000, 0.0000),
+(28, '100000028', 1, 10.0000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 7.0000, 'plain', 0.0000, 0.0000, 10.0000, 10.0000, 0.0000, 0.0000, 0.0000, 0.0000, 3.0000, 0.0000, 0.0000),
+(29, '100000029', 1, 10.0000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 7.0000, 'plain', 0.0000, 0.0000, 10.0000, 10.0000, 0.0000, 0.0000, 0.0000, 0.0000, 3.0000, 0.0000, 0.0000),
+(30, '100000030', 1, 25.0000, 'plain', 0.0000, 0.0000, 0, 9.0000, 0.0000, 0.0000, 0.0000, 9.0000, 20.0000, 'plain', 0.0000, 0.0000, 25.0000, 25.0000, 0.0000, 0.0000, 0.0000, 0.0000, 5.0000, 0.0000, 0.0000),
+(31, '100000031', 1, 10.0000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 7.0000, 'plain', 0.0000, 0.0000, 10.0000, 10.0000, 0.0000, 0.0000, 0.0000, 0.0000, 3.0000, 0.0000, 0.0000),
+(32, '100000032', 1, 10.0000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 7.0000, 'plain', 0.0000, 0.0000, 10.0000, 10.0000, 0.0000, 0.0000, 0.0000, 0.0000, 3.0000, 0.0000, 0.0000),
+(33, '100000033', 1, 10.0000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 7.0000, 'plain', 0.0000, 0.0000, 10.0000, 10.0000, 0.0000, 0.0000, 0.0000, 0.0000, 3.0000, 0.0000, 0.0000),
+(34, '100000034', 1, 25.0000, 'plain', 0.0000, 0.0000, 0, 9.0000, 0.0000, 0.0000, 0.0000, 9.0000, 20.0000, 'plain', 0.0000, 0.0000, 25.0000, 25.0000, 0.0000, 0.0000, 0.0000, 0.0000, 5.0000, 0.0000, 0.0000),
+(35, '100000035', 1, 10.0000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 7.0000, 'plain', 0.0000, 0.0000, 10.0000, 10.0000, 0.0000, 0.0000, 0.0000, 0.0000, 3.0000, 0.0000, 0.0000),
+(36, '100000036', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(37, '100000037', 1, 45.0000, 'plain', 0.0000, 0.0000, 0, 12.6000, 0.0000, 0.0000, 0.0000, 12.6000, 30.0000, 'plain', 0.0000, 0.0000, 45.0000, 45.0000, 0.0000, 0.0000, 0.0000, 0.0000, 15.0000, 0.0000, 0.0000),
+(38, '100000038', 1, 12.8000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 8.0000, 'plain', 0.0000, 0.0000, 12.8000, 12.8000, 0.0000, 0.0000, 0.0000, 0.0000, 4.8000, 0.0000, 0.0000),
+(39, '100000039', 1, 10.0000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 7.0000, 'plain', 0.0000, 0.0000, 10.0000, 10.0000, 0.0000, 0.0000, 0.0000, 0.0000, 3.0000, 0.0000, 0.0000),
+(40, '100000040', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(41, '100000041', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(42, '100000042', 1, 12.8000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 8.0000, 'plain', 0.0000, 0.0000, 12.8000, 12.8000, 0.0000, 0.0000, 0.0000, 0.0000, 4.8000, 0.0000, 0.0000),
+(43, '100000043', 1, 25.0000, 'plain', 0.0000, 0.0000, 0, 9.0000, 0.0000, 0.0000, 0.0000, 9.0000, 20.0000, 'plain', 0.0000, 0.0000, 25.0000, 25.0000, 0.0000, 0.0000, 0.0000, 0.0000, 5.0000, 0.0000, 0.0000),
+(44, '100000044', 1, 10.0000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 7.0000, 'plain', 0.0000, 0.0000, 10.0000, 10.0000, 0.0000, 0.0000, 0.0000, 0.0000, 3.0000, 0.0000, 0.0000),
+(45, '100000045', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(46, '100000046', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000),
+(47, '100000047', 1, 10.0000, 'plain', 0.0000, 0.0000, 0, 2.8000, 0.0000, 0.0000, 0.0000, 2.8000, 7.0000, 'plain', 0.0000, 0.0000, 10.0000, 10.0000, 0.0000, 0.0000, 0.0000, 0.0000, 3.0000, 0.0000, 0.0000),
+(48, '100000048', 1, 5.0000, 'plain', 0.0000, 0.0000, 0, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 4.0000, 'plain', 0.0000, 0.0000, 5.0000, 5.0000, 0.0000, 0.0000, 0.0000, 0.0000, 1.0000, 0.0000, 0.0000);
+
 -- --------------------------------------------------------
 
 --
@@ -3178,6 +4251,62 @@ CREATE TABLE `sell_logs` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `sell_logs`
+--
+
+INSERT INTO `sell_logs` (`id`, `customer_id`, `reference_no`, `ref_invoice_id`, `type`, `pmethod_id`, `description`, `amount`, `store_id`, `created_by`, `created_at`, `updated_at`) VALUES
+(1, 1, 'CT250704100001', '100000001', 'sell', 1, 'Paid while selling', 5.0000, 1, 1, '2025-07-04 10:26:52', '2025-07-04 10:26:52'),
+(2, 1, 'CT2507051002', '100000002', 'sell', 1, 'Paid while selling', 5.0000, 1, 1, '2025-07-05 07:45:01', '2025-07-05 07:45:01'),
+(3, 1, 'CT25070511003', '100000003', 'sell', 1, 'Paid while selling', 5.0000, 1, 1, '2025-07-05 07:46:09', '2025-07-05 07:46:09'),
+(4, 1, 'CT25070511004', '100000004', 'sell', 1, 'Paid while selling', 5.0000, 1, 1, '2025-07-05 07:48:24', '2025-07-05 07:48:24'),
+(5, 1, 'CT25070511005', '100000005', 'sell', 1, 'Paid while selling', 5.0000, 1, 1, '2025-07-05 07:48:34', '2025-07-05 07:48:34'),
+(6, 1, 'CT25070511006', '100000006', 'sell', 1, 'Paid while selling', 5.0000, 1, 1, '2025-07-05 07:49:15', '2025-07-05 07:49:15'),
+(7, 1, 'CT25070511007', '100000007', 'sell', 1, 'Paid while selling', 5.0000, 1, 1, '2025-07-05 07:55:09', '2025-07-05 07:55:09'),
+(8, 1, 'CT25070511008', '100000008', 'sell', 1, 'Paid while selling', 5.0000, 1, 1, '2025-07-05 07:56:36', '2025-07-05 07:56:36'),
+(9, 1, 'CT25070511009', '100000009', 'sell', 1, 'Paid while selling', 5.0000, 1, 1, '2025-07-05 07:57:26', '2025-07-05 07:57:26'),
+(10, 1, 'CT25070511010', '100000010', 'sell', 1, 'Paid while selling', 5.0000, 1, 1, '2025-07-05 07:58:17', '2025-07-05 07:58:17'),
+(11, 1, 'CT25070511011', '100000011', 'sell', 1, 'Paid while selling', 5.0000, 1, 1, '2025-07-05 07:59:55', '2025-07-05 07:59:55'),
+(12, 3, 'CT25070511012', '100000012', 'sell', 1, 'Paid while selling', 5.0000, 1, 1, '2025-07-05 10:39:54', '2025-07-05 10:39:54'),
+(13, 3, 'CT250705100001', '100000012', 'due_paid', 1, 'Due paid', 5.0000, 1, 1, '2025-07-05 10:40:26', '2025-07-05 10:40:26'),
+(14, 3, 'CT25070511013', '100000013', 'sell', 1, 'Paid while selling', 5.0000, 1, 1, '2025-07-05 10:40:26', '2025-07-05 10:40:26'),
+(15, 3, 'CT25070511014', '100000014', 'sell', 1, 'Paid while selling', 1.0000, 1, 1, '2025-07-05 10:41:22', '2025-07-05 10:41:22'),
+(16, 1, 'CT25070511015', '100000015', 'sell', 1, 'Paid while selling', 10.0000, 1, 1, '2025-07-05 11:03:37', '2025-07-05 11:03:37'),
+(17, 1, 'CT25070611016', '100000016', 'sell', 1, 'Paid while selling', 12.8000, 1, 1, '2025-07-06 08:05:26', '2025-07-06 08:05:26'),
+(18, 1, 'CT25070711017', '100000017', 'sell', 1, 'Paid while selling', 29.8000, 1, 1, '2025-07-07 07:44:15', '2025-07-07 07:44:15'),
+(19, 1, 'CT25070911018', '100000018', 'sell', 1, 'Paid while selling', 12.8000, 1, 1, '2025-07-09 04:27:27', '2025-07-09 04:27:27'),
+(20, 1, 'CT25071511019', '100000019', 'sell', 5, 'Paid while selling', 5.0000, 1, 1, '2025-07-15 09:26:02', '2025-07-15 09:26:02'),
+(21, 1, 'CT25071511020', '100000020', 'sell', 5, 'Paid while selling', 12.8000, 1, 1, '2025-07-15 09:42:06', '2025-07-15 09:42:06'),
+(22, 1, 'CT25071511021', '100000021', 'sell', 5, 'Paid while selling', 12.8000, 1, 1, '2025-07-15 09:58:06', '2025-07-15 09:58:06'),
+(23, 1, 'CT25071511022', '100000022', 'sell', 5, 'Paid while selling', 12.8000, 1, 1, '2025-07-15 10:05:27', '2025-07-15 10:05:27'),
+(24, 1, 'CT25071511023', '100000023', 'sell', 5, 'Paid while selling', 10.0000, 1, 1, '2025-07-15 10:09:45', '2025-07-15 10:09:45'),
+(25, 1, 'CT25071511024', '100000024', 'sell', 5, 'Paid while selling', 25.0000, 1, 1, '2025-07-15 10:32:40', '2025-07-15 10:32:40'),
+(26, 1, 'CT25071611025', '100000025', 'sell', 5, 'Paid while selling', 10.0000, 1, 1, '2025-07-16 04:20:03', '2025-07-16 04:20:03'),
+(27, 1, 'CT25071711026', '100000026', 'sell', 5, 'Paid while selling', 10.0000, 1, 1, '2025-07-17 05:00:56', '2025-07-17 05:00:56'),
+(28, 1, 'CT25071711027', '100000027', 'sell', 5, 'Paid while selling', 25.0000, 1, 1, '2025-07-17 05:01:29', '2025-07-17 05:01:29'),
+(29, 1, 'CT25071711028', '100000028', 'sell', 5, 'Paid while selling', 10.0000, 1, 1, '2025-07-17 15:20:10', '2025-07-17 15:20:10'),
+(30, 1, 'CT25071711029', '100000029', 'sell', 5, 'Paid while selling', 10.0000, 1, 1, '2025-07-17 15:25:47', '2025-07-17 15:25:47'),
+(31, 1, 'CT25071711030', '100000030', 'sell', 5, 'Paid while selling', 25.0000, 1, 1, '2025-07-17 15:26:24', '2025-07-17 15:26:24'),
+(32, 1, 'CT25071711031', '100000031', 'sell', 5, 'Paid while selling', 10.0000, 1, 1, '2025-07-17 15:29:08', '2025-07-17 15:29:08'),
+(33, 1, 'CT25071711032', '100000032', 'sell', 5, 'Paid while selling', 10.0000, 1, 1, '2025-07-17 16:07:14', '2025-07-17 16:07:14'),
+(34, 1, 'CT25071711033', '100000033', 'sell', 5, 'Paid while selling', 10.0000, 1, 1, '2025-07-17 16:19:38', '2025-07-17 16:19:38'),
+(35, 1, 'CT25071711034', '100000034', 'sell', 5, 'Paid while selling', 25.0000, 1, 1, '2025-07-17 16:28:01', '2025-07-17 16:28:01'),
+(36, 1, 'CT25071711035', '100000035', 'sell', 5, 'Paid while selling', 10.0000, 1, 1, '2025-07-17 16:38:00', '2025-07-17 16:38:00'),
+(37, 1, 'CT25071711036', '100000036', 'sell', 5, 'Paid while selling', 5.0000, 1, 1, '2025-07-17 17:03:55', '2025-07-17 17:03:55'),
+(38, 1, 'CT25071711037', '100000037', 'sell', 5, 'Paid while selling', 45.0000, 1, 1, '2025-07-17 17:35:44', '2025-07-17 17:35:44'),
+(39, 3, 'CT2507181002', '100000014', 'due_paid', 1, 'Due paid', 4.0000, 1, 1, '2025-07-18 03:58:33', '2025-07-18 03:58:33'),
+(40, 3, 'CT25071811038', '100000038', 'sell', 5, 'Paid while selling', 12.8000, 1, 1, '2025-07-18 03:59:55', '2025-07-18 03:59:55'),
+(41, 3, 'CT25071811039', '100000039', 'sell', 5, 'Paid while selling', 10.0000, 1, 1, '2025-07-18 04:00:31', '2025-07-18 04:00:31'),
+(42, 1, 'CT25071811040', '100000040', 'sell', 5, 'Paid while selling', 5.0000, 1, 1, '2025-07-18 04:01:05', '2025-07-18 04:01:05'),
+(43, 1, 'CT25071811041', '100000041', 'sell', 5, 'Paid while selling', 5.0000, 1, 1, '2025-07-18 04:10:56', '2025-07-18 04:10:56'),
+(44, 1, 'CT25071811042', '100000042', 'sell', 5, 'Paid while selling', 12.8000, 1, 1, '2025-07-18 04:13:40', '2025-07-18 04:13:40'),
+(45, 1, 'CT25071811043', '100000043', 'sell', 5, 'Paid while selling', 25.0000, 1, 1, '2025-07-18 07:01:45', '2025-07-18 07:01:45'),
+(46, 1, 'CT25071811044', '100000044', 'sell', 5, 'Paid while selling', 10.0000, 1, 1, '2025-07-18 07:15:21', '2025-07-18 07:15:21'),
+(47, 1, 'CT25071811045', '100000045', 'sell', 5, 'Paid while selling', 5.0000, 1, 1, '2025-07-18 07:28:11', '2025-07-18 07:28:11'),
+(48, 1, 'CT25071811046', '100000046', 'sell', 5, 'Paid while selling', 5.0000, 1, 1, '2025-07-18 07:28:23', '2025-07-18 07:28:23'),
+(49, 1, 'CT25071811047', '100000047', 'sell', 5, 'Paid while selling', 10.0000, 1, 1, '2025-07-18 07:28:31', '2025-07-18 07:28:31'),
+(50, 1, 'CT25071811048', '100000048', 'sell', 5, 'Paid while selling', 5.0000, 1, 1, '2025-07-18 07:42:30', '2025-07-18 07:42:30');
 
 -- --------------------------------------------------------
 
@@ -3332,6 +4461,7 @@ CREATE TABLE `stores` (
   `printer` int(11) DEFAULT NULL,
   `order_printers` varchar(100) DEFAULT NULL,
   `auto_print` tinyint(1) NOT NULL DEFAULT 0,
+  `show_upi_qr` tinyint(1) NOT NULL DEFAULT 0,
   `local_printers` tinyint(1) DEFAULT NULL,
   `logo` text DEFAULT NULL,
   `favicon` varchar(250) DEFAULT NULL,
@@ -3350,8 +4480,8 @@ CREATE TABLE `stores` (
 -- Dumping data for table `stores`
 --
 
-INSERT INTO `stores` (`store_id`, `name`, `code_name`, `mobile`, `email`, `country`, `zip_code`, `currency`, `vat_reg_no`, `cashier_id`, `address`, `receipt_printer`, `cash_drawer_codes`, `char_per_line`, `remote_printing`, `printer`, `order_printers`, `auto_print`, `local_printers`, `logo`, `favicon`, `preference`, `sound_effect`, `sort_order`, `feedback_status`, `feedback_at`, `deposit_account_id`, `thumbnail`, `status`, `created_at`) VALUES
-(1, 'Shreshta Collections', 'shreshta_collections', '9739381943', 'info@store1.com', 'US', '1200', 'INR', '654321', 2, 'Darur', '1', NULL, 42, 0, 1, '[\"1\"]', 0, 1, '1_logo.jpg', '1_favicon.png', 'a:18:{s:8:\"timezone\";s:12:\"Asia/Kolkata\";s:21:\"invoice_edit_lifespan\";i:1440;s:26:\"invoice_edit_lifespan_unit\";s:6:\"minute\";s:23:\"invoice_delete_lifespan\";i:1440;s:28:\"invoice_delete_lifespan_unit\";s:6:\"minute\";s:3:\"tax\";i:0;s:20:\"stock_alert_quantity\";i:10;s:20:\"datatable_item_limit\";i:25;s:15:\"after_sell_page\";s:3:\"pos\";s:19:\"invoice_footer_text\";s:26:\"Thank you for choosing us!\";s:10:\"email_from\";s:20:\"Shreshta Collections\";s:13:\"email_address\";s:2:\"US\";s:12:\"email_driver\";s:11:\"smtp_server\";s:9:\"smtp_host\";s:15:\"smtp.google.com\";s:13:\"smtp_username\";s:0:\"\";s:13:\"smtp_password\";s:0:\"\";s:9:\"smtp_port\";i:465;s:7:\"ssl_tls\";s:3:\"ssl\";}', 0, 0, 'ready', '2019-03-01 14:29:18', 1, NULL, 1, '2025-07-03 08:43:18');
+INSERT INTO `stores` (`store_id`, `name`, `code_name`, `mobile`, `email`, `country`, `zip_code`, `currency`, `vat_reg_no`, `cashier_id`, `address`, `receipt_printer`, `cash_drawer_codes`, `char_per_line`, `remote_printing`, `printer`, `order_printers`, `auto_print`, `show_upi_qr`, `local_printers`, `logo`, `favicon`, `preference`, `sound_effect`, `sort_order`, `feedback_status`, `feedback_at`, `deposit_account_id`, `thumbnail`, `status`, `created_at`) VALUES
+(1, 'supermarket', 'supermarket', '9739381943', 'info@store1.com', 'IN', '591304', 'INR', '654321', 2, 'athani', '1', NULL, 42, 0, 1, '[\"1\"]', 1, 1, 1, '1_logo.jpg', '1_favicon.png', 'a:18:{s:8:\"timezone\";s:12:\"Asia/Kolkata\";s:21:\"invoice_edit_lifespan\";i:1440;s:26:\"invoice_edit_lifespan_unit\";s:6:\"minute\";s:23:\"invoice_delete_lifespan\";i:1440;s:28:\"invoice_delete_lifespan_unit\";s:6:\"minute\";s:3:\"tax\";i:0;s:20:\"stock_alert_quantity\";i:10;s:20:\"datatable_item_limit\";i:25;s:15:\"after_sell_page\";s:3:\"pos\";s:19:\"invoice_footer_text\";s:26:\"Thank you for choosing us!\";s:10:\"email_from\";s:20:\"Shreshta Collections\";s:13:\"email_address\";s:2:\"US\";s:12:\"email_driver\";s:11:\"smtp_server\";s:9:\"smtp_host\";s:15:\"smtp.google.com\";s:13:\"smtp_username\";s:0:\"\";s:13:\"smtp_password\";s:0:\"\";s:9:\"smtp_port\";i:465;s:7:\"ssl_tls\";s:3:\"ssl\";}', 0, 0, 'ready', '2019-03-01 14:29:18', 0, NULL, 1, '2025-07-03 08:43:18');
 
 -- --------------------------------------------------------
 
@@ -3379,7 +4509,8 @@ CREATE TABLE `suppliers` (
 --
 
 INSERT INTO `suppliers` (`sup_id`, `sup_name`, `code_name`, `sup_mobile`, `sup_email`, `gtin`, `sup_address`, `sup_city`, `sup_state`, `sup_country`, `sup_details`, `created_at`) VALUES
-(1, 'No Supplier', 'no_supplier', '016000000', 'supplier@itsolution24.com', '', 'USA', '', '', 'AD', '', '2025-07-03 08:43:18');
+(1, 'No Supplier', 'no_supplier', '016000000', 'supplier@itsolution24.com', '', 'USA', '', '', 'AD', '', '2025-07-03 08:43:18'),
+(2, 'Ganesh Halladamal', 'ganesh_halladamal', '08217291743', 'imtiyazakiwat0@gmail.com', '', 'Shresta Collection\r\nHulagbali Road, Karlatti', 'Athni', 'Karnataka', 'IN', '', '2025-07-05 10:33:05');
 
 -- --------------------------------------------------------
 
@@ -3401,7 +4532,8 @@ CREATE TABLE `supplier_to_store` (
 --
 
 INSERT INTO `supplier_to_store` (`s2s_id`, `sup_id`, `store_id`, `balance`, `status`, `sort_order`) VALUES
-(1, 1, 1, 0.0000, 1, 0);
+(1, 1, 1, 0.0000, 1, 0),
+(2, 2, 1, 0.0000, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -3428,7 +4560,15 @@ INSERT INTO `taxrates` (`taxrate_id`, `taxrate_name`, `code_name`, `taxrate`, `s
 (3, 'No Tax', 'no_tax', 0.0000, 1, 1),
 (4, 'VAT @10%', 'VVX', 10.0000, 1, 2),
 (5, 'Tax @20%', 'TTX', 20.0000, 1, 3),
-(6, 'Tax@5%', 'tax@5%', 5.0000, 1, 0);
+(6, 'Tax@5%', 'tax@5%', 5.0000, 1, 0),
+(7, 'cgst', 'cgst', 2.5000, 1, 0),
+(8, 'cgst @2.5%', 'cgst_@2.5%', 2.5000, 1, 0),
+(9, 'sgst @2.5%', 'sgst_@2.5%', 2.5000, 1, 0),
+(10, 'cess', 'cess', 14.0000, 1, 0),
+(11, 'cgst 14, sgst 14', 'cgst_14,_sgst_14', 28.0000, 1, 0),
+(12, 'cgst14 + sgst14', 'cgst14_+_sgst14', 28.0000, 1, 0),
+(13, 'cgst14_sgst14', 'cgst14_sgst14', 28.0000, 1, 0),
+(14, 'cgst14_sgst14_chess8', 'cgst14_sgst14_chess8', 36.0000, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -3487,7 +4627,9 @@ CREATE TABLE `units` (
 --
 
 INSERT INTO `units` (`unit_id`, `unit_name`, `code_name`, `unit_details`) VALUES
-(1, 'Pieces', 'pieces', '');
+(1, 'Pieces', 'pieces', ''),
+(2, 'kg', 'kg', ''),
+(3, 'ltr', 'ltr', '');
 
 -- --------------------------------------------------------
 
@@ -3508,7 +4650,9 @@ CREATE TABLE `unit_to_store` (
 --
 
 INSERT INTO `unit_to_store` (`unit2s_id`, `uunit_id`, `store_id`, `status`, `sort_order`) VALUES
-(1, 1, 1, 1, 0);
+(1, 1, 1, 1, 0),
+(2, 2, 1, 1, 0),
+(3, 3, 1, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -3542,9 +4686,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `group_id`, `username`, `email`, `mobile`, `dob`, `sex`, `password`, `pass_reset_code`, `reset_code_time`, `login_try`, `last_login`, `ip`, `address`, `preference`, `user_image`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Your Name', 'mokashihanama@gmail.com', '9739381943', '1990-01-01', 'M', '$2y$10$OYNAqNt5KVeAKRGXPG.K1uWbv0gCVsH2KWgzb6Xfzccy5.Fq1uOJa', '', NULL, 0, '2025-07-03 14:16:41', '::1', NULL, 'a:4:{s:10:\"base_color\";s:5:\"green\";s:14:\"pos_side_panel\";s:5:\"right\";s:11:\"pos_pattern\";s:13:\"brickwall.jpg\";s:8:\"language\";s:2:\"hi\";}', '/solution24-logo.jpg', '2025-07-03 05:15:47', '2025-07-03 08:48:04'),
+(1, 1, 'Your Name', 'mokashihanama@gmail.com', '9739381943', '1990-01-01', 'M', '$2y$10$OYNAqNt5KVeAKRGXPG.K1uWbv0gCVsH2KWgzb6Xfzccy5.Fq1uOJa', '', NULL, 0, '2025-09-10 13:06:27', '::1', NULL, 'a:4:{s:8:\"language\";s:2:\"hi\";s:10:\"base_color\";s:5:\"green\";s:14:\"pos_side_panel\";s:5:\"right\";s:11:\"pos_pattern\";s:16:\"rount-stripe.jpg\";}', '/solution24-logo.jpg', '2025-07-03 05:15:47', '2025-09-10 07:36:27'),
 (2, 2, 'Cashier', 'cashier@gmail.com', '01521504597', '1990-01-01', 'M', '$2y$10$OYNAqNt5KVeAKRGXPG.K1uWbv0gCVsH2KWgzb6Xfzccy5.Fq1uOJa', '', NULL, 0, '2019-06-22 14:01:20', '::1', NULL, 'a:4:{s:8:\"language\";s:7:\"english\";s:10:\"base_color\";s:5:\"green\";s:14:\"pos_side_panel\";s:5:\"right\";s:11:\"pos_pattern\";s:31:\"abstract-attractive-backdro.jpg\";}', '', '2025-07-03 05:15:47', '2025-07-03 08:45:47'),
-(3, 3, 'Salesman', 'salesman@gmail.com', '0113743700', '1990-01-01', 'M', '$2y$10$OYNAqNt5KVeAKRGXPG.K1uWbv0gCVsH2KWgzb6Xfzccy5.Fq1uOJa', '', NULL, 0, '2020-08-29 10:12:31', '::1', NULL, 'a:4:{s:10:\"base_color\";s:5:\"black\";s:14:\"pos_side_panel\";s:4:\"left\";s:11:\"pos_pattern\";s:13:\"brickwall.jpg\";s:8:\"language\";s:2:\"en\";}', '', '2025-07-03 05:15:47', '2025-07-03 08:45:47');
+(3, 3, 'Salesman', 'salesman@gmail.com', '0113743700', '1990-01-01', 'M', '$2y$10$OYNAqNt5KVeAKRGXPG.K1uWbv0gCVsH2KWgzb6Xfzccy5.Fq1uOJa', '', NULL, 0, '2020-08-29 10:12:31', '::1', NULL, 'a:4:{s:10:\"base_color\";s:5:\"black\";s:14:\"pos_side_panel\";s:4:\"left\";s:11:\"pos_pattern\";s:13:\"brickwall.jpg\";s:8:\"language\";s:2:\"en\";}', '', '2025-07-03 05:15:47', '2025-07-03 08:45:47'),
+(4, 1, 'itmiyaz', 'imriyazakiwat)2gmail.com', '8217291743', '2002-07-15', 'M', '$2y$10$BgcuzD8xP09r84o3WUljEOn8/w7TSY45EJeUgP56MQac0TC46QM02', NULL, NULL, 0, NULL, NULL, NULL, NULL, '', '2025-07-04 10:32:42', '2025-07-04 10:32:42');
 
 -- --------------------------------------------------------
 
@@ -3591,7 +4736,8 @@ CREATE TABLE `user_to_store` (
 INSERT INTO `user_to_store` (`u2s_id`, `user_id`, `store_id`, `status`, `sort_order`) VALUES
 (1, 1, 1, 1, 1),
 (2, 2, 1, 1, 2),
-(3, 3, 1, 1, 3);
+(3, 3, 1, 1, 3),
+(4, 4, 1, 1, 0);
 
 --
 -- Indexes for dumped tables
@@ -3970,7 +5116,8 @@ ALTER TABLE `return_items`
 ALTER TABLE `selling_info`
   ADD PRIMARY KEY (`info_id`),
   ADD KEY `created_at` (`created_at`),
-  ADD KEY `invoice_id` (`invoice_id`);
+  ADD KEY `invoice_id` (`invoice_id`),
+  ADD KEY `idx_customer_gst_number` (`customer_gst_number`);
 
 --
 -- Indexes for table `selling_item`
@@ -4113,13 +5260,13 @@ ALTER TABLE `bank_account_to_store`
 -- AUTO_INCREMENT for table `bank_transaction_info`
 --
 ALTER TABLE `bank_transaction_info`
-  MODIFY `info_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `info_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `bank_transaction_price`
 --
 ALTER TABLE `bank_transaction_price`
-  MODIFY `price_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `price_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `boxes`
@@ -4137,25 +5284,25 @@ ALTER TABLE `box_to_store`
 -- AUTO_INCREMENT for table `brands`
 --
 ALTER TABLE `brands`
-  MODIFY `brand_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `brand_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `brand_to_store`
 --
 ALTER TABLE `brand_to_store`
-  MODIFY `b2s_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `b2s_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `categorys`
 --
 ALTER TABLE `categorys`
-  MODIFY `category_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `category_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `category_to_store`
 --
 ALTER TABLE `category_to_store`
-  MODIFY `c2s_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `c2s_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `currency`
@@ -4173,19 +5320,19 @@ ALTER TABLE `currency_to_store`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `customer_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `customer_to_store`
 --
 ALTER TABLE `customer_to_store`
-  MODIFY `c2s_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `c2s_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `customer_transactions`
 --
 ALTER TABLE `customer_transactions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `expenses`
@@ -4257,7 +5404,7 @@ ALTER TABLE `languages`
 -- AUTO_INCREMENT for table `language_translations`
 --
 ALTER TABLE `language_translations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1683;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2324;
 
 --
 -- AUTO_INCREMENT for table `loans`
@@ -4275,7 +5422,7 @@ ALTER TABLE `loan_payments`
 -- AUTO_INCREMENT for table `login_logs`
 --
 ALTER TABLE `login_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `mail_sms_tag`
@@ -4287,13 +5434,13 @@ ALTER TABLE `mail_sms_tag`
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `pmethods`
 --
 ALTER TABLE `pmethods`
-  MODIFY `pmethod_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `pmethod_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `pmethod_to_store`
@@ -4335,7 +5482,7 @@ ALTER TABLE `printer_to_store`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `p_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `p_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `product_images`
@@ -4347,37 +5494,37 @@ ALTER TABLE `product_images`
 -- AUTO_INCREMENT for table `product_to_store`
 --
 ALTER TABLE `product_to_store`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `purchase_info`
 --
 ALTER TABLE `purchase_info`
-  MODIFY `info_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `info_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `purchase_item`
 --
 ALTER TABLE `purchase_item`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `purchase_logs`
 --
 ALTER TABLE `purchase_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `purchase_payments`
 --
 ALTER TABLE `purchase_payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `purchase_price`
 --
 ALTER TABLE `purchase_price`
-  MODIFY `price_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `price_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `purchase_returns`
@@ -4425,25 +5572,25 @@ ALTER TABLE `return_items`
 -- AUTO_INCREMENT for table `selling_info`
 --
 ALTER TABLE `selling_info`
-  MODIFY `info_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `info_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `selling_item`
 --
 ALTER TABLE `selling_item`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `selling_price`
 --
 ALTER TABLE `selling_price`
-  MODIFY `price_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `price_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `sell_logs`
 --
 ALTER TABLE `sell_logs`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `settings`
@@ -4479,19 +5626,19 @@ ALTER TABLE `stores`
 -- AUTO_INCREMENT for table `suppliers`
 --
 ALTER TABLE `suppliers`
-  MODIFY `sup_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `sup_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `supplier_to_store`
 --
 ALTER TABLE `supplier_to_store`
-  MODIFY `s2s_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `s2s_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `taxrates`
 --
 ALTER TABLE `taxrates`
-  MODIFY `taxrate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `taxrate_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `transfers`
@@ -4509,19 +5656,19 @@ ALTER TABLE `transfer_items`
 -- AUTO_INCREMENT for table `units`
 --
 ALTER TABLE `units`
-  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `unit_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `unit_to_store`
 --
 ALTER TABLE `unit_to_store`
-  MODIFY `unit2s_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `unit2s_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `user_group`
@@ -4533,7 +5680,7 @@ ALTER TABLE `user_group`
 -- AUTO_INCREMENT for table `user_to_store`
 --
 ALTER TABLE `user_to_store`
-  MODIFY `u2s_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `u2s_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

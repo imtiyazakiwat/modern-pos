@@ -1,6 +1,39 @@
 <?php
 include ("../_init.php");
 
+// Product Search for Barcode Print
+if($request->server['REQUEST_METHOD'] == 'POST' AND $request->post['type'] == 'SEARCH_PRODUCTS') 
+{
+	try {
+		$query = $request->post['query'];
+		
+		// Search products by name or code with additional details
+		$statement = $db->prepare("
+			SELECT p.p_id, p.p_name, p.p_code, p.barcode_symbology, p2s.sell_price, p2s.quantity_in_stock, p.unit_id, p.category_id,
+				   u.unit_name, c.category_name
+			FROM `products` p 
+			LEFT JOIN `product_to_store` p2s ON (p.p_id = p2s.product_id AND p2s.store_id = ? AND p2s.status = 1)
+			LEFT JOIN `units` u ON p.unit_id = u.unit_id 
+			LEFT JOIN `categorys` c ON p.category_id = c.category_id 
+			WHERE p.p_name LIKE ? OR p.p_code LIKE ? 
+			ORDER BY p.p_name ASC LIMIT 10
+		");
+		
+		$statement->execute(array(store_id(), '%' . $query . '%', '%' . $query . '%'));
+		$products = $statement->fetchAll(PDO::FETCH_ASSOC);
+		
+	    header('Content-Type: application/json');
+	    echo json_encode(array('success' => true, 'data' => $products));
+	    exit();
+
+	  } catch (Exception $e) { 
+	    header('HTTP/1.1 422 Unprocessable Entity');
+	    header('Content-Type: application/json; charset=UTF-8');
+	    echo json_encode(array('success' => false, 'errorMsg' => $e->getMessage()));
+	    exit();
+	  }
+}
+
 // Product Images
 if($request->server['REQUEST_METHOD'] == 'GET' AND $request->get['type'] == 'PRODUCTIMAGES') 
 {

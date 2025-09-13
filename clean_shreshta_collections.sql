@@ -2544,7 +2544,8 @@ INSERT INTO `pmethods` (`pmethod_id`, `name`, `code_name`, `details`, `created_a
 (1, 'Cash on Delivery', 'cod', 'Payment method details goes here...', '2025-07-03 08:43:17', '2025-07-03 08:43:17'),
 (2, 'Bkash', 'bkash', 'Bkash a Brack Bank Service', '2025-07-03 08:43:17', '2025-07-03 08:43:17'),
 (3, 'Gift card', 'gift_card', 'Details of giftcard payment method', '2025-07-03 08:43:17', '2025-07-03 08:43:17'),
-(4, 'Credit', 'credit', 'Payment by customer credited balance', '2025-07-03 08:43:17', '2025-07-03 08:43:17');
+(4, 'Credit', 'credit', 'Payment by customer credited balance', '2025-07-03 08:43:17', '2025-07-03 08:43:17'),
+(5, 'UPI Payment', 'upi', 'Payment through UPI (Unified Payments Interface) with dynamic QR code', '2025-07-03 08:43:17', '2025-07-03 08:43:17');
 
 -- --------------------------------------------------------
 
@@ -3072,6 +3073,7 @@ CREATE TABLE `selling_info` (
   `store_id` int(10) UNSIGNED NOT NULL DEFAULT 1,
   `customer_id` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `customer_mobile` varchar(20) DEFAULT NULL,
+  `gst_number` varchar(50) DEFAULT NULL,
   `ref_invoice_id` varchar(100) DEFAULT NULL,
   `ref_user_id` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `invoice_note` text DEFAULT NULL,
@@ -3332,6 +3334,7 @@ CREATE TABLE `stores` (
   `printer` int(11) DEFAULT NULL,
   `order_printers` varchar(100) DEFAULT NULL,
   `auto_print` tinyint(1) NOT NULL DEFAULT 0,
+  `show_upi_qr` tinyint(1) NOT NULL DEFAULT 0,
   `local_printers` tinyint(1) DEFAULT NULL,
   `logo` text DEFAULT NULL,
   `favicon` varchar(250) DEFAULT NULL,
@@ -3350,8 +3353,8 @@ CREATE TABLE `stores` (
 -- Dumping data for table `stores`
 --
 
-INSERT INTO `stores` (`store_id`, `name`, `code_name`, `mobile`, `email`, `country`, `zip_code`, `currency`, `vat_reg_no`, `cashier_id`, `address`, `receipt_printer`, `cash_drawer_codes`, `char_per_line`, `remote_printing`, `printer`, `order_printers`, `auto_print`, `local_printers`, `logo`, `favicon`, `preference`, `sound_effect`, `sort_order`, `feedback_status`, `feedback_at`, `deposit_account_id`, `thumbnail`, `status`, `created_at`) VALUES
-(1, 'Shreshta Collections', 'shreshta_collections', '9739381943', 'info@store1.com', 'US', '1200', 'INR', '654321', 2, 'Darur', '1', NULL, 42, 0, 1, '[\"1\"]', 0, 1, '1_logo.jpg', '1_favicon.png', 'a:18:{s:8:\"timezone\";s:12:\"Asia/Kolkata\";s:21:\"invoice_edit_lifespan\";i:1440;s:26:\"invoice_edit_lifespan_unit\";s:6:\"minute\";s:23:\"invoice_delete_lifespan\";i:1440;s:28:\"invoice_delete_lifespan_unit\";s:6:\"minute\";s:3:\"tax\";i:0;s:20:\"stock_alert_quantity\";i:10;s:20:\"datatable_item_limit\";i:25;s:15:\"after_sell_page\";s:3:\"pos\";s:19:\"invoice_footer_text\";s:26:\"Thank you for choosing us!\";s:10:\"email_from\";s:20:\"Shreshta Collections\";s:13:\"email_address\";s:2:\"US\";s:12:\"email_driver\";s:11:\"smtp_server\";s:9:\"smtp_host\";s:15:\"smtp.google.com\";s:13:\"smtp_username\";s:0:\"\";s:13:\"smtp_password\";s:0:\"\";s:9:\"smtp_port\";i:465;s:7:\"ssl_tls\";s:3:\"ssl\";}', 0, 0, 'ready', '2019-03-01 14:29:18', 1, NULL, 1, '2025-07-03 08:43:18');
+INSERT INTO `stores` (`store_id`, `name`, `code_name`, `mobile`, `email`, `country`, `zip_code`, `currency`, `vat_reg_no`, `cashier_id`, `address`, `receipt_printer`, `cash_drawer_codes`, `char_per_line`, `remote_printing`, `printer`, `order_printers`, `auto_print`, `show_upi_qr`, `local_printers`, `logo`, `favicon`, `preference`, `sound_effect`, `sort_order`, `feedback_status`, `feedback_at`, `deposit_account_id`, `thumbnail`, `status`, `created_at`) VALUES
+(1, 'Shreshta Collections', 'shreshta_collections', '9739381943', 'info@store1.com', 'US', '1200', 'INR', '654321', 2, 'Darur', '1', NULL, 42, 0, 1, '[\"1\"]', 0, 0, 1, '1_logo.jpg', '1_favicon.png', 'a:18:{s:8:\"timezone\";s:12:\"Asia/Kolkata\";s:21:\"invoice_edit_lifespan\";i:1440;s:26:\"invoice_edit_lifespan_unit\";s:6:\"minute\";s:23:\"invoice_delete_lifespan\";i:1440;s:28:\"invoice_delete_lifespan_unit\";s:6:\"minute\";s:3:\"tax\";i:0;s:20:\"stock_alert_quantity\";i:10;s:20:\"datatable_item_limit\";i:25;s:15:\"after_sell_page\";s:3:\"pos\";s:19:\"invoice_footer_text\";s:26:\"Thank you for choosing us!\";s:10:\"email_from\";s:20:\"Shreshta Collections\";s:13:\"email_address\";s:2:\"US\";s:12:\"email_driver\";s:11:\"smtp_server\";s:9:\"smtp_host\";s:15:\"smtp.google.com\";s:13:\"smtp_username\";s:0:\"\";s:13:\"smtp_password\";s:0:\"\";s:9:\"smtp_port\";i:465;s:7:\"ssl_tls\";s:3:\"ssl\";}', 0, 0, 'ready', '2019-03-01 14:29:18', 1, NULL, 1, '2025-07-03 08:43:18');
 
 -- --------------------------------------------------------
 
