@@ -1,10 +1,18 @@
 window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$http", "$uibModal", "$sce", "InvoiceViewModal", "PrintReceiptModal", "$rootScope", function (API_URL, window, $, $http, $uibModal, $sce, InvoiceViewModal, PrintReceiptModal, $scope) {
     return function($scope) {
+        console.log('[PaymentFormModal] Opening payment modal');
+        
+        // Force cleanup before opening modal
+        $('body').removeClass('overlay-loader');
+        $('.modal').removeClass('overlay-loader');
+        $('.modal-backdrop').remove();
+        $('.pos-content-wrapper').removeAttr('inert').removeAttr('aria-hidden');
+        
         // Store focused element before opening modal
         var previouslyFocused = document.activeElement;
         
         var uibModalInstance = $uibModal.open({
-            animation: true,
+            animation: false,
             ariaLabelledBy: "modal-title",
             ariaDescribedBy: "modal-body",
             template: "<div class=\"modal-header\">" +
@@ -23,7 +31,16 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                             "<button ng-click=\"checkout();\" type=\"button\" class=\"btn btn-success radius-50\" tabindex=\"4\"><i class=\"fa fa-fw fa-money\"></i> Checkout &rarr;</button>" +
                         "</div>",
             controller: function ($scope, $uibModalInstance) {
+                console.log('[PaymentFormModal] Modal controller initialized');
+                
                 $(document).find("body").addClass("overlay-loader");
+                
+                // Safety timeout to remove overlay if it gets stuck
+                var safetyTimeout = setTimeout(function() {
+                    console.log('[PaymentFormModal] Safety timeout - removing overlay-loader');
+                    $(document).find("body").removeClass("overlay-loader");
+                    $('.modal').removeClass('overlay-loader');
+                }, 5000);
                 
                 // Use inert attribute instead of aria-hidden
                 $('.pos-content-wrapper').attr('inert', '');
@@ -34,11 +51,17 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                   method: "GET"
                 })
                 .then(function(response, status, headers, config) {
+                    console.log('[PaymentFormModal] Payment form loaded successfully');
+                    clearTimeout(safetyTimeout);
+                    
                     $scope.modal_title = "Payment > " + $scope.customerName;
                     $scope.rawHtml = $sce.trustAsHtml(response.data);
                     setTimeout(function() {
                         storeApp.bootBooxHeightAdjustment();
                         $(document).find("body").removeClass("overlay-loader");
+                        $('.modal').removeClass('overlay-loader');
+                        
+                        console.log('[PaymentFormModal] Modal content rendered, overlay removed');
                         
                         // Focus management
                         var firstInput = document.querySelector('.modal-body input:not([type="hidden"]), .modal-body button:not(.close)');
@@ -47,8 +70,12 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                         }
                     }, 500);                 
                 }, function(response) {
-                   window.swal("Oops!", response.data.errorMsg, "error");
+                   console.error('[PaymentFormModal] Error loading payment form:', response);
+                   clearTimeout(safetyTimeout);
+                   var errorMsg = (response && response.data && response.data.errorMsg) ? response.data.errorMsg : "Failed to load payment form";
+                   window.swal("Oops!", errorMsg, "error");
                    $(document).find("body").removeClass("overlay-loader");
+                   $('.modal').removeClass('overlay-loader');
                 });
 
                 $scope.sellWithInstallment = function() {
@@ -369,10 +396,26 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
             scope: $scope,
             size: "lg",
             backdrop: "static",
-            keyboard: true,
+            keyboard: false,
+            windowClass: 'payment-modal-window'
         });
 
-        uibModalInstance.result.catch(function () { 
+        // Prevent accidental modal dismissal
+        uibModalInstance.opened.then(function() {
+            console.log('[PaymentFormModal] Modal opened successfully');
+            
+            // Prevent backdrop clicks from closing modal
+            $('.modal-backdrop').off('click');
+            
+            // Ensure modal stays open
+            setTimeout(function() {
+                $('.payment-modal-window').addClass('modal-open-confirmed');
+                console.log('[PaymentFormModal] Modal confirmed open');
+            }, 500);
+        });
+        
+        uibModalInstance.result.catch(function (reason) {
+            console.log('[PaymentFormModal] Modal dismissed, reason:', reason);
             // Remove inert attribute and restore focus
             $('.pos-content-wrapper').removeAttr('inert');
             $('.pos-content-wrapper').removeAttr('aria-hidden');
@@ -381,7 +424,6 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                     previouslyFocused.focus();
                 }, 0);
             }
-            uibModalInstance.close(); 
         });
     };
 }]);

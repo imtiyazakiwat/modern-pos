@@ -11,6 +11,18 @@
     
     // Function to force cleanup of modal artifacts
     function forceCleanup() {
+        // Don't cleanup if payment modal is protected
+        if (window.paymentModalProtected) {
+            console.log('[Modal Cleanup] Payment modal is protected, skipping cleanup');
+            return;
+        }
+        
+        // Don't cleanup if payment modal is confirmed open
+        if ($('.payment-modal-window.modal-open-confirmed').length > 0) {
+            console.log('[Modal Cleanup] Payment modal is open, skipping cleanup');
+            return;
+        }
+        
         cleanupCount++;
         console.log('[Modal Cleanup] Running cleanup #' + cleanupCount);
         
@@ -33,7 +45,7 @@
         if (backdrops.length > 0) {
             console.log('[Modal Cleanup] Found', backdrops.length, 'modal backdrops');
             // Only remove if no modals are actually open
-            if ($('.modal.in, .modal.show').length === 0) {
+            if ($('.modal.in, .modal.show, .payment-modal-window').length === 0) {
                 console.log('[Modal Cleanup] No open modals, removing backdrops');
                 backdrops.remove();
                 $('body').removeClass('modal-open');
@@ -74,6 +86,11 @@
     // Run cleanup when modal is hidden
     $(document).on('hidden.bs.modal', '.modal', function() {
         console.log('[Modal Cleanup] Modal hidden event triggered');
+        // Don't cleanup if payment modal is still open
+        if ($('.payment-modal-window.modal-open-confirmed').length > 0) {
+            console.log('[Modal Cleanup] Payment modal is open, skipping cleanup');
+            return;
+        }
         forceCleanup();
         // Run again after a delay to catch any stragglers
         setTimeout(forceCleanup, 100);
@@ -83,6 +100,11 @@
     // Also run on hide event (before hidden)
     $(document).on('hide.bs.modal', '.modal', function() {
         console.log('[Modal Cleanup] Modal hide event triggered');
+        // Don't cleanup if payment modal is confirmed open
+        if ($('.payment-modal-window.modal-open-confirmed').length > 0) {
+            console.log('[Modal Cleanup] Payment modal is open, skipping pre-cleanup');
+            return;
+        }
         // Start cleanup immediately
         setTimeout(forceCleanup, 50);
     });
@@ -111,9 +133,14 @@
         setTimeout(forceCleanup, 500);
     });
     
-    // Cleanup on ESC key
+    // Cleanup on ESC key (but not for payment modal)
     $(document).on('keydown', function(e) {
         if (e.keyCode === 27) { // ESC key
+            // Don't cleanup if payment modal is open
+            if ($('.payment-modal-window.modal-open-confirmed').length > 0) {
+                console.log('[Modal Cleanup] ESC pressed but payment modal is open, ignoring');
+                return;
+            }
             console.log('[Modal Cleanup] ESC key pressed, scheduling cleanup');
             setTimeout(forceCleanup, 500);
         }
@@ -126,7 +153,12 @@
     
     // Monitor for any elements blocking clicks
     setInterval(function() {
-        if ($('.modal.in, .modal.show').length === 0) {
+        // Don't monitor if payment modal is protected or open
+        if (window.paymentModalProtected || $('.payment-modal-window.modal-open-confirmed').length > 0) {
+            return;
+        }
+        
+        if ($('.modal.in, .modal.show, .payment-modal-window').length === 0) {
             // No modals open, check for blocking elements
             var inertCount = $('[inert]').length;
             var overlayCount = $('.overlay-loader').length;

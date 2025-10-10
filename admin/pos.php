@@ -673,6 +673,9 @@ if ($order_printer_ids) {
 <!-- Modal Cleanup Fix -->
 <script src="../assets/itsolution24/js/pos/modal-cleanup-fix.js" type="text/javascript"></script>
 
+<!-- Payment Modal Fix for Windows -->
+<script src="../assets/itsolution24/js/pos/payment-modal-fix.js" type="text/javascript"></script>
+
 <noscript>
     <div class="global-site-notice noscript">
         <div class="notice-inner">
