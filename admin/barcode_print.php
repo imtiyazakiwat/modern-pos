@@ -341,7 +341,8 @@ include ("left_sidebar.php") ;
                                 <?php endif;?>
                                 <?php 
                                 $price = $product['sell_price'];
-                                $formatted_price = number_format($price, 0);
+                                // Format price with 2 decimals, then remove trailing zeros
+                                $formatted_price = rtrim(rtrim(number_format($price, 2, '.', ''), '0'), '.');
                                 echo $formatted_price;
                                 ?></span>
                               </div>
