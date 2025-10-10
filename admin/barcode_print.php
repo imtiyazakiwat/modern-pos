@@ -208,7 +208,27 @@ include ("left_sidebar.php") ;
                             <div id="barcode-con">
               <?php 
               if(isset($request->post['products'])):
+                // Console log: Barcode generation started
+                echo "<script>console.log('========================================');</script>";
+                echo "<script>console.log('BARCODE GENERATION STARTED');</script>";
+                echo "<script>console.log('========================================');</script>";
+                echo "<script>console.log(' ');</script>";
+                
+                // Log selected fields
+                echo "<script>console.log('--- SELECTED FIELDS ---');</script>";
+                if (isset($request->post['fields'])) {
+                  foreach ($request->post['fields'] as $field => $value) {
+                    echo "<script>console.log('Field: " . addslashes($field) . " = " . addslashes($value) . "');</script>";
+                  }
+                } else {
+                  echo "<script>console.log('No fields selected');</script>";
+                }
+                echo "<script>console.log(' ');</script>";
+                
                 $per_page = $request->post['per_page'];
+                echo "<script>console.log('--- LAYOUT SETTINGS ---');</script>";
+                echo "<script>console.log('Per Page: " . addslashes($per_page) . "');</script>";
+                
                 if (!$per_page) {
                   redirect(root_url().'admin/barcode_print.php');
                 }
@@ -246,6 +266,9 @@ include ("left_sidebar.php") ;
                     break;
                 }
                 
+                echo "<script>console.log('Page Layout: " . addslashes($page_layout) . "');</script>";
+                echo "<script>console.log(' ');</script>";
+                
                 // For retsol layout, we'll handle the page breaks differently
                 $items_per_page = ($per_page == 'retsol') ? 2 : $per_page;
                 
@@ -257,6 +280,11 @@ include ("left_sidebar.php") ;
                 foreach ($request->post['products'] as $prod) {
                   $total_barcodes += $prod['quantity'];
                 }
+                
+                echo "<script>console.log('--- BARCODE SUMMARY ---');</script>";
+                echo "<script>console.log('Total Products: " . count($request->post['products']) . "');</script>";
+                echo "<script>console.log('Total Barcodes to Generate: " . $total_barcodes . "');</script>";
+                echo "<script>console.log(' ');</script>";
                 ?>
 
                   <?php 
@@ -266,6 +294,113 @@ include ("left_sidebar.php") ;
                     $product = get_the_product($prod['item_id']);
                     $symbology = $product['barcode_symbology'] ? $product['barcode_symbology'] : 'code39';
                     $symbology = barcode_symbology($generator, $symbology);
+                    
+                    // Console log: Product data (ONCE per product, not per barcode)
+                    echo "<script>console.log('=== PRODUCT DATA ===');</script>";
+                    echo "<script>console.log('Product ID: " . addslashes($product['p_id']) . "');</script>";
+                    echo "<script>console.log('Product Code: " . addslashes($product['p_code']) . "');</script>";
+                    echo "<script>console.log('Full Product Name (from DB): " . addslashes($product['p_name']) . "');</script>";
+                    echo "<script>console.log('Sell Price: " . addslashes($product['sell_price']) . "');</script>";
+                    echo "<script>console.log('Purchase Price: " . addslashes($product['purchase_price']) . "');</script>";
+                    echo "<script>console.log('Quantity in Stock: " . addslashes($product['quantity_in_stock']) . "');</script>";
+                    echo "<script>console.log('Barcodes to generate for this product: " . $prod['quantity'] . "');</script>";
+                    echo "<script>console.log(' ');</script>";
+                    
+                    // Parse product name for MRP ONCE (not inside the barcode loop)
+                    $full_name = $product['p_name'];
+                    $mrp_value = null;
+                    $product_display_name = $full_name;
+                    
+                    // Console log: Start MRP extraction
+                    echo "<script>console.log('--- MRP EXTRACTION START ---');</script>";
+                    echo "<script>console.log('Full Name Input: \"" . addslashes($full_name) . "\"');</script>";
+                    
+                    // Try multiple patterns to extract MRP
+                    $pattern_matched = false;
+                    
+                    // Pattern 1: Multiple numbers with underscore, last is MRP (e.g., "kurta_14_540")
+                    if (preg_match('/^(.+?)_\d+_(\d+(?:\.\d+)?)$/', $full_name, $matches)) {
+                      $product_display_name = trim($matches[1]);
+                      $mrp_value = trim($matches[2]);
+                      $pattern_matched = true;
+                      echo "<script>console.log('Pattern 1 matched: name + number + underscore + MRP');</script>";
+                    }
+                    // Pattern 2: Multiple numbers with dash, last is MRP (e.g., "kurta_14-540")
+                    elseif (preg_match('/^(.+?)_(\d+)-(\d+(?:\.\d+)?)$/', $full_name, $matches)) {
+                      $product_display_name = trim($matches[1]);
+                      $mrp_value = trim($matches[3]);
+                      $pattern_matched = true;
+                      echo "<script>console.log('Pattern 2 matched: name + underscore + number + dash + MRP');</script>";
+                    }
+                    // Pattern 3: underscore/space followed by digits (e.g., "Product_50" or "Product _0.55")
+                    elseif (preg_match('/^(.+?)[\s_]+(\d+(?:\.\d+)?)$/', $full_name, $matches)) {
+                      $product_display_name = trim($matches[1]);
+                      $mrp_value = trim($matches[2]);
+                      $pattern_matched = true;
+                      echo "<script>console.log('Pattern 3 matched: underscore/space + digits');</script>";
+                    }
+                    // Pattern 4: underscore + text + dash + digits (e.g., "tobacco_ui-800")
+                    elseif (preg_match('/^(.+?)_[a-zA-Z]+-(\d+(?:\.\d+)?)$/', $full_name, $matches)) {
+                      $product_display_name = trim($matches[1]);
+                      $mrp_value = trim($matches[2]);
+                      $pattern_matched = true;
+                      echo "<script>console.log('Pattern 4 matched: underscore + text + dash + digits');</script>";
+                    }
+                    // Pattern 5: dash followed by digits at the end (e.g., "Product-800")
+                    elseif (preg_match('/^(.+?)-(\d+(?:\.\d+)?)$/', $full_name, $matches)) {
+                      $product_display_name = trim($matches[1]);
+                      $mrp_value = trim($matches[2]);
+                      $pattern_matched = true;
+                      echo "<script>console.log('Pattern 5 matched: dash + digits');</script>";
+                    }
+                    
+                    if ($pattern_matched) {
+                      // Console log: MRP found
+                      echo "<script>console.log('✓ MRP Pattern Matched!');</script>";
+                      echo "<script>console.log('Regex Matches: " . addslashes(json_encode($matches)) . "');</script>";
+                      echo "<script>console.log('Extracted Product Name: \"" . addslashes($product_display_name) . "\"');</script>";
+                      echo "<script>console.log('Extracted MRP Value: \"" . addslashes($mrp_value) . "\"');</script>";
+                    } else {
+                      // Console log: MRP not found
+                      echo "<script>console.log('✗ No MRP Pattern Matched');</script>";
+                      echo "<script>console.log('Product will display without MRP');</script>";
+                    }
+                    
+                    // Handle case with colon-separated barcode
+                    if (strpos($product_display_name, ':') !== false) {
+                      $before_colon = $product_display_name;
+                      $product_display_name = trim(explode(':', $product_display_name)[0]);
+                      echo "<script>console.log('Colon detected in name');</script>";
+                      echo "<script>console.log('Before colon trim: \"" . addslashes($before_colon) . "\"');</script>";
+                      echo "<script>console.log('After colon trim: \"" . addslashes($product_display_name) . "\"');</script>";
+                    }
+                    
+                    echo "<script>console.log('--- MRP EXTRACTION END ---');</script>";
+                    echo "<script>console.log(' ');</script>";
+                    
+                    // Log price display info ONCE per product
+                    $price = $product['sell_price'];
+                    $formatted_price = rtrim(rtrim(number_format($price, 2, '.', ''), '0'), '.');
+                    
+                    echo "<script>console.log('--- PRICE DISPLAY ---');</script>";
+                    echo "<script>console.log('Raw Sell Price: " . addslashes($price) . "');</script>";
+                    echo "<script>console.log('Formatted Sell Price: " . addslashes($formatted_price) . "');</script>";
+                    
+                    if ($mrp_value) {
+                      echo "<script>console.log('MRP will be displayed: " . addslashes($mrp_value) . "');</script>";
+                    } else {
+                      echo "<script>console.log('MRP will NOT be displayed (no value)');</script>";
+                    }
+                    
+                    if (isset($request->post['fields']['currency']) && $request->post['fields']['currency']) {
+                      echo "<script>console.log('Currency will be shown: " . addslashes(get_currency_code()) . "');</script>";
+                    } else {
+                      echo "<script>console.log('Currency will NOT be shown');</script>";
+                    }
+                    echo "<script>console.log('--- END PRICE DISPLAY ---');</script>";
+                    echo "<script>console.log(' ');</script>";
+                    
+                    echo "<script>console.log('Generating " . $prod['quantity'] . " barcode(s)...');</script>";
                     
                     for ($i=0; $i < $prod['quantity']; $i++): 
                       $barcode_html = '';
@@ -292,23 +427,6 @@ include ("left_sidebar.php") ;
                             </div>
                           <?php endif;?>
                           <?php if (isset($request->post['fields']['product_name']) && $request->post['fields']['product_name']):?>
-                            <?php 
-                              // Parse product name for MRP
-                              $full_name = $product['p_name'];
-                              $mrp_value = null;
-                              $product_display_name = $full_name;
-                              
-                              // Look for '-' followed by digits pattern
-                              if (preg_match('/(.*)-(\d+)/', $full_name, $matches)) {
-                                $product_display_name = trim($matches[1]);
-                                $mrp_value = trim($matches[2]);
-                              }
-                              
-                              // Handle case with colon-separated barcode
-                              if (strpos($product_display_name, ':') !== false) {
-                                $product_display_name = trim(explode(':', $product_display_name)[0]);
-                              }
-                            ?>
                             <div style="margin-bottom: 0; padding-bottom: 0; text-align: center;">
                               <span class="barcode_name"><?php echo $product_display_name;?></span>
                             </div>
@@ -328,6 +446,10 @@ include ("left_sidebar.php") ;
                             <img src="data:image/png;base64,<?php echo encode_data($generator->getBarcode($product['p_code'], $symbology, 1));?>" alt="<?php echo $product['p_code'];?>" class="bcimg" style="height: 32px; max-height: 32px; margin: 0 auto;">
                           </span>
                           <?php if (isset($request->post['fields']['price']) && $request->post['fields']['price']):?>
+                            <?php
+                              $price = $product['sell_price'];
+                              $formatted_price = rtrim(rtrim(number_format($price, 2, '.', ''), '0'), '.');
+                            ?>
                             <div style="margin: 0 auto; padding: 0; display: flex; justify-content: center; width: 100%; text-align: center; gap: 0;">
                               <?php if ($mrp_value): ?>
                                 <div style="font-size: 10px; margin-right: 0; text-align: left; margin-left: 0; width: 40%; padding-left: 3px; font-weight: bold;">
@@ -339,12 +461,7 @@ include ("left_sidebar.php") ;
                                 <?php if (isset($request->post['fields']['currency']) && $request->post['fields']['currency']):?>
                                 <?php echo get_currency_code();?> 
                                 <?php endif;?>
-                                <?php 
-                                $price = $product['sell_price'];
-                                // Format price with 2 decimals, then remove trailing zeros
-                                $formatted_price = rtrim(rtrim(number_format($price, 2, '.', ''), '0'), '.');
-                                echo $formatted_price;
-                                ?></span>
+                                <?php echo $formatted_price; ?></span>
                               </div>
                             </div>
                           <?php endif;?>
@@ -355,7 +472,15 @@ include ("left_sidebar.php") ;
                       $barcode_html = ob_get_clean();
                       $all_barcodes[] = $barcode_html;
                     endfor;
+                    echo "<script>console.log('✓ " . $prod['quantity'] . " barcode(s) generated successfully');</script>";
+                    echo "<script>console.log('=== END PRODUCT ===');</script>";
+                    echo "<script>console.log(' ');</script>";
                   endforeach;
+                  
+                  echo "<script>console.log('========================================');</script>";
+                  echo "<script>console.log('ALL BARCODES GENERATED SUCCESSFULLY');</script>";
+                  echo "<script>console.log('Total barcodes in array: " . count($all_barcodes) . "');</script>";
+                  echo "<script>console.log('========================================');</script>";
                   
                   // Calculate how many barcodes we have
                   $barcode_count = count($all_barcodes);
