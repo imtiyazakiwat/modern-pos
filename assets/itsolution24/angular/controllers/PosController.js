@@ -303,16 +303,29 @@ function (
     $scope.installmentInterestAmount = 0;
 
     $scope._calcDisAmount = function () {
-        if (window._.includes($scope.discountInput, '%')) {
+        var inputStr = String($scope.discountInput).trim();
+        if (window._.includes(inputStr, '%')) {
             $scope.discountType = 'percentage';
+            // Remove % symbol and parse the number
+            var percentValue = parseFloat(inputStr.replace('%', ''));
+            if (percentValue < 0 || percentValue > 100) {
+                $scope.discountAmount = 0;
+                $scope.discountInput = 0;
+                if (window.store.sound_effect == 1) {
+                    window.storeApp.playSound("error.mp3");
+                }
+                window.toastr.error("Discount percentage must be between 0 and 100", "Warning!");
+            } else {
+                $scope.discountAmount = percentValue;
+            }
         } else {
             $scope.discountType = 'plain';
-        }
-        if ($scope.discountInput < 0) {
-            $scope.discountAmount = 0;
-            $scope.discountInput = 0;
-        } else {
-            $scope.discountAmount = parseFloat($scope.discountInput);
+            if ($scope.discountInput < 0) {
+                $scope.discountAmount = 0;
+                $scope.discountInput = 0;
+            } else {
+                $scope.discountAmount = parseFloat($scope.discountInput);
+            }
         }
     };
     $scope._calcTaxAmount = function () {
