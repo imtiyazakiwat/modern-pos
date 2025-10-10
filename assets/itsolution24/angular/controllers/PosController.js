@@ -607,6 +607,80 @@ function (
     // ============================================
 
 
+    // ============================================
+    // Start Manual Quantity Update
+    // ============================================
+
+    $scope.updateItemQuantity = function (id, newQuantity) {
+        var newQty = parseFloat(newQuantity);
+        
+        if (!newQty || newQty < 1) {
+            if (window.store.sound_effect == 1) {
+                window.storeApp.playSound("error.mp3");
+            }
+            window.toastr.error("Quantity must be at least 1", "Warning!");
+            // Reset to previous value
+            window._.map($scope.itemArray, function (item) {
+                if (item.id == id) {
+                    $("#item_quantity_"+item.id).val(item.quantity);
+                }
+            });
+            return false;
+        }
+        
+        if (id) {
+            var find = window._.find($scope.itemArray, function (item) {
+                return item.id == id;
+            });
+            
+            if (find) {
+                window._.map($scope.itemArray, function (item) {
+                    if (item.id == id) {
+                        var oldQuantity = parseFloat(item.quantity);
+                        var quantityDiff = newQty - oldQuantity;
+                        
+                        if (window.store.sound_effect == 1) {
+                            window.storeApp.playSound("modify.mp3");
+                        }
+                        
+                        // Update quantity
+                        item.quantity = newQty;
+                        
+                        // Recalculate subtotal
+                        item.subTotal = parseFloat(item.price) * newQty;
+                        
+                        // Update totals
+                        $scope.totalQuantity = $scope.totalQuantity + quantityDiff;
+                        $scope.totalAmount = $scope.totalAmount + (parseFloat(item.price) * quantityDiff);
+                    }
+                });
+                
+                $scope._calcTotalPayable();
+                
+                // Apply scope changes safely
+                if (!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            }
+        }
+    };
+
+    // Event listener for manual quantity input changes
+    $(document).on("change blur", ".item_quantity", function() {
+        var itemId = $(this).data("itemid");
+        var newQuantity = $(this).val();
+        
+        // Use $timeout to ensure we're in Angular's digest cycle
+        $scope.$evalAsync(function() {
+            $scope.updateItemQuantity(itemId, newQuantity);
+        });
+    });
+
+    // ============================================
+    // End Manual Quantity Update
+    // ============================================
+
+
     // ===================================================
     // Start Remove Item from Invoice
     // ===================================================

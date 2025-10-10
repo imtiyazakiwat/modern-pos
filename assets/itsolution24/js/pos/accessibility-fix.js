@@ -16,6 +16,9 @@
     // Immediately fix any existing aria-hidden attributes
     function fixExistingAriaHidden() {
         var elements = document.querySelectorAll('[aria-hidden="true"]');
+        if (elements.length > 0) {
+            console.log('[Accessibility] Fixing', elements.length, 'elements with aria-hidden');
+        }
         elements.forEach(function(el) {
             el.removeAttribute('aria-hidden');
             el.setAttribute('inert', '');
@@ -51,14 +54,27 @@
 
         // Fix for bootstrap modals
         $(document).on('show.bs.modal', '.modal', function() {
+            console.log('[Accessibility] Modal showing');
             $('.pos-content-wrapper').attr('inert', '');
             $('.pos-content-wrapper').removeAttr('aria-hidden');
             fixExistingAriaHidden();
         });
 
         $(document).on('hidden.bs.modal', '.modal', function() {
+            console.log('[Accessibility] Modal hidden - removing inert');
             $('.pos-content-wrapper').removeAttr('inert');
             $('.pos-content-wrapper').removeAttr('aria-hidden');
+            
+            // Force remove inert from all elements
+            $('[inert]').each(function() {
+                console.log('[Accessibility] Removing inert from:', this.tagName, this.className);
+                $(this).removeAttr('inert');
+            });
+        });
+        
+        // Also cleanup on hide event
+        $(document).on('hide.bs.modal', '.modal', function() {
+            console.log('[Accessibility] Modal hiding - preparing cleanup');
         });
 
         // Fix for Angular UI Bootstrap modals
@@ -78,8 +94,17 @@
             return originalAttr.apply(this, arguments);
         };
 
-        // Make sure all modals use inert instead of aria-hidden
-        setInterval(fixExistingAriaHidden, 1000);
+        // Only check periodically if needed, and stop after a while
+        var checkCount = 0;
+        var maxChecks = 10; // Only check 10 times (10 seconds)
+        var intervalId = setInterval(function() {
+            fixExistingAriaHidden();
+            checkCount++;
+            if (checkCount >= maxChecks) {
+                clearInterval(intervalId);
+                console.log('Accessibility fix checks completed');
+            }
+        }, 1000);
     }
 
     // Run immediately and again when DOM is ready

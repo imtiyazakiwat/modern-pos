@@ -26,9 +26,9 @@
                         // Patch the $rootScope to ensure customer data is always valid
                         var $rootScope = injector.get('$rootScope');
                         if ($rootScope) {
-                            // Watch for invoice info changes
-                            $rootScope.$watch(function() {
-                                // Find and fix any customer mobile issues
+                            // Instead of watching everything, just fix data when modals open
+                            // This is much more efficient
+                            var fixCustomerData = function() {
                                 Object.keys($rootScope).forEach(function(key) {
                                     if (typeof $rootScope[key] === 'object' && $rootScope[key] !== null) {
                                         // Fix invoiceInfo objects
@@ -49,7 +49,13 @@
                                         }
                                     }
                                 });
-                            });
+                            };
+                            
+                            // Fix data when modals are shown
+                            $(document).on('show.bs.modal', '.modal', fixCustomerData);
+                            
+                            // Run once on initialization
+                            fixCustomerData();
                             
                             console.log('Customer mobile field fix applied');
                         }

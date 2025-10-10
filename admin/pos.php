@@ -670,6 +670,9 @@ if ($order_printer_ids) {
 <!-- Invoice Printing Fix -->
 <script src="../assets/itsolution24/js/pos/invoice-patch.js" type="text/javascript"></script>
 
+<!-- Modal Cleanup Fix -->
+<script src="../assets/itsolution24/js/pos/modal-cleanup-fix.js" type="text/javascript"></script>
+
 <noscript>
     <div class="global-site-notice noscript">
         <div class="notice-inner">

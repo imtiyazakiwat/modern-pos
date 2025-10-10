@@ -41,34 +41,57 @@ $store_name = store('name');
 <script>
 // Dynamically load QRCode library with fallbacks
 (function loadQRCodeLibrary() {
+    var qrLibraryLoaded = false;
+    var loadAttempts = 0;
+    var maxAttempts = 2; // Limit attempts to prevent freezing
+    
     // Try different paths to find the library
     var paths = [
-        '/assets/itsolution24/js/qrcode/qrcode.min.js',
-        'assets/itsolution24/js/qrcode/qrcode.min.js',
-        '../assets/itsolution24/js/qrcode/qrcode.min.js'
+        '../assets/itsolution24/js/qrcode/qrcode.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'
     ];
     
     function tryLoadScript(index) {
-        if (index >= paths.length) {
-            console.error("Failed to load QRCode library from all paths");
-            $('#upi-qr-code').html('<p class="text-danger">Error: QR Code library could not be loaded</p>');
+        if (qrLibraryLoaded) {
             return;
         }
         
+        if (index >= paths.length || loadAttempts >= maxAttempts) {
+            console.error("Failed to load QRCode library, using fallback");
+            $('#upi-qr-code').html('<p class="text-warning">QR Code unavailable. Please enter transaction ID manually.</p>');
+            return;
+        }
+        
+        loadAttempts++;
         var script = document.createElement('script');
         script.src = paths[index];
+        
+        // Add timeout to prevent hanging
+        var timeout = setTimeout(function() {
+            console.warn("Timeout loading QRCode from: " + paths[index]);
+            tryLoadScript(index + 1);
+        }, 3000);
+        
         script.onload = function() {
-            console.log("QRCode library loaded successfully from: " + paths[index]);
-            setTimeout(generateUpiQrCode, 500);
+            clearTimeout(timeout);
+            qrLibraryLoaded = true;
+            console.log("[UPI QR] QRCode library loaded successfully from: " + paths[index]);
+            // Don't call generateUpiQrCode here - let document.ready handle it
         };
         script.onerror = function() {
+            clearTimeout(timeout);
             console.warn("Failed to load QRCode from: " + paths[index]);
-            tryLoadScript(index + 1);
+            setTimeout(function() {
+                tryLoadScript(index + 1);
+            }, 100);
         };
         document.head.appendChild(script);
     }
     
-    tryLoadScript(0);
+    // Start loading with a small delay to prevent blocking
+    setTimeout(function() {
+        tryLoadScript(0);
+    }, 100);
 })();
 </script>
 
@@ -112,9 +135,37 @@ function getPaymentAmount() {
     return { amount: 100, source: "Default fallback" };
 }
 
+// Track if generation is in progress to prevent multiple calls
+var qrGenerationInProgress = false;
+var qrGenerationCount = 0;
+var qrCodeGenerated = false;
+
 // Function to generate UPI QR code directly in browser
 function generateUpiQrCode() {
+    console.log('[UPI QR] generateUpiQrCode called, count:', ++qrGenerationCount);
+    
     try {
+        // Prevent multiple simultaneous generations
+        if (qrGenerationInProgress) {
+            console.log('[UPI QR] Generation already in progress, skipping');
+            return;
+        }
+        
+        // Prevent regeneration if already generated (unless explicitly refreshed)
+        if (qrCodeGenerated && qrGenerationCount > 1) {
+            console.log('[UPI QR] QR code already generated, skipping duplicate call');
+            return;
+        }
+        
+        // Check if the QR code container still exists (modal not closed)
+        if ($('#upi-qr-code').length === 0) {
+            console.log('[UPI QR] Container not found, modal likely closed');
+            return;
+        }
+        
+        qrGenerationInProgress = true;
+        console.log('[UPI QR] Starting generation process');
+        
         // Get payment amount
         var amountInfo = getPaymentAmount();
         var amount = amountInfo.amount;
@@ -131,7 +182,7 @@ function generateUpiQrCode() {
         $('#upi_ctn').val(ctn);
         $('#upi-debug-ctn').text(ctn);
         
-        console.log("Generating QR code with amount:", formattedAmount, "CTN:", ctn, "Source:", scopeAccess);
+        console.log("[UPI QR] Generating with amount:", formattedAmount, "CTN:", ctn, "Source:", scopeAccess);
         
         // Create UPI URL with fixed amount
         var upiId = "hanamantmokashi@ybl"; // Change this to your actual UPI ID
@@ -155,6 +206,7 @@ function generateUpiQrCode() {
         });
         
         // Generate QR code using qrcode.js library
+        console.log('[UPI QR] Creating QRCode object');
         new QRCode(document.getElementById("upi-qr-code"), {
             text: upiUrl,
             width: 200,
@@ -163,35 +215,94 @@ function generateUpiQrCode() {
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.H
         });
+        
+        console.log('[UPI QR] QR code generated successfully');
+        qrCodeGenerated = true;
+        qrGenerationInProgress = false;
     } catch (e) {
-        console.error("Main function error:", e);
+        console.error("[UPI QR] Error:", e);
         $('#upi-qr-code').html('<p class="text-danger">Error: ' + e.message + '</p>');
+        qrGenerationInProgress = false;
     }
 }
 
+// Use a namespace for events to allow proper cleanup
+var upiEventNamespace = '.upiQrCode' + Date.now();
+var qrCodeInitialized = false;
+var eventListenersAttached = false;
+
+console.log('[UPI QR] Event namespace created:', upiEventNamespace);
+
 // Watch for changes in the paid amount
-$(document).on('input', '#paid-amount', function() {
-    // Regenerate QR code when amount changes
-    setTimeout(generateUpiQrCode, 500);
+$(document).on('input' + upiEventNamespace, '#paid-amount', function() {
+    console.log('[UPI QR] Paid amount changed');
+    // Only regenerate if QR code container exists
+    if ($('#upi-qr-code').length > 0) {
+        console.log('[UPI QR] Scheduling regeneration in 500ms');
+        setTimeout(generateUpiQrCode, 500);
+    } else {
+        console.log('[UPI QR] Container not found, skipping regeneration');
+    }
 });
 
 // Refresh QR code button
-$(document).on('click', '#refresh-upi-qr', function() {
-    $('#upi-qr-code').html('<p>Refreshing QR code...</p>');
-    setTimeout(generateUpiQrCode, 100);
+$(document).on('click' + upiEventNamespace, '#refresh-upi-qr', function() {
+    console.log('[UPI QR] Refresh button clicked');
+    if ($('#upi-qr-code').length > 0) {
+        $('#upi-qr-code').html('<p>Refreshing QR code...</p>');
+        qrCodeGenerated = false; // Allow regeneration
+        qrGenerationInProgress = false;
+        setTimeout(generateUpiQrCode, 100);
+    }
 });
 
 // Show debug info when pressing Ctrl+D (for debugging purposes)
-$(document).keydown(function(e) {
+$(document).on('keydown' + upiEventNamespace, function(e) {
     if (e.ctrlKey && e.keyCode === 68) { // Ctrl+D
-        $('#upi-debug-info').toggle();
+        if ($('#upi-debug-info').length > 0) {
+            $('#upi-debug-info').toggle();
+        }
         return false;
     }
 });
 
+// Clean up event listeners when modal is closed
+$(document).on('hidden.bs.modal', '.modal', function() {
+    console.log('[UPI QR] Modal closed, cleaning up');
+    // Remove all UPI-related event listeners
+    $(document).off(upiEventNamespace);
+    qrCodeInitialized = false;
+    qrGenerationInProgress = false;
+    qrCodeGenerated = false;
+    console.log('[UPI QR] Event listeners cleaned up, flags reset');
+});
+
+// Also clean up when modal is dismissed
+$(document).on('hide.bs.modal', '.modal', function() {
+    console.log('[UPI QR] Modal hiding');
+    qrGenerationInProgress = false;
+});
+
 // Initialize QR code generation when the template is loaded
 $(document).ready(function() {
-    // Wait for everything to be initialized
-    setTimeout(generateUpiQrCode, 1000);
+    console.log('[UPI QR] Document ready, qrCodeInitialized:', qrCodeInitialized);
+    
+    // Wait for QR library to load, then generate
+    var checkLibraryInterval = setInterval(function() {
+        if (typeof QRCode !== 'undefined' && !qrCodeInitialized && $('#upi-qr-code').length > 0) {
+            clearInterval(checkLibraryInterval);
+            qrCodeInitialized = true;
+            console.log('[UPI QR] Library loaded, generating QR code');
+            setTimeout(generateUpiQrCode, 500);
+        }
+    }, 100);
+    
+    // Stop checking after 10 seconds
+    setTimeout(function() {
+        clearInterval(checkLibraryInterval);
+        if (!qrCodeInitialized) {
+            console.log('[UPI QR] Library load timeout, QR code not generated');
+        }
+    }, 10000);
 });
 </script> 
