@@ -169,7 +169,7 @@ include ("left_sidebar.php");
 						<div class="box-body">
 							<div class="table-responsive">
 								<?php
-									$print_columns = '2,3,4,5,6,7';
+									$print_columns = '2,3,4,5,6,7,8';
 									if (user_group_id() != 1) {
 										if (! has_permission('access', 'show_purchase_price')) {
 											$print_columns = my_str_replace('6,', '', $print_columns);
@@ -184,19 +184,19 @@ include ("left_sidebar.php");
 											$hide_colums .= "6,";
 										}
 										if (! has_permission('access', 'read_product')) {
-											$hide_colums .= "8,";
-										}
-										if (! has_permission('access', 'update_product')) {
 											$hide_colums .= "9,";
 										}
-										if (! has_permission('access', 'create_purchase_invoice')) {
+										if (! has_permission('access', 'update_product')) {
 											$hide_colums .= "10,";
 										}
-										if (! has_permission('access', 'print_barcode')) {
+										if (! has_permission('access', 'create_purchase_invoice')) {
 											$hide_colums .= "11,";
 										}
-										if (! has_permission('access', 'delete_product')) {
+										if (! has_permission('access', 'print_barcode')) {
 											$hide_colums .= "12,";
+										}
+										if (! has_permission('access', 'delete_product')) {
+											$hide_colums .= "13,";
 										}
 									}
 
@@ -227,6 +227,9 @@ include ("left_sidebar.php");
 								            </th>                        
 								            <th class="w-5">
 								            	<?php echo trans('label_selling_price'); ?>
+								            </th>
+								            <th class="w-5">
+								            	MRP
 								            </th>
 								            <th class="w-5">
 								            	<?php echo trans('label_view'); ?>
@@ -270,6 +273,9 @@ include ("left_sidebar.php");
 								            </th>                        
 								            <th class="w-5">
 								            	<?php echo trans('label_selling_price'); ?>
+								            </th>
+								            <th class="w-5">
+								            	MRP
 								            </th>
 								            <th class="w-5">
 								            	<?php echo trans('label_view'); ?>

@@ -73,8 +73,8 @@ function (
             [10, 25, 50, 100, 200, "All"]
         ],
         "columnDefs": [
-            {"targets": [0, 1, 3, 4, 8, 9, 10, 11, 12], "orderable": false},
-            {"className": "text-center", "targets": [0, 1, 5, 8, 9, 10, 11, 12]},
+            {"targets": [0, 1, 3, 4, 8, 9, 10, 11, 12, 13], "orderable": false},
+            {"className": "text-center", "targets": [0, 1, 5, 8, 9, 10, 11, 12, 13]},
             {"className": "text-right", "targets": [6, 7]},
             {"visible": false, "targets": hideColumsArray},
             { 
@@ -149,6 +149,12 @@ function (
                    $(td).attr('data-title', $("#product-product-list thead tr th:eq(12)").html());
                 }
             },
+            { 
+                "targets": [13],
+                'createdCell':  function (td, cellData, rowData, row, col) {
+                   $(td).attr('data-title', $("#product-product-list thead tr th:eq(13)").html());
+                }
+            },
         ],
         "aoColumns": [
             {data: "select"},
@@ -159,6 +165,7 @@ function (
             {data: "quantity_in_stock"},
             {data: "purchase_price"},
             {data: "sell_price"},
+            {data: "mrp"},
             {data: "view_btn"},
             {data: "edit_btn"},
             {data: "purchase_btn"},
@@ -685,7 +692,7 @@ function (
     $("#email-btn").on( "click", function (e) {
         e.stopPropagation();
         e.preventDefault();
-        dt.find("thead th:nth-child(1), thead th:nth-child(2), thead th:nth-child(9), thead th:nth-child(10), thead th:nth-child(11), thead th:nth-child(12), thead th:nth-child(13), tbody td:nth-child(1), tbody td:nth-child(2), tbody td:nth-child(9), tbody td:nth-child(10), tbody td:nth-child(11), tbody td:nth-child(12), tbody td:nth-child(13), tfoot th:nth-child(1), tfoot th:nth-child(1), tfoot th:nth-child(9), tfoot th:nth-child(10), tfoot th:nth-child(11), tfoot th:nth-child(12), tfoot th:nth-child(13)").addClass("hide-in-mail");
+        dt.find("thead th:nth-child(1), thead th:nth-child(2), thead th:nth-child(10), thead th:nth-child(11), thead th:nth-child(12), thead th:nth-child(13), thead th:nth-child(14), tbody td:nth-child(1), tbody td:nth-child(2), tbody td:nth-child(10), tbody td:nth-child(11), tbody td:nth-child(12), tbody td:nth-child(13), tbody td:nth-child(14), tfoot th:nth-child(1), tfoot th:nth-child(1), tfoot th:nth-child(10), tfoot th:nth-child(11), tfoot th:nth-child(12), tfoot th:nth-child(13), tfoot th:nth-child(14)").addClass("hide-in-mail");
         var thehtml = dt.html();
         EmailModal({template: "product-list", subject: "Product Listing", title:"Product Listing", html: thehtml});
     });

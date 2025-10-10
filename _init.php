@@ -226,6 +226,7 @@ require_once DIR_HELPER . 'quotation.php';
 require_once DIR_HELPER . 'purchase.php';
 require_once DIR_HELPER . 'pmethod.php';
 require_once DIR_HELPER . 'product.php';
+require_once DIR_HELPER . 'mrp_helper.php';
 require_once DIR_HELPER . 'report.php';
 require_once DIR_HELPER . 'store.php';
 require_once DIR_HELPER . 'supplier.php';

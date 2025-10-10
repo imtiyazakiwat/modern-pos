@@ -441,7 +441,8 @@ $columns = array(
     'db' => 'p_name',   
     'dt' => 'p_name' ,
     'formatter' => function($d, $row) {
-        return html_entity_decode($row['p_name']);
+        $display_name = get_product_display_name($row['p_name']);
+        return html_entity_decode($display_name);
     }
   ),
   array( 'db' => 'category_id',  'dt' => 'category_id' ),
@@ -501,6 +502,17 @@ $columns = array(
     'dt' => 'sell_price' ,
     'formatter' => function($d, $row) {
       return currency_format($row['sell_price']);
+    }
+  ),
+  array( 
+    'db' => 'p_name',   
+    'dt' => 'mrp' ,
+    'formatter' => function($d, $row) {
+      $mrp = get_product_mrp($row['p_name']);
+      if ($mrp) {
+        return '<span class="label label-info">' . currency_format($mrp) . '</span>';
+      }
+      return '<span class="text-muted">-</span>';
     }
   ),
   array( 'db' => 'tax_method',   'dt' => 'tax_method' ),
