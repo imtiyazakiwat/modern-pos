@@ -4,27 +4,27 @@
  * This script directly patches the PrintReceiptModal function in modal.js
  * to fix the issue with customer_mobile being undefined
  */
-(function() {
+(function () {
     // Wait for DOM and Angular to be ready
     function initPatch() {
         if (!window.angular || !window.angularApp) {
             setTimeout(initPatch, 500);
             return;
         }
-        
+
         console.log('Applying invoice PrintReceiptModal patch');
-        
+
         // Add a PDF receipt generator as a fallback option
-        window.generatePDFReceipt = function(scope) {
+        window.generatePDFReceipt = function (scope) {
             try {
                 console.log("Generating PDF receipt as a fallback");
-                
+
                 // Check if required data exists
                 if (!scope.invoiceInfo) {
                     console.error("Missing invoice info for PDF generation");
                     return;
                 }
-                
+
                 // Store and payment info
                 var storeName = window.store && window.store.name ? window.store.name : 'Store';
                 var storeAddress = window.store && window.store.address ? window.store.address : '';
@@ -38,7 +38,7 @@
                 var customerContact = '';
                 var customerAddress = 'athani';
                 var customerGTIN = '147258';
-                
+
                 // Get customer contact - safely
                 if (scope.invoiceInfo.customer_mobile && scope.invoiceInfo.customer_mobile !== "undefined") {
                     customerContact = scope.invoiceInfo.customer_mobile;
@@ -47,11 +47,11 @@
                 } else if (scope.invoiceInfo.customer_email && scope.invoiceInfo.customer_email !== "undefined") {
                     customerContact = scope.invoiceInfo.customer_email;
                 }
-                
+
                 // UPI payment details
                 var upiId = window.store && window.store.upi_id ? window.store.upi_id : 'hanamantmokashi@ybl';
                 var paymentReference = 'INV' + invoiceId;
-                
+
                 // Safely get numeric values
                 var subtotal = parseFloat(scope.invoiceInfo.subtotal || 0);
                 var orderTax = parseFloat(scope.invoiceInfo.order_tax || 0);
@@ -66,12 +66,12 @@
                 var prevDuePaid = parseFloat(scope.invoiceInfo.prev_due_paid || 0);
                 var totalDue = dueAmount;
                 var paymentMethod = scope.invoiceInfo.payment_method || 'UPI Payment';
-                
+
                 // Format numbers for display
                 function formatNumber(num) {
                     return num.toFixed(2);
                 }
-                
+
                 // Check if store has a logo URL
                 var logoUrl = '';
                 if (window.store && window.store.logo) {
@@ -79,10 +79,10 @@
                     var baseUrl = window.baseUrl || '';
                     logoUrl = baseUrl + 'assets/itsolution24/img/logo-favicons/' + window.store.logo;
                 }
-                
+
                 // Base64 encoded Modern POS logo - embedding directly to avoid loading issues
                 var logoBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACECAMAAAC82akHAAAAM1BMVEX///8AAADBwcHm5uYtLS2UlJRtbW1MTEzd3d1jY2Pf39/y8vLZ2dmnp6fJycl9fX2Li4uRJv1pAAAC/ElEQVR4nO3c23KrIBRAUQni/XT8/589aK0xpLU9JW2HrfMwbYMgq+KAl9sNAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALKJ0/J8MHiSz8n+R19n4uMVM5zVG5dz49KRSGXPyrlv15q8qNVt52ZX0QV33azmE9qKn2eqLdx21EELdVLrSTeL4ddnO9pVWobR+lJW0lQ+ZvK02r98n266mjKROrYeNb0TPBt83wXmg1Vo6/1Jyc4yWqqhk1ncbX8nvnw6+f+wU4exLMlus9a1sA4/tzA9/Nvj+6SZlpzWk7AstOdp0qnZJw8NV9fsGcdNy9HqlS+o2cZYV6+64HkOqqpZTVbVvmkuWd3aNj8tffPS2hUon/C0t2WW1scc3IbfeKY0PiSuU6jo/DZn89vQQcdMSNVq6vqWR7FqbEO7yqrkQU8uiTfNop9bkPD61KauY8vKh71+U+2fbKVN7Sjbsa6jX/ubeRpSUNd/G1s9C1/dmfUvXT5/Gvt/q3l6t4OPry0ox9W5yTaF6Obo7+wtZeuvh4YZQNoe85jhKdJM0zc+S7Qfc8+37rG9tU+ZtD5PXK+RnrO8y7Vj3KL5TSKXTYzOlY2P3+q7OgnWipBZOQ+hXldbvT9XXw+fSX/3l6lG3UsQQnjO2buZCab32Tbe+77/2/fH7k0hpYL7o5iv0kj7aXNCTM5Qub63SY5REzgfl9p3tuVRU28UVnp8q5E2fdd53vqgrXm3pmbmM3lsfTZ17gVZm+PG5yZsbTpsEHZlO1pfda8739q/+s+ICjb/yZHSxDiO3To05j+vCre8/O2csM55+QfPTwbPdyPZaQyu3irF2nrJz66Q5VmV2lkwcTwya55FvLIInb2rPXERvpZrLYXnMp+bNL1l1Q5R58wudOzSd/IhhSnrc2ymV+oInGKpGp9tjaSrbvpJNF2xlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/Elf7QYTYYdxhDcAAAAASUVORK5CYII=";
-                
+
                 // Create a full page invoice HTML structure
                 var invoiceHTML = `
                 <!DOCTYPE html>
@@ -271,36 +271,60 @@
                     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
                     <!-- Multiple QR code libraries for fallback -->
                     <script>
+                        var qrLibraryLoaded = false;
+                        var qrLoadAttempts = 0;
+                        var maxQRLoadAttempts = 3;
+                        
                         // We'll try multiple QR code libraries to ensure we have one that works
                         function loadScript(url, callback) {
+                            // Prevent too many attempts
+                            if (qrLoadAttempts >= maxQRLoadAttempts) {
+                                console.log('Max QR load attempts reached, using fallback');
+                                callback(false);
+                                return;
+                            }
+                            
+                            qrLoadAttempts++;
                             var script = document.createElement('script');
                             script.type = 'text/javascript';
                             script.src = url;
+                            
+                            var timeout = setTimeout(function() {
+                                console.log('QRCode load timeout from: ' + url);
+                                callback(false);
+                            }, 3000); // 3 second timeout
+                            
                             script.onload = function() {
+                                clearTimeout(timeout);
                                 console.log('QRCode library loaded successfully from: ' + url);
+                                qrLibraryLoaded = true;
                                 callback(true);
                             };
                             script.onerror = function() {
+                                clearTimeout(timeout);
                                 console.log('Failed to load QRCode from: ' + url);
                                 callback(false);
                             };
                             document.head.appendChild(script);
                         }
                         
-                        // Try to load QR code libraries in order
+                        // Try to load QR code libraries in order - only try local first, then CDN
                         var qrLibraries = [
-                            '/assets/js/qrcode.min.js',
-                            'assets/js/qrcode.min.js',
-                            '../assets/js/qrcode.min.js',
-                            'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
+                            '../assets/itsolution24/js/qrcode/qrcode.min.js',
                             'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'
                         ];
                         
                         var qrLibraryIndex = 0;
                         
                         function tryLoadQRLibrary() {
-                            if (qrLibraryIndex >= qrLibraries.length) {
+                            if (qrLibraryLoaded) {
+                                generateQRCode();
+                                return;
+                            }
+                            
+                            if (qrLibraryIndex >= qrLibraries.length || qrLoadAttempts >= maxQRLoadAttempts) {
                                 // All libraries failed, fall back to image
+                                console.log('Using QR image fallback');
                                 generateQRAsImage();
                                 return;
                             }
@@ -310,7 +334,7 @@
                                     generateQRCode();
                                 } else {
                                     qrLibraryIndex++;
-                                    tryLoadQRLibrary();
+                                    setTimeout(tryLoadQRLibrary, 100); // Small delay between attempts
                                 }
                             });
                         }
@@ -411,11 +435,16 @@
                         
                         // On document load
                         window.onload = function() {
-                            // Only try to load QR library if UPI QR is enabled
-                            if (window.store && window.store.show_upi_qr == 1) {
-                                tryLoadQRLibrary();
-                            }
+                            // Generate barcode first (it's more reliable)
                             generateBarcode();
+                            
+                            // Only try to load QR library if UPI QR is enabled
+                            // Use setTimeout to prevent blocking
+                            if (window.store && window.store.show_upi_qr == 1) {
+                                setTimeout(function() {
+                                    tryLoadQRLibrary();
+                                }, 100);
+                            }
                         };
                     </script>
                 </head>
@@ -493,11 +522,11 @@
                             </thead>
                             <tbody>
                                 ${scope.invoiceItems.map((item, index) => {
-                                    const itemQty = parseFloat(item.item_quantity || 0);
-                                    const itemPrice = parseFloat(item.item_price || 0);
-                                    const itemAmount = itemQty * itemPrice;
-                                    
-                                    return `
+                    const itemQty = parseFloat(item.item_quantity || 0);
+                    const itemPrice = parseFloat(item.item_price || 0);
+                    const itemAmount = itemQty * itemPrice;
+
+                    return `
                                     <tr>
                                         <td>${index + 1}</td>
                                         <td>${item.item_name}</td>
@@ -505,7 +534,7 @@
                                         <td>${itemPrice.toFixed(2)}</td>
                                         <td style="text-align:right">${itemAmount.toFixed(2)}</td>
                                     </tr>`;
-                                }).join('')}
+                }).join('')}
                             </tbody>
                         </table>
                         
@@ -650,25 +679,25 @@
                 </body>
                 </html>
                 `;
-                
+
                 // Open a new window and write the invoice HTML to it
                 var printWindow = window.open('', '_blank', 'height=600,width=800');
                 printWindow.document.write(invoiceHTML);
                 printWindow.document.close();
-                
+
                 // Wait for resources to load then print
-                setTimeout(function() {
+                setTimeout(function () {
                     printWindow.print();
                 }, 1000);
-                
+
             } catch (e) {
                 console.error("Error generating PDF receipt:", e);
                 window.toastr.error("Failed to generate receipt: " + e.message);
             }
         };
-        
+
         // Monkey patch for PrintReceiptModal to handle customer_mobile properly
-        window.monkeyPatchPrintReceiptModal = function(directScope) {
+        window.monkeyPatchPrintReceiptModal = function (directScope) {
             try {
                 // First try direct printing
                 $.ajax({
@@ -676,17 +705,17 @@
                     type: "POST",
                     data: directScope,
                     dataType: "json",
-                    beforeSend: function() {
+                    beforeSend: function () {
                         console.log("Sending print request...");
                     },
-                    success: function(response) {
+                    success: function (response) {
                         if (response.error) {
                             window.toastr.error(response.error, "Error!");
                             // If printing fails, generate PDF receipt as fallback
                             window.generatePDFReceipt(directScope);
                         }
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         console.error("Print request failed:", xhr, status, error);
                         // If AJAX request fails, generate PDF receipt as fallback
                         window.generatePDFReceipt(directScope);
@@ -700,12 +729,12 @@
             }
         };
     }
-    
+
     // Start the patch when document is ready
     if (document.readyState === "complete" || document.readyState === "interactive") {
         setTimeout(initPatch, 100);
     } else {
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             setTimeout(initPatch, 100);
         });
     }
