@@ -115,14 +115,9 @@
             </label>
             <div class="col-sm-8">
               <input type="text" class="form-control" id="p_name" name="p_name" value="<?php
-                $mrp = '';
-                $name = $product['p_name'];
-                // Extract MRP from product name if it has the format: product-name_mrp
-                if (preg_match('/(.*?)_(\d+)$/', $product['p_name'], $matches)) {
-                  $name = $matches[1];
-                  $mrp = $matches[2];
-                }
-                echo $name;
+                // Extract MRP from product name using helper function (supports all 5 patterns)
+                $extracted = extract_mrp_from_name($product['p_name']);
+                echo htmlspecialchars($extracted['name']);
               ?>" required>
             </div>
           </div>
@@ -131,7 +126,10 @@
               <?php echo "MRP"; ?><i class="required">*</i>
             </label>
             <div class="col-sm-8">
-              <input type="text" class="form-control" id="p_mrp" name="p_mrp" value="<?php echo $mrp; ?>" required>
+              <input type="text" class="form-control" id="p_mrp" name="p_mrp" value="<?php 
+                // Use the extracted MRP value
+                echo htmlspecialchars($extracted['mrp'] ?? ''); 
+              ?>" required>
             </div>
           </div>
           <div class="form-group all">
