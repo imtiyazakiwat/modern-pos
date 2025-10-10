@@ -516,7 +516,7 @@ function get_postemplate_data($invoice_id)
       'invoice_note' => $invoice_info['invoice_note'],
       'footer_text' => get_preference('invoice_footer_text'),
 
-      'subtotal' => currency_format($invoice_info['subtotal'] - $invoice_info['item_tax']),
+      'subtotal' => currency_format($invoice_info['subtotal']),
       'discount_type' => ucfirst($invoice_info['discount_type']),
       'discount_amount' => currency_format($invoice_info['discount_amount']),
       'interest_amount' => currency_format($invoice_info['interest_amount']),
@@ -561,9 +561,9 @@ function get_postemplate_data($invoice_id)
         if (in_array($key, array('sl'))) {
           $new_item[$key] = $val;
         } else if(in_array($key, array('item_price'))) {
-            $new_item[$key] = currency_format($val - $item['item_tax']);
+            $new_item[$key] = currency_format($val);
         } else if(in_array($key, array('item_total'))) {
-            $new_item[$key] = currency_format($val - ($item['item_tax']) * $item['item_quantity']);
+            $new_item[$key] = currency_format($val);
         } else {
           $new_item[$key] = currency_format($val);
         }
