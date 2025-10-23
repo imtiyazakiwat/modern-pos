@@ -149,10 +149,13 @@ $customer_id = isset($request->get['customer_id']) ? $request->get['customer_id'
 								<input type="hidden" name="product-item['{{ items.id }}'][item_name]" value="{{ items.name }}">
 								<input type="hidden" name="product-item['{{ items.id }}'][item_price]" value="{{ items.price  | formatDecimal:2 }}">
 								<input type="hidden" name="product-item['{{ items.id }}'][item_quantity]" value="{{ items.quantity }}">
+								<input type="hidden" name="product-item['{{ items.id }}'][item_discount_type]" value="{{ items.discountType || 'plain' }}">
+								<input type="hidden" name="product-item['{{ items.id }}'][item_discount_percent]" value="{{ items.discountPercent || 0 }}">
+								<input type="hidden" name="product-item['{{ items.id }}'][item_discount_amount]" value="{{ items.discountAmount || 0 }}">
 								<input type="hidden" name="product-item['{{ items.id }}'][item_total]" value="{{ items.subTotal  | formatDecimal:2 }}">
 								{{ $index+1 }}
 							</td>
-							<td class="w-70">{{ items.name }} (x{{ items.quantity }} {{ items.unitName }})</td>
+							<td class="w-70">{{ items.name }} (x{{ items.quantity }} {{ items.unitName }})<span ng-show="items.discountAmount > 0" style="color: #ff6600; font-weight: bold;"> [-{{ items.discountType == 'percentage' ? (items.discountPercent + '%') : ('₹' + (items.discountAmount | formatDecimal:2)) }}]</span></td>
 							<td class="text-right w-20">{{ items.subTotal  | formatDecimal:2 }}</td>
 						</tr>
 					</tbody>

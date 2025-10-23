@@ -536,8 +536,6 @@ window.angularApp.controller("PosController", [
                             item.taxamount = taxamount;
                             item.price = parseFloat(response.data.sell_price) + additonalTaxAmount;
                             item.quantity = qty;
-                            item.discountInput = '0';
-                            item.discountType = 'plain';
                             item.discountPercent = 0;
                             item.discountAmount = 0;
                             item.subTotal = (parseFloat(response.data.sell_price) * qty) + additonalTaxAmount;
@@ -723,18 +721,16 @@ window.angularApp.controller("PosController", [
             }
         };
 
-        // Event listener for manual quantity input changes (one-time binding)
-        if (!window.posEventListenersInitialized) {
-            $(document).on("change blur", ".item_quantity", function () {
-                var itemId = $(this).data("itemid");
-                var newQuantity = $(this).val();
+        // Event listener for manual quantity input changes
+        $(document).on("change blur", ".item_quantity", function () {
+            var itemId = $(this).data("itemid");
+            var newQuantity = $(this).val();
 
-                // Use $timeout to ensure we're in Angular's digest cycle
-                $scope.$evalAsync(function () {
-                    $scope.updateItemQuantity(itemId, newQuantity);
-                });
+            // Use $timeout to ensure we're in Angular's digest cycle
+            $scope.$evalAsync(function () {
+                $scope.updateItemQuantity(itemId, newQuantity);
             });
-        }
+        });
 
         // ============================================
         // End Manual Quantity Update
@@ -745,69 +741,74 @@ window.angularApp.controller("PosController", [
         // Start Item Discount Update
         // ============================================
 
-        $scope.updateItemDiscount = function (id, discountInput) {
-            var inputStr = String(discountInput).trim();
-            if (!inputStr || inputStr === '') { inputStr = '0'; }
+        $scope.updateItemDiscount = function (id, discountPercent) {
+            var discount = parseFloat(discountPercent);
+
+            if (isNaN(discount) || discount < 0) {
+                discount = 0;
+            }
+
+            if (discount > 100) {
+                if (window.store.sound_effect == 1) {
+                    window.storeApp.playSound("error.mp3");
+                }
+                window.toastr.error("Discount percentage cannot exceed 100%", "Warning!");
+                discount = 0;
+                $("#item_discount_" + id).val(0);
+            }
+
             if (id) {
-                var find = window._.find($scope.itemArray, function (item) { return item.id == id; });
+                var find = window._.find($scope.itemArray, function (item) {
+                    return item.id == id;
+                });
+
                 if (find) {
                     window._.map($scope.itemArray, function (item) {
                         if (item.id == id) {
-                            var baseAmount = parseFloat(item.price) * parseFloat(item.quantity);
-                            if (window._.includes(inputStr, '%')) {
-                                item.discountType = 'percentage';
-                                var percentValue = parseFloat(inputStr.replace('%', ''));
-                                if (percentValue < 0 || percentValue > 100) {
-                                    if (window.store.sound_effect == 1) { window.storeApp.playSound("error.mp3"); }
-                                    window.toastr.error("Discount percentage must be between 0 and 100", "Warning!");
-                                    item.discountInput = '0'; item.discountPercent = 0; item.discountAmount = 0;
-                                    $("#item_discount_" + id).val('0');
-                                } else {
-                                    if (window.store.sound_effect == 1) { window.storeApp.playSound("modify.mp3"); }
-                                    item.discountInput = inputStr;
-                                    item.discountPercent = percentValue;
-                                    item.discountAmount = (baseAmount * percentValue) / 100;
-                                }
-                            } else {
-                                item.discountType = 'plain';
-                                var fixedAmount = parseFloat(inputStr);
-                                if (fixedAmount < 0) {
-                                    if (window.store.sound_effect == 1) { window.storeApp.playSound("error.mp3"); }
-                                    window.toastr.error("Discount amount cannot be negative", "Warning!");
-                                    item.discountInput = '0'; item.discountPercent = 0; item.discountAmount = 0;
-                                    $("#item_discount_" + id).val('0');
-                                } else if (fixedAmount >= baseAmount) {
-                                    if (window.store.sound_effect == 1) { window.storeApp.playSound("error.mp3"); }
-                                    window.toastr.error("Discount amount must be less than item total", "Warning!");
-                                    item.discountInput = '0'; item.discountPercent = 0; item.discountAmount = 0;
-                                    $("#item_discount_" + id).val('0');
-                                } else {
-                                    if (window.store.sound_effect == 1) { window.storeApp.playSound("modify.mp3"); }
-                                    item.discountInput = inputStr;
-                                    item.discountPercent = (fixedAmount / baseAmount) * 100;
-                                    item.discountAmount = fixedAmount;
-                                }
+                            if (window.store.sound_effect == 1) {
+                                window.storeApp.playSound("modify.mp3");
                             }
+
+                            // Store discount percentage
+                            item.discountPercent = discount;
+
+                            // Calculate base amount (price * quantity)
+                            var baseAmount = parseFloat(item.price) * parseFloat(item.quantity);
+
+                            // Calculate discount amount
+                            item.discountAmount = (baseAmount * discount) / 100;
+
+                            // Update subtotal (base amount - discount)
                             item.subTotal = baseAmount - item.discountAmount;
+
+                            // Recalculate total amount
                             $scope.totalAmount = 0;
-                            window._.map($scope.itemArray, function (itm) { $scope.totalAmount += parseFloat(itm.subTotal); });
+                            window._.map($scope.itemArray, function (itm) {
+                                $scope.totalAmount += parseFloat(itm.subTotal);
+                            });
+
                             $scope._calcTotalPayable();
                         }
                     });
-                    if (!$scope.$$phase) { $scope.$apply(); }
+
+                    // Apply scope changes safely
+                    if (!$scope.$$phase) {
+                        $scope.$apply();
+                    }
                 }
             }
         };
-        if (!window.posEventListenersInitialized) {
-            $(document).on("change blur", ".item_discount", function () {
-                var itemId = $(this).data("itemid");
-                var discountInput = $(this).val();
-                $scope.$evalAsync(function () { $scope.updateItemDiscount(itemId, discountInput); });
+
+        // Event listener for item discount input changes
+        $(document).on("change blur", ".item_discount", function () {
+            var itemId = $(this).data("itemid");
+            var discountPercent = $(this).val();
+
+            // Use $evalAsync to ensure we're in Angular's digest cycle
+            $scope.$evalAsync(function () {
+                $scope.updateItemDiscount(itemId, discountPercent);
             });
-            
-            // Mark listeners as initialized
-            window.posEventListenersInitialized = true;
-        }
+        });
 
         // ============================================
         // End Item Discount Update

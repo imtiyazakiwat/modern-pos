@@ -2,6 +2,10 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
     return function($scope) {
         console.log('[PaymentFormModal] Opening payment modal');
         
+        // Set protection flag IMMEDIATELY
+        window.paymentModalProtected = true;
+        console.log('[PaymentFormModal] Payment modal protection enabled');
+        
         // Force cleanup before opening modal
         $('body').removeClass('overlay-loader');
         $('.modal').removeClass('overlay-loader');
@@ -360,6 +364,14 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
                 };
 
                 $scope.closePaymentFormModal = function () {
+                    console.log('[PaymentFormModal] Closing payment modal');
+                    
+                    // Remove protection
+                    window.paymentModalProtected = false;
+                    
+                    // Remove modal class
+                    $('.payment-modal-window').removeClass('modal-open-confirmed');
+                    
                     // Remove inert attribute when closing modal
                     $('.pos-content-wrapper').removeAttr('inert');
                     $('.pos-content-wrapper').removeAttr('aria-hidden');
@@ -404,6 +416,9 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
         uibModalInstance.opened.then(function() {
             console.log('[PaymentFormModal] Modal opened successfully');
             
+            // Keep protection active
+            window.paymentModalProtected = true;
+            
             // Prevent backdrop clicks from closing modal
             $('.modal-backdrop').off('click');
             
@@ -411,11 +426,24 @@ window.angularApp.factory("PaymentFormModal", ["API_URL", "window", "jQuery", "$
             setTimeout(function() {
                 $('.payment-modal-window').addClass('modal-open-confirmed');
                 console.log('[PaymentFormModal] Modal confirmed open');
+                
+                // Extend protection period
+                setTimeout(function() {
+                    window.paymentModalProtected = false;
+                    console.log('[PaymentFormModal] Protection period ended, modal should be stable');
+                }, 3000);
             }, 500);
         });
         
         uibModalInstance.result.catch(function (reason) {
             console.log('[PaymentFormModal] Modal dismissed, reason:', reason);
+            
+            // Remove protection
+            window.paymentModalProtected = false;
+            
+            // Remove modal class
+            $('.payment-modal-window').removeClass('modal-open-confirmed');
+            
             // Remove inert attribute and restore focus
             $('.pos-content-wrapper').removeAttr('inert');
             $('.pos-content-wrapper').removeAttr('aria-hidden');

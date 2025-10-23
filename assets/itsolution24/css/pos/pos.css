@@ -669,6 +669,10 @@ img {
 	text-align: right;
 }
 #invoice-item-head thead tr th:nth-child(5) {
+	width: 50px;
+	text-align: center;
+}
+#invoice-item-head thead tr th:nth-child(6) {
 	width: 15px;
 	text-align: left;
 }
@@ -733,6 +737,10 @@ img {
 #invoice-item-list .invoice-item .product-subtotal {
 	width: 70px;
 	text-align: right;
+}
+#invoice-item-list .invoice-item .product-discount {
+	width: 50px;
+	text-align: center;
 }
 #invoice-item-list .invoice-item .product-delete {
 	width: 20px;
@@ -895,4 +903,13 @@ img {
 	padding:5px;
 	border-radius: 20px;
 	border:2px solid #ddd;
+}
+#pos-page .item_discount {
+	max-width:50px;
+	width:50px;
+	padding:5px;
+	border-radius: 20px;
+	border:2px solid #ffa500;
+	text-align: center;
+	background-color: #fff9f0;
 }

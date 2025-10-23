@@ -53,7 +53,7 @@
         }
         
         // Re-enable body scrolling if needed
-        if ($('.modal.in, .modal.show').length === 0) {
+        if ($('.modal.in, .modal.show, .payment-modal-window').length === 0) {
             console.log('[Modal Cleanup] Re-enabling body interaction');
             $('body').css('overflow', '');
             $('body').css('padding-right', '');
@@ -61,10 +61,13 @@
         }
         
         // Remove any inert attributes that might be blocking interaction
+        // BUT NOT if payment modal is open
         var inertElements = $('[inert]');
-        if (inertElements.length > 0 && $('.modal.in, .modal.show').length === 0) {
+        if (inertElements.length > 0 && $('.modal.in, .modal.show, .payment-modal-window').length === 0) {
             console.log('[Modal Cleanup] Removing inert from', inertElements.length, 'elements');
             inertElements.removeAttr('inert');
+        } else if ($('.payment-modal-window').length > 0) {
+            console.log('[Modal Cleanup] Payment modal open, keeping inert on background');
         }
         
         // Check for any elements with pointer-events: none
@@ -114,6 +117,16 @@
     var maxSafetyChecks = 10;
     var safetyInterval = setInterval(function() {
         safetyCheckCount++;
+        
+        // Don't run safety checks if payment modal is protected or open
+        if (window.paymentModalProtected || $('.payment-modal-window').length > 0) {
+            console.log('[Modal Cleanup] Safety check skipped - payment modal active');
+            if (safetyCheckCount >= maxSafetyChecks) {
+                console.log('[Modal Cleanup] Safety checks completed');
+                clearInterval(safetyInterval);
+            }
+            return;
+        }
         
         // Check if there are any stuck overlays
         if ($('body').hasClass('overlay-loader') || $('.modal').hasClass('overlay-loader')) {

@@ -407,6 +407,9 @@ if ($order_printer_ids) {
 												<th>
 													<?php echo trans('label_subtotal'); ?>
 												</th>
+												<th>
+													Disc %
+												</th>
 												<th>&nbsp; </th>
 											</tr>
 										</thead>
@@ -441,6 +444,9 @@ if ($order_printer_ids) {
 													</td>
 													<td class="product-subtotal">
 														{{ items.subTotal | formatDecimal:2 }}
+													</td>
+													<td class="product-discount">
+														<input type="text" class="text-center item_discount" id="item_discount_{{ items.id }}" name="item_discount_{{ items.id }}" value="{{ items.discountInput || 0 }}" data-itemid="{{ items.id }}" onClick="this.select();" ondrop="return false;" onpaste="return false;" placeholder="₹ or %">
 													</td>
 													<td class="product-delete text-red pointer" ng-click="removeItemFromInvoice($index, items.id)">
 														<span class="fa fa-close"></span>
@@ -675,6 +681,9 @@ if ($order_printer_ids) {
 
 <!-- Payment Modal Fix for Windows -->
 <script src="../assets/itsolution24/js/pos/payment-modal-fix.js" type="text/javascript"></script>
+
+<!-- Windows Freeze Fix -->
+<script src="../assets/itsolution24/js/pos/windows-freeze-fix.js" type="text/javascript"></script>
 
 <noscript>
     <div class="global-site-notice noscript">

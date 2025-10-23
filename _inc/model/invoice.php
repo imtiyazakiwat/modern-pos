@@ -34,7 +34,6 @@ class ModelInvoice extends Model
         $others_charge = $request->post['others-charge'] ? $request->post['others-charge'] : 0;
         $order_tax = $request->post['tax-amount'];
         $payable_amount = $request->post['payable-amount'];
-        $product_discount = $discount_amount / $total_items;
         $product_tax = $order_tax / $total_items;
 
         $item_tax = 0;
@@ -59,6 +58,7 @@ class ModelInvoice extends Model
             $product_quantity = $product['item_quantity'];
             $product_price = $product['item_price'];
             $product_total = $product['item_total'];
+            $product_discount = isset($product['item_discount_amount']) ? floatval($product['item_discount_amount']) : ($discount_amount / $total_items);
             $purchase_invoice_id = NULL;
             $item_purchase_price = 0;
             $tax_method = $product_info['tax_method'];
@@ -192,7 +192,6 @@ class ModelInvoice extends Model
             $paid_amount = $payable_amount;
         }
         
-        $product_discount = $discount_amount / $total_items;
         $product_tax = $order_tax / $total_items;
         $payment_status = $due > 0 ? 'due' : 'paid';
         if ($customer_id == 1 && $due > 0) {
@@ -224,6 +223,7 @@ class ModelInvoice extends Model
             }
             $product_price = $product['item_price'];
             $product_total = $product['item_total'];
+            $product_discount = isset($product['item_discount_amount']) ? floatval($product['item_discount_amount']) : ($discount_amount / $total_items);
             $purchase_invoice_id = NULL;
             $item_purchase_price = 0;
             $tax_method = $product_info['tax_method'];
